@@ -161,7 +161,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.playSong(songId, listItem)
 		elif result == 2:
 			l = len(songs)
-			for n in range(1, l):
+			for n in range(0, l):
 				self.playlist.append(songs[n])
 		elif result == 3:
 			pass
