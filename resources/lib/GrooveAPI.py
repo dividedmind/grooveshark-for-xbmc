@@ -1,19 +1,77 @@
-import urllib2, simplejson, md5, unicodedata, re
-#implement error checking and handling eventually
+import urllib2, simplejson, md5, unicodedata, re, os, traceback, sys, pickle
+
 class GrooveAPI:
 	def __init__(self):
 		self.loggedIn = 0
 		self.userId = 0
-		self.sessionID = '74294e3e45b297fe70f462740e15f6c8'
+		self.rootDir = os.getcwd()
+		self.sessionID = self.getSavedSession()
+		print 'Saved sessionID: ' + self.sessionID
 		self.sessionID = self.getSessionFromAPI()
+		print 'API sessionID: ' + self.sessionID
 		if self.sessionID == '':
 			self.sessionID = self.startSession()
-		if self.sessionID == '':
-			print 'Could not get a sessionID'
+			print 'Start() sessionID: ' + self.sessionID
+			if self.sessionID == '':
+				# FIXME: Raise an exception instead and stop the script from even loading
+				print 'Could not get a sessionID. Try again in a few minutes'
+			else:
+				self.saveSession()
+		
+		print 'sessionID: ' + self.sessionID
 
 	def __del__(self):
 		if self.loggedIn == 1:
 			self.logout()
+			
+	def getSavedSession(self):
+		sessionID = ''
+		path = os.path.join(self.rootDir, 'data', 'session.txt')
+
+		try:
+			f = open(path, 'rb')
+			sessionID = pickle.load(f)
+			f.close()
+		except:
+			sessionID = ''
+			# File not found, will be created upon save
+			pass		
+		
+		return sessionID
+
+	def saveSession(self):			
+		try:
+			dir = os.path.join(self.rootDir, 'data')
+			# Create the 'data' directory if it doesn't exist.
+			if not os.path.exists(dir):
+				os.mkdir(dir)
+			path = os.path.join(dir, 'session.txt')
+			f = open(path, 'wb')
+			pickle.dump(self.sessionID, f, protocol=pickle.HIGHEST_PROTOCOL)
+			f.close()
+		except IOError, e:
+			print 'There was an error while saving the session pickle (%s)' % e
+			pass
+		except:
+			print "An unknown error occured during save session: " + str(sys.exc_info()[0])
+			pass
+			
+	def saveSettings(self):			
+		try:
+			dir = os.path.join(self.rootDir, 'data')
+			# Create the 'data' directory if it doesn't exist.
+			if not os.path.exists(dir):
+				os.mkdir(dir)
+			path = os.path.join(dir, 'settings1.txt')
+			f = open(path, 'wb')
+			pickle.dump(self.settings, f, protocol=pickle.HIGHEST_PROTOCOL)
+			f.close()
+		except IOError, e:
+			print 'There was an error while saving the settings pickle (%s)' % e
+			pass
+		except:
+			print "An unknown error occured during save settings\n"
+			pass
 
 	def callRemote(self, method, params={}):
 		data = {'header': {'sessionID': self.sessionID}, 'method': method, 'parameters': params}
@@ -56,10 +114,10 @@ class GrooveAPI:
 		result = response.read()
 		result = simplejson.loads(result)
 		response.close()
-		if 'header' in result:
-			return result['header']['sessionID']
-		else:
+		if 'fault' in result:
 			return ''
+		else:
+			return result['header']['sessionID']
 
 	def sessionDestroy(self):
 		return self.callRemote("session.destroy")
