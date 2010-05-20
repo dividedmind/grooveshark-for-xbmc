@@ -5,7 +5,6 @@ import os
 import traceback
 sys.path.append(os.path.join(os.getcwd().replace(";",""),'resources/lib'))
 
-import simplejson
 from GrooveAPI import GrooveAPI
 from GroovePlayer import GroovePlayer
 
