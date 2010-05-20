@@ -1,0 +1,304 @@
+<window>
+	<resolution>PAL16x9</resolution>
+	<useincludes>false</useincludes>
+	<defaultcontrol>204</defaultcontrol>	
+	<allowoverlay>false</allowoverlay>
+	
+	<controls>
+		<control type="image">
+			<description>Background</description>
+			<posx>0</posx>
+			<posy>0</posy>
+			<height>576</height>
+			<width>720</width>
+			<texture>art-default.png</texture>	
+		</control>
+		<control type="image">
+			<description>Background for playlist or search results</description>
+			<posx>5</posx>
+			<posy>25</posy>
+			<height>530</height>
+			<width>525</width>
+			<texture>button_focus.png</texture>	
+		</control>
+<!--		<control type="image">
+			<description>Album Cover</description>
+			<posx>21</posx>
+			<posy>400</posy>
+			<height>100</height>
+			<width>100</width>
+			<texture>sarah.jpg</texture>	
+		</control>-->
+<!--		<control type="image">
+			<description>GS Logo</description>
+			<posx>0</posx>
+			<posy>0</posy>
+			<height>50</height>
+			<width>720</width>
+			<texture>gs_logo.png</texture>	
+		</control>-->
+		<control type="label" id="3000">
+			<description>State label</description>
+			<width>520</width>			
+			<posx>15</posx>
+			<posy>10</posy>
+			<align>center</align>
+			<aligny>center</aligny>
+			<label></label>
+			<font>font16</font>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control type="group" id="204">	
+			<control type="button" id="1001">
+				<description>Current playlist</description>				
+				<posx>550</posx>
+				<posy>275</posy>
+				<width>155</width>
+				<height>30</height>
+				<label>Current playlist</label>
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1005</onup>
+				<ondown>1002</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1002">
+				<description>Find song or album</description>				
+				<posx>550</posx>
+				<posy>310</posy>
+				<width>155</width>
+				<height>30</height>
+				<label>Find Song or Album</label>
+				<texturefocus>button_focus.png</texturefocus>		
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1001</onup>
+				<ondown>1003</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1003">
+				<description>Playlists button</description>				
+				<posx>550</posx>	
+				<posy>345</posy>
+				<width>155</width>
+				<height>30</height>
+				<label>Playlists</label>		
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1002</onup>
+				<ondown>1004</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1004">
+				<description>Settings button</description>				
+				<posx>550</posx>	
+				<posy>380</posy>
+				<width>155</width>
+				<height>30</height>
+				<label>Settings</label>		
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1003</onup>
+				<ondown>1001</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+		</control>
+<!--		<control type="group" id="210">	
+			<control type="button" id="2001">
+				<description>Prev button</description>				
+				<posx>10</posx>
+				<posy>510</posy>
+				<width>30</width>
+				<height>30</height>		
+				<texturefocus>b_prev.png</texturefocus>
+				<texturenofocus>b_prev.png</texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>17</textoffsetx>
+				<aligny>center</aligny>
+				<onup>1004</onup>
+				<ondown>1001</ondown>	
+				<onleft>2004</onleft>
+				<onright>2002</onright>
+				<font>font12</font>
+				<visible>true</visible>
+			</control>
+			<control type="button" id="2002">
+				<description>Prev button</description>				
+				<posx>45</posx>
+				<posy>510</posy>
+				<width>30</width>
+				<height>30</height>		
+				<texturefocus>b_stop.png</texturefocus>
+				<texturenofocus>b_stop.png</texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>17</textoffsetx>
+				<aligny>center</aligny>					
+				<onup>1004</onup>
+				<ondown>1001</ondown>	
+				<onleft>2001</onleft>
+				<onright>2003</onright>
+				<font>font12</font>
+				<visible>true</visible>
+			</control>
+			<control type="button" id="2003">
+				<description>Prev button</description>				
+				<posx>80</posx>
+				<posy>510</posy>
+				<width>30</width>
+				<height>30</height>		
+				<texturefocus>b_play.png</texturefocus>
+				<texturenofocus>b_play.png</texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>17</textoffsetx>
+				<aligny>center</aligny>					
+				<onup>1004</onup>
+				<ondown>1001</ondown>	
+				<onleft>2002</onleft>
+				<onright>2004</onright>
+				<font>font12</font>
+				<visible>true</visible>
+			</control>
+			<control type="button" id="2004">
+				<description>Prev button</description>				
+				<posx>115</posx>
+				<posy>510</posy>
+				<width>30</width>
+				<height>30</height>		
+				<texturefocus>b_next.png</texturefocus>
+				<texturenofocus>b_next.png</texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>17</textoffsetx>
+				<aligny>center</aligny>					
+				<onup>1004</onup>
+				<ondown>1001</ondown>	
+				<onleft>2003</onleft>
+				<onright>2001</onright>
+				<font>font12</font>
+				<visible>true</visible>
+			</control>
+		</control>-->
+		<control type="group" id="205">
+				<control type="list" id="50">
+				<description>Search List</description>
+				<posx>10</posx>
+				<posy>30</posy>
+				<width>515</width>
+				<height>520</height>						
+				<onup>205</onup>
+				<ondown>205</ondown>
+				<onleft>204</onleft>
+				<onright>204</onright>
+				<viewtype label="Text Only">list</viewtype>		      
+				<orientation>vertical</orientation>
+				<pagecontrol>25</pagecontrol>
+				<scrolltime>200</scrolltime>
+				<itemlayout width="525" height="25">
+					<control type="image">
+						<posx>5</posx>
+						<posy>3</posy>
+						<width>22</width>
+						<height>22</height>
+						<info>ListItem.Icon</info>
+						<visible>false</visible>
+					</control>
+					<control type="label">
+						<posx>5</posx>
+						<posy>0</posy>
+						<width>450</width>
+						<height>25</height>
+						<font>font13</font>
+						<aligny>center</aligny>					
+						<align>left</align>
+						<info>ListItem.Label</info>
+						<textcolor>FFFFFFFF</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+					<control type="label">
+						<posx>515</posx>
+						<posy>0</posy>
+						<width>50</width>
+						<height>25</height>
+						<font>font13</font>
+						<aligny>center</aligny>					
+						<align>right</align>
+						<info>ListItem.Label2</info>
+						<textcolor>FFFFFFFF</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+				</itemlayout>
+				<focusedlayout height="25" width="525">				
+					<control type="image">
+						<width>515</width>
+						<height>25</height>
+						<posx>0</posx>
+						<posy>0</posy>					
+						<texture>list_focus.png</texture>
+					</control>							
+					<control type="image">
+						<posx>5</posx>
+						<posy>3</posy>
+						<width>22</width>
+						<height>22</height>
+						<info>ListItem.Icon</info>
+						<visible>true</visible>
+					</control>
+					<control type="label">
+						<posx>5</posx>
+						<posy>0</posy>
+						<width>450</width>
+						<height>25</height>
+						<font>font13</font>
+						<aligny>center</aligny>					
+						<align>left</align>
+						<info>ListItem.Label</info>
+						<textcolor>FFFFFFFF</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+					<control type="label">
+						<posx>515</posx>
+						<posy>0</posy>
+						<width>50</width>
+						<height>25</height>
+						<font>font13</font>
+						<aligny>center</aligny>					
+						<align>right</align>
+						<info>ListItem.Label2</info>
+						<textcolor>FFFFFFFF</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+				</focusedlayout>
+			</control>
+		</control>
+	</controls>
+</window>
