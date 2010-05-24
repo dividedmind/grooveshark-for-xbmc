@@ -1,28 +1,54 @@
-import urllib2, simplejson, md5, unicodedata, re, os, traceback, sys, pickle
+import urllib2, simplejson, md5, unicodedata, re, os, traceback, sys, pickle, socket
+from operator import itemgetter, attrgetter
+
+class LoginTokensExceededError(Exception):
+	def __init__(self):
+		self.value = 'You have created to many tokens. Only 12 are allowed'
+	def __str__(self):
+		return repr(self.value)
+		
+class LoginUnknownError(Exception):
+	def __init__(self):
+		self.value = 'Unable to get a new session ID. Wait a few minutes and try again'
+	def __str__(self):
+		return repr(self.value)
+
+class SessionIDTryAgainError(Exception):
+	def __init__(self):
+		self.value = 'Unable to get a new session ID. Wait a few minutes and try again'
+	def __str__(self):
+		return repr(self.value)
 
 class GrooveAPI:
-	def __init__(self):
+	def __init__(self, enableDebug = False):
+		timeout = 20
+		socket.setdefaulttimeout(timeout)
+		self.enableDebug = enableDebug
 		self.loggedIn = 0
 		self.userId = 0
 		self.rootDir = os.getcwd()
 		self.sessionID = self.getSavedSession()
-		print 'Saved sessionID: ' + self.sessionID
+		self.debug('Saved sessionID: ' + self.sessionID)
 		self.sessionID = self.getSessionFromAPI()
-		print 'API sessionID: ' + self.sessionID
+		self.debug('API sessionID: ' + self.sessionID)
 		if self.sessionID == '':
 			self.sessionID = self.startSession()
-			print 'Start() sessionID: ' + self.sessionID
+			self.debug('Start() sessionID: ' + self.sessionID)
 			if self.sessionID == '':
-				# FIXME: Raise an exception instead and stop the script from even loading
-				print 'Could not get a sessionID. Try again in a few minutes'
+				self.debug('Could not get a sessionID. Try again in a few minutes')
+				raise SessionIDTryAgainError()
 			else:
 				self.saveSession()
 		
-		print 'sessionID: ' + self.sessionID
+		self.debug('sessionID: ' + self.sessionID)
 
 	def __del__(self):
 		if self.loggedIn == 1:
 			self.logout()
+			
+	def debug(self, msg):
+		if self.enableDebug == True:
+			print msg
 			
 	def getSavedSession(self):
 		sessionID = ''
@@ -34,7 +60,6 @@ class GrooveAPI:
 			f.close()
 		except:
 			sessionID = ''
-			# File not found, will be created upon save
 			pass		
 		
 		return sessionID
@@ -76,11 +101,6 @@ class GrooveAPI:
 	def callRemote(self, method, params={}):
 		data = {'header': {'sessionID': self.sessionID}, 'method': method, 'parameters': params}
 		data = simplejson.dumps(data)
-		#proxy_support = urllib2.ProxyHandler({"http" : "http://wwwproxy.kom.aau.dk:3128"})
-		## build a new opener with proxy details
-		#opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler)
-		## install it
-		#urllib2.install_opener(opener)
 		req = urllib2.Request("http://api.grooveshark.com/ws/1.0/?json")
 		req.add_header('Host', 'api.grooveshark.com')
 		req.add_header('Content-type', 'text/json')
@@ -90,24 +110,8 @@ class GrooveAPI:
 		result = response.read()
 		result = simplejson.loads(result)
 		response.close()
+		#self.debug(result)
 		return result
-	
-	def searchSongs(self, query, limit):
-		songs = self.callRemote("search.songs", {"query": query, "limit": limit, "streamableOnly": 1})['result']['songs']
-		i = 0
-		list = []
-		while(i < len(songs)):
-			s = songs[i]
-			list.append([s['songName'].encode('ascii', 'ignore'),\
-			s['songID'],\
-			s['estDurationSecs'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore'),\
-			s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID']])
-			i = i + 1	
-		return list
 
 	def startSession(self):
 		response = urllib2.urlopen("http://www.moovida.com/services/grooveshark/session_start")
@@ -139,8 +143,13 @@ class GrooveAPI:
 		result = self.callRemote("session.createUserAuthToken", {"username": username, "hashpass": hashpass})
 		if 'result' in result:
 			return result['result']['token'], result['result']['userID']
+		elif 'fault' in result:
+			if result['fault']['code'] == 256:
+				return -1 # Exceeded the number of allowed tokens. Should not happen
+			else:
+				return -2 # Unknown error
 		else:
-			return None
+			return -2 # Unknown error
 	
 	def destroyUserAuthToken(self, token):
 		self.callRemote("session.destroyAuthToken", {"token": token})
@@ -158,20 +167,36 @@ class GrooveAPI:
 		if self.loggedIn == 1:
 			return self.userId
 		result = self.createUserAuthToken(username, password)
-		if result != None:
-			self.token = result[0]
-			print self.token
-			self.userId = self.loginViaAuthToken(self.token)
-			self.loggedIn = 1
-			return self.userId
+		if result == -1:
+			raise LoginTokensExceededError()
+		elif result == -2:
+			raise LoginUnknownError()
 		else:
+			self.token = result[0]
+			self.debug('Token:' + self.token)
+			self.userId = self.loginViaAuthToken(self.token)
+			if self.userId == 0:
+				raise LoginUnknownError()
+			else:
+				self.loggedIn = 1
+				return self.userId
+				
+	def loginBasic(self, username, password):
+		if self.loggedIn == 1:
+			return self.userId
+		result = self.callRemote("session.login", {"username": username, "password": password})
+		if 'fault' in result:
 			return 0
-			
+		else:
+			self.loggedIn = 1
+			return result['result']['userID']
+
 	def loggedInStatus(self):
 		return self.loggedIn
 	
 	def logout(self):
 		self.callRemote("session.logout", {})
+		self.loggedIn = 0
 		
 	def getSongInfo(self, songID):
 		return self.callRemote("song.about", {"songID": songID})['result']['song']
@@ -200,7 +225,7 @@ class GrooveAPI:
 				p = playlists[i]
 				list.append([p['playlistName'].encode('ascii', 'ignore'), p['playlistID']])
 				i = i + 1	
-			return list
+			return sorted(list, key=itemgetter(0))
 		else:
 			return []
 
@@ -239,6 +264,16 @@ class GrooveAPI:
 		if self.loggedIn == 1:
 			return self.callRemote("playlist.delete", {"playlistID": playlistId})
 
+	def playlistRename(self, playlistId, name):
+		if self.loggedIn == 1:
+			result = self.callRemote("playlist.rename", {"playlistID": playlistId, "name": name})
+			if 'fault' in result:
+				return 0
+			else:
+				return 1
+		else:
+			return 0
+
 	def playlistClearSongs(self, playlistId):
 		if self.loggedIn == 1:
 			return self.callRemote("playlist.clearSongs", {"playlistID": playlistId})
@@ -246,6 +281,17 @@ class GrooveAPI:
 	def playlistAddSong(self, playlistId, songId, position):
 		if self.loggedIn == 1:
 			result = self.callRemote("playlist.addSong", {"playlistID": playlistId, "songID": songId, "position": position})
+			if 'fault' in result:
+				return 0
+			else:
+				return 1
+		else:
+			return 0
+			
+	def playlistReplace(self, playlistId, songIds):
+		if self.loggedIn == 1:
+			result = self.callRemote("playlist.replace", {"playlistID": playlistId, "songIDs": songIds})
+			print result
 			if 'fault' in result:
 				return 0
 			else:
@@ -264,8 +310,44 @@ class GrooveAPI:
 	
 	def getMethods(self):
 		return self.callRemote("service.getMethods")
-	
-	def searchArtists(self, query, limit):
+
+	def searchSongsExactMatch(self, songName, artistName, albumName):
+		result = self.callRemote("search.songExactMatch", {"songName": songName, "artistName": artistName, "albumName": albumName})
+		#['result']['songs']
+		return result
+		i = 0
+		list = []
+		while(i < len(songs)):
+			s = songs[i]
+			list.append([s['songName'].encode('ascii', 'ignore'),\
+			s['songID'],\
+			s['estDurationSecs'],\
+			s['albumName'].encode('ascii', 'ignore'),\
+			s['albumID'],\
+			s['image']['medium'].encode('ascii', 'ignore'),\
+			s['artistName'].encode('ascii', 'ignore'),\
+			s['artistID']])
+			i = i + 1	
+		return list
+
+	def searchSongs(self, query, limit, sortKey=6):
+		songs = self.callRemote("search.songs", {"query": query, "limit": limit, "streamableOnly": 1})['result']['songs']
+		i = 0
+		list = []
+		while(i < len(songs)):
+			s = songs[i]
+			list.append([s['songName'].encode('ascii', 'ignore'),\
+			s['songID'],\
+			s['estDurationSecs'],\
+			s['albumName'].encode('ascii', 'ignore'),\
+			s['albumID'],\
+			s['image']['medium'].encode('ascii', 'ignore'),\
+			s['artistName'].encode('ascii', 'ignore'),\
+			s['artistID']])
+			i = i + 1	
+		return sorted(list, key=itemgetter(sortKey))
+
+	def searchArtists(self, query, limit, sortKey=0):
 		artists = self.callRemote("search.artists", {"query": query, "limit": limit, "streamableOnly": 1})['result']['artists']
 		i = 0
 		list = []
@@ -274,9 +356,9 @@ class GrooveAPI:
 			list.append([s['artistName'].encode('ascii', 'ignore'),\
 			s['artistID']])
 			i = i + 1	
-		return list
+		return sorted(list, key=itemgetter(sortKey))
 
-	def searchAlbums(self, query, limit):
+	def searchAlbums(self, query, limit, sortKey=2):
 		albums = self.callRemote("search.albums", {"query": query, "limit": limit, "streamableOnly": 1})['result']['albums']
 		i = 0
 		list = []
@@ -289,10 +371,70 @@ class GrooveAPI:
 			s['albumID'],\
 			s['image']['medium'].encode('ascii', 'ignore')])
 			i = i + 1
+		return sorted(list, key=itemgetter(sortKey))
+
+	def popularGetSongs(self, limit):
+		songs = self.callRemote("popular.getSongs", {"limit": limit})['result']['songs']
+		i = 0
+		list = []
+		while(i < len(songs)):
+			s = songs[i]
+			list.append([s['songName'].encode('ascii', 'ignore'),\
+			s['songID'],\
+			-1,\
+			s['albumName'].encode('ascii', 'ignore'),\
+			s['albumID'],\
+			s['image']['medium'].encode('ascii', 'ignore'),\
+			s['artistName'].encode('ascii', 'ignore'),\
+			s['artistID']])
+			i = i + 1	
 		return list
 		
-	def artistGetAlbums(self, artistId, limit):
+	def popularGetArtists(self, limit):
+		artists = self.callRemote("popular.getArtists", {"limit": limit})['result']['artists']
+		i = 0
+		list = []
+		while(i < len(artists)):
+			s = artists[i]
+			list.append([s['artistName'].encode('ascii', 'ignore'),\
+			s['artistID']])
+			i = i + 1	
+		return list
+
+	def popularGetAlbums(self, limit):
+		albums = self.callRemote("popular.getAlbums", {"limit": limit})['result']['albums']
+		i = 0
+		list = []
+		while(i < len(albums)):
+			s = albums[i]
+			list.append([s['artistName'].encode('ascii', 'ignore'),\
+			s['artistID'],\
+			s['albumName'].encode('ascii', 'ignore'),\
+			s['albumID'],\
+			s['image']['medium'].encode('ascii', 'ignore')])
+			i = i + 1
+		return list
+		
+	def artistGetAlbums(self, artistId, limit, sortKey=2):
 		albums = self.callRemote("artist.getAlbums", {"artistID": artistId, "limit": limit})['result']['albums']
+		i = 0
+		list = []
+		while(i < len(albums)):
+			s = albums[i]
+			list.append([s['artistName'].encode('ascii', 'ignore'),\
+			s['artistID'],\
+			s['albumName'].encode('ascii', 'ignore'),\
+			s['albumID'],\
+			s['image']['medium'].encode('ascii', 'ignore')])
+			i = i + 1	
+		return sorted(list, key=itemgetter(sortKey))
+
+	def artistGetVerifiedAlbums(self, artistId, limit):
+		result = self.callRemote("artist.getVerifiedAlbums", {"artistID": artistId, "limit": limit})
+		if 'fault' in result:
+			return []
+		else:
+			albums = result['result']['albums']
 		i = 0
 		list = []
 		while(i < len(albums)):
