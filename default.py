@@ -592,6 +592,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.playlist = self.gs.playlistGetSongs(self.playlistId)
 				self.listSongs(self.playlist, 'Current Playlist (' + self.playlistName + ')')
 				self.stateList = GrooveClass.STATE_LIST_PLAYLIST
+				self.playlistHasFocus()
 			elif action == 1: #Rename
 				name = self.getInput('New name for playlist', default=playlists[n][0])
 				if name != '':
@@ -603,6 +604,8 @@ class GrooveClass(xbmcgui.WindowXML):
 				result = dialog.yesno('Delete playlist', 'Are you sure you want to delete the playlist:',playlists[n][0])
 				if result == True:
 					self.gs.playlistDelete(playlists[n][1])
+					if self.playlistId == playlists[n][1]:
+						self.closePlaylist()
 				else:
 					pass
 				self.showPlaylists()
@@ -619,8 +622,6 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.listSongs(self.playlist, 'Current Playlist (' + self.playlistName + ')')
 		self.stateList = GrooveClass.STATE_LIST_PLAYLIST
 	
-	#FIXME: Would be better to use playlist.replace - current implementation is rather slow and unsafe
-	# Could be made safe by creating a duplicate playlist, try to save the playlist and only if everything went according to plan, delete the old playlist
 	def savePlaylist(self, playlistId, name = '', about = ''):
 		pDialog = xbmcgui.DialogProgress()
 		pDialog.update(0)
