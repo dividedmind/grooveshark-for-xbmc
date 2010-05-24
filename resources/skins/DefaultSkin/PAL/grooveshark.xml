@@ -11,24 +11,24 @@
 			<posy>0</posy>
 			<height>576</height>
 			<width>720</width>
-			<texture>art-default.png</texture>	
+			<texture>art-default-4-3.png</texture>	
 		</control>
 		<control type="image">
 			<description>Background for playlist or search results</description>
 			<posx>5</posx>
 			<posy>25</posy>
 			<height>530</height>
-			<width>525</width>
-			<texture>button_focus.png</texture>	
+			<width>530</width>
+			<texture>list-bg.png</texture>	
 		</control>
-<!--		<control type="image">
+		<control type="image">
 			<description>Album Cover</description>
-			<posx>21</posx>
-			<posy>400</posy>
-			<height>100</height>
-			<width>100</width>
-			<texture>sarah.jpg</texture>	
-		</control>-->
+			<posx>0</posx>
+			<posy>0</posy>
+			<height>1</height>
+			<width>1</width>
+			<texture>submenu_bg.png</texture>
+		</control>
 <!--		<control type="image">
 			<description>GS Logo</description>
 			<posx>0</posx>
@@ -48,6 +48,19 @@
 			<font>font16</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
+		<control type="fadelabel" id="3001">
+			<description>Now playing label</description>
+			<width>155</width>			
+			<posx>550</posx>
+			<posy>490</posy>
+			<align>center</align>
+			<aligny>center</aligny>
+			<label></label>
+			<scrollout>False</scrollout>
+			<pauseatend>2000</pauseatend>
+			<font>font16</font>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
 		<control type="group" id="204">	
 			<control type="button" id="1001">
 				<description>Current playlist</description>				
@@ -63,19 +76,19 @@
 				<textoffsetx>0</textoffsetx>
 				<align>center</align>
 				<aligny>center</aligny>					
-				<onup>1005</onup>
+				<onup>210</onup>
 				<ondown>1002</ondown>	
 				<onleft>205</onleft>
 				<onright>205</onright>
 				<font>font12</font>
 			</control>
 			<control type="button" id="1002">
-				<description>Find song or album</description>				
+				<description>Search</description>				
 				<posx>550</posx>
 				<posy>310</posy>
 				<width>155</width>
 				<height>30</height>
-				<label>Find Song or Album</label>
+				<label>Search</label>
 				<texturefocus>button_focus.png</texturefocus>		
 				<texturenofocus></texturenofocus>
 				<textcolor>ffffffff</textcolor>
@@ -110,9 +123,29 @@
 				<font>font12</font>
 			</control>
 			<control type="button" id="1004">
-				<description>Settings button</description>				
+				<description>Popular button</description>				
 				<posx>550</posx>	
 				<posy>380</posy>
+				<width>155</width>
+				<height>30</height>
+				<label>Popular</label>		
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1003</onup>
+				<ondown>1005</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1005">
+				<description>Settings button</description>				
+				<posx>550</posx>	
+				<posy>415</posy>
 				<width>155</width>
 				<height>30</height>
 				<label>Settings</label>		
@@ -123,21 +156,21 @@
 				<textoffsetx>0</textoffsetx>
 				<align>center</align>
 				<aligny>center</aligny>					
-				<onup>1003</onup>
-				<ondown>1001</ondown>	
+				<onup>1004</onup>
+				<ondown>210</ondown>	
 				<onleft>205</onleft>
 				<onright>205</onright>
 				<font>font12</font>
 			</control>
 		</control>
-<!--		<control type="group" id="210">	
+		<control type="group" id="210">	
 			<control type="button" id="2001">
 				<description>Prev button</description>				
-				<posx>10</posx>
+				<posx>560</posx>
 				<posy>510</posy>
 				<width>30</width>
 				<height>30</height>		
-				<texturefocus>b_prev.png</texturefocus>
+				<texturefocus>b_prev_focus.png</texturefocus>
 				<texturenofocus>b_prev.png</texturenofocus>
 				<textcolor>ffffffff</textcolor>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -151,12 +184,12 @@
 				<visible>true</visible>
 			</control>
 			<control type="button" id="2002">
-				<description>Prev button</description>				
-				<posx>45</posx>
+				<description>Stop button</description>				
+				<posx>595</posx>
 				<posy>510</posy>
 				<width>30</width>
 				<height>30</height>		
-				<texturefocus>b_stop.png</texturefocus>
+				<texturefocus>b_stop_focus.png</texturefocus>
 				<texturenofocus>b_stop.png</texturenofocus>
 				<textcolor>ffffffff</textcolor>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -170,12 +203,12 @@
 				<visible>true</visible>
 			</control>
 			<control type="button" id="2003">
-				<description>Prev button</description>				
-				<posx>80</posx>
+				<description>Play button</description>				
+				<posx>630</posx>
 				<posy>510</posy>
 				<width>30</width>
 				<height>30</height>		
-				<texturefocus>b_play.png</texturefocus>
+				<texturefocus>b_play_focus.png</texturefocus>
 				<texturenofocus>b_play.png</texturenofocus>
 				<textcolor>ffffffff</textcolor>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -188,32 +221,51 @@
 				<font>font12</font>
 				<visible>true</visible>
 			</control>
-			<control type="button" id="2004">
-				<description>Prev button</description>				
-				<posx>115</posx>
+			<control type="button" id="2005">
+				<description>Pause button</description>				
+				<posx>630</posx>
 				<posy>510</posy>
 				<width>30</width>
 				<height>30</height>		
-				<texturefocus>b_next.png</texturefocus>
-				<texturenofocus>b_next.png</texturenofocus>
+				<texturefocus>b_pause_focus.png</texturefocus>
+				<texturenofocus>b_pause.png</texturenofocus>
 				<textcolor>ffffffff</textcolor>
 				<disabledcolor>60ffffff</disabledcolor>
 				<textoffsetx>17</textoffsetx>
 				<aligny>center</aligny>					
 				<onup>1004</onup>
 				<ondown>1001</ondown>	
+				<onleft>2002</onleft>
+				<onright>2004</onright>
+				<font>font12</font>
+				<visible>true</visible>
+			</control>
+			<control type="button" id="2004">
+				<description>Next button</description>				
+				<posx>665</posx>
+				<posy>510</posy>
+				<width>30</width>
+				<height>30</height>		
+				<texturefocus>b_next_focus.png</texturefocus>
+				<texturenofocus>b_next.png</texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>17</textoffsetx>
+				<aligny>center</aligny>					
+				<onup>1005</onup>
+				<ondown>1001</ondown>	
 				<onleft>2003</onleft>
 				<onright>2001</onright>
 				<font>font12</font>
 				<visible>true</visible>
 			</control>
-		</control>-->
+		</control>
 		<control type="group" id="205">
 				<control type="list" id="50">
 				<description>Search List</description>
-				<posx>10</posx>
+				<posx>15</posx>
 				<posy>30</posy>
-				<width>515</width>
+				<width>510</width>
 				<height>520</height>						
 				<onup>205</onup>
 				<ondown>205</ondown>
@@ -237,7 +289,7 @@
 						<posy>0</posy>
 						<width>450</width>
 						<height>25</height>
-						<font>font13</font>
+						<font>font12</font>
 						<aligny>center</aligny>					
 						<align>left</align>
 						<info>ListItem.Label</info>
@@ -245,11 +297,11 @@
 						<selectedcolor>FF000000</selectedcolor>
 					</control>
 					<control type="label">
-						<posx>515</posx>
+						<posx>505</posx>
 						<posy>0</posy>
 						<width>50</width>
 						<height>25</height>
-						<font>font13</font>
+						<font>font12</font>
 						<aligny>center</aligny>					
 						<align>right</align>
 						<info>ListItem.Label2</info>
@@ -259,7 +311,7 @@
 				</itemlayout>
 				<focusedlayout height="25" width="525">				
 					<control type="image">
-						<width>515</width>
+						<width>510</width>
 						<height>25</height>
 						<posx>0</posx>
 						<posy>0</posy>					
@@ -278,7 +330,7 @@
 						<posy>0</posy>
 						<width>450</width>
 						<height>25</height>
-						<font>font13</font>
+						<font>font12</font>
 						<aligny>center</aligny>					
 						<align>left</align>
 						<info>ListItem.Label</info>
@@ -286,11 +338,11 @@
 						<selectedcolor>FF000000</selectedcolor>
 					</control>
 					<control type="label">
-						<posx>515</posx>
+						<posx>505</posx>
 						<posy>0</posy>
 						<width>50</width>
 						<height>25</height>
-						<font>font13</font>
+						<font>font12</font>
 						<aligny>center</aligny>					
 						<align>right</align>
 						<info>ListItem.Label2</info>
