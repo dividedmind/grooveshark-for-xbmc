@@ -81,6 +81,8 @@ class GrooveClass(xbmcgui.WindowXML):
 		aId = action.getId()
 		if aId == 10:
 			self.close()
+		elif aId == 117: # Play
+			self.player.play()
 		elif aId == 14: # Skip
 			self.playNextSong()
 		elif aId == 15: # Replay
@@ -117,7 +119,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		elif control == 2004: #Next
 			self.playNextSong()
 		elif control == 2005: #Pause
-			self.playSong()
+			self.playPause()
 		elif control == 50:
 			n = self.getCurrentListPosition()
 			item = self.getListItem(n)
