@@ -1,3 +1,5 @@
+# This class is not pretty. Needs some TLC
+
 import xbmc, xbmcgui
 import sys
 import pickle
