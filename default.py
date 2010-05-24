@@ -569,6 +569,9 @@ class GrooveClass(xbmcgui.WindowXML):
 			print 'No login details provided in settings'
 
 	def showPlaylists(self):
+		if self.gs.loggedInStatus() != 1:
+			self.message('You have to be logged in. Set your login in settings','Unable to get playlists')
+			return None
 		dialog = xbmcgui.DialogProgress()
 		dialog.update(0)
 		dialog.create('Getting your playlists...', '')		
