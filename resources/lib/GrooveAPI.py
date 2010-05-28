@@ -21,7 +21,7 @@ class SessionIDTryAgainError(Exception):
 
 class GrooveAPI:
 	def __init__(self, enableDebug = False):
-		timeout = 20
+		timeout = 40
 		socket.setdefaulttimeout(timeout)
 		self.enableDebug = enableDebug
 		self.loggedIn = 0
@@ -101,6 +101,11 @@ class GrooveAPI:
 	def callRemote(self, method, params={}):
 		data = {'header': {'sessionID': self.sessionID}, 'method': method, 'parameters': params}
 		data = simplejson.dumps(data)
+		#proxy_support = urllib2.ProxyHandler({"http" : "http://wwwproxy.kom.aau.dk:3128"})
+		## build a new opener with proxy details
+		#opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler)
+		## install it
+		#urllib2.install_opener(opener)
 		req = urllib2.Request("http://api.grooveshark.com/ws/1.0/?json")
 		req.add_header('Host', 'api.grooveshark.com')
 		req.add_header('Content-type', 'text/json')
@@ -134,7 +139,12 @@ class GrooveAPI:
 			return result['header']['sessionID']												
 
 	def getStreamURL(self, songID):
-		return self.callRemote("song.getStreamUrlEx", {"songID": songID})['result']['url']
+		result = self.callRemote("song.getStreamUrlEx", {"songID": songID})
+		print result
+		if 'result' in result:
+			return result['result']['url']
+		else:
+			return ''
 	
 	def createUserAuthToken(self, username, password):
 		hashpass = md5.new(password).hexdigest()
@@ -201,15 +211,9 @@ class GrooveAPI:
 	def getSongInfo(self, songID):
 		return self.callRemote("song.about", {"songID": songID})['result']['song']
 	
-	#need to parse, same as search songs
 	def userGetFavoriteSongs(self, userID):
-		songs = self.callRemote("user.getFavoriteSongs", {"userID": userID})['result']['songs']
-		i = 0
-		list = []
-		while(i < len(songs)):
-			s = songs[i]
-			list.append([str(s['songName']), s['songID'], s['estDurationSecs'], str(s['albumName']), s['albumID'], str(s['image']['medium']), str(s['artistName']), s['artistID']])
-			i = i + 1
+		result = self.callRemote("user.getFavoriteSongs", {"userID": userID})
+		list = self.parseSongs(result)
 		return list
 	
 	def userGetPlaylists(self):
@@ -242,24 +246,12 @@ class GrooveAPI:
 	def playlistGetSongs(self, playlistId):
 		if self.loggedIn == 1:
 			result = self.callRemote("playlist.getSongs", {"playlistID": playlistId})
-			i = 0
-			list = []
-			#return songs
-			while(i < len(result['result']['songs'])):
-				s = result['result']['songs'][i]
-				list.append([s['songName'].encode('ascii', 'ignore'),\
-				s['songID'],\
-				s['estDurationSecs'],\
-				s['albumName'].encode('ascii', 'ignore'),\
-				s['albumID'],\
-				s['image']['medium'].encode('ascii', 'ignore'),\
-				s['artistName'].encode('ascii', 'ignore'),\
-				s['artistID']])
-				i = i + 1	
+			list = self.parseSongs(result)
 			return list
 		else:
 			return []
-
+			
+			
 	def playlistDelete(self, playlistId):
 		if self.loggedIn == 1:
 			return self.callRemote("playlist.delete", {"playlistID": playlistId})
@@ -304,164 +296,115 @@ class GrooveAPI:
 
 	def unfavoriteSong(self, songID):
 		return self.callRemote("song.unfavorite", {"songID": songID})
-	
-	def getPopularSongs(self):
-		return self.callRemote("popular.getArtists")
-	
+		
 	def getMethods(self):
 		return self.callRemote("service.getMethods")
 
 	def searchSongsExactMatch(self, songName, artistName, albumName):
 		result = self.callRemote("search.songExactMatch", {"songName": songName, "artistName": artistName, "albumName": albumName})
-		#['result']['songs']
-		return result
-		i = 0
-		list = []
-		while(i < len(songs)):
-			s = songs[i]
-			list.append([s['songName'].encode('ascii', 'ignore'),\
-			s['songID'],\
-			s['estDurationSecs'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore'),\
-			s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID']])
-			i = i + 1	
+		list = self.parseSongs(result)
 		return list
 
-	def searchSongs(self, query, limit, sortKey=6):
-		songs = self.callRemote("search.songs", {"query": query, "limit": limit, "streamableOnly": 1})['result']['songs']
-		i = 0
-		list = []
-		while(i < len(songs)):
-			s = songs[i]
-			list.append([s['songName'].encode('ascii', 'ignore'),\
-			s['songID'],\
-			s['estDurationSecs'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore'),\
-			s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID']])
-			i = i + 1	
+	def searchSongs(self, query, limit, page=0, sortKey=6):
+		result = self.callRemote("search.songs", {"query": query, "limit": limit, "page:": page, "streamableOnly": 1})
+		list = self.parseSongs(result)
 		return sorted(list, key=itemgetter(sortKey))
 
 	def searchArtists(self, query, limit, sortKey=0):
-		artists = self.callRemote("search.artists", {"query": query, "limit": limit, "streamableOnly": 1})['result']['artists']
-		i = 0
-		list = []
-		while(i < len(artists)):
-			s = artists[i]
-			list.append([s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID']])
-			i = i + 1	
+		result = self.callRemote("search.artists", {"query": query, "limit": limit, "streamableOnly": 1})
+		list = self.parseArtists(result)
 		return sorted(list, key=itemgetter(sortKey))
 
 	def searchAlbums(self, query, limit, sortKey=2):
-		albums = self.callRemote("search.albums", {"query": query, "limit": limit, "streamableOnly": 1})['result']['albums']
-		i = 0
-		list = []
-		#return list
-		while(i < len(albums)):
-			s = albums[i]
-			list.append([s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore')])
-			i = i + 1
-		return sorted(list, key=itemgetter(sortKey))
+		result = self.callRemote("search.albums", {"query": query, "limit": limit, "streamableOnly": 1})
+		list = self.parseAlbums(result)
+		return sorted(list, key=itemgetter(sortKey))				
 
 	def popularGetSongs(self, limit):
-		songs = self.callRemote("popular.getSongs", {"limit": limit})['result']['songs']
-		i = 0
-		list = []
-		while(i < len(songs)):
-			s = songs[i]
-			list.append([s['songName'].encode('ascii', 'ignore'),\
-			s['songID'],\
-			-1,\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore'),\
-			s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID']])
-			i = i + 1	
+		result = self.callRemote("popular.getSongs", {"limit": limit})
+		list = self.parseSongs(result)
 		return list
 		
 	def popularGetArtists(self, limit):
-		artists = self.callRemote("popular.getArtists", {"limit": limit})['result']['artists']
-		i = 0
-		list = []
-		while(i < len(artists)):
-			s = artists[i]
-			list.append([s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID']])
-			i = i + 1	
+		result = self.callRemote("popular.getArtists", {"limit": limit})
+		list = self.parseArtists(result)
 		return list
 
 	def popularGetAlbums(self, limit):
-		albums = self.callRemote("popular.getAlbums", {"limit": limit})['result']['albums']
-		i = 0
-		list = []
-		while(i < len(albums)):
-			s = albums[i]
-			list.append([s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore')])
-			i = i + 1
+		result = self.callRemote("popular.getAlbums", {"limit": limit})
+		list = self.parseAlbums(result)
 		return list
 		
 	def artistGetAlbums(self, artistId, limit, sortKey=2):
-		albums = self.callRemote("artist.getAlbums", {"artistID": artistId, "limit": limit})['result']['albums']
-		i = 0
-		list = []
-		while(i < len(albums)):
-			s = albums[i]
-			list.append([s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore')])
-			i = i + 1	
+		result = self.callRemote("artist.getAlbums", {"artistID": artistId, "limit": limit})
+		list = self.parseAlbums(result)
 		return sorted(list, key=itemgetter(sortKey))
 
 	def artistGetVerifiedAlbums(self, artistId, limit):
 		result = self.callRemote("artist.getVerifiedAlbums", {"artistID": artistId, "limit": limit})
-		if 'fault' in result:
-			return []
-		else:
-			albums = result['result']['albums']
-		i = 0
-		list = []
-		while(i < len(albums)):
-			s = albums[i]
-			list.append([s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore')])
-			i = i + 1	
+		list = self.parseSongs(result)
 		return list
 
 	def albumGetSongs(self, albumId, limit):
-		songs = self.callRemote("album.getSongs", {"albumID": albumId, "limit": limit})['result']['songs']
-		i = 0
-		list = []
-		#return albums
-		while(i < len(songs)):
-			s = songs[i]
-			list.append([s['songName'].encode('ascii', 'ignore'),\
-			s['songID'],\
-			s['estDurationSecs'],\
-			s['albumName'].encode('ascii', 'ignore'),\
-			s['albumID'],\
-			s['image']['medium'].encode('ascii', 'ignore'),\
-			s['artistName'].encode('ascii', 'ignore'),\
-			s['artistID']])
-			i = i + 1	
+		result = self.callRemote("album.getSongs", {"albumID": albumId, "limit": limit})
+		list = self.parseSongs(result)
 		return list
+
+	def parseSongs(self, items):
+		if 'result' in items:
+			i = 0
+			list = []
+			while(i < len(items['result']['songs'])):
+				s = items['result']['songs'][i]
+				if 'estDurationSecs' in s:
+					dur = s['estDurationSecs']
+				else:
+					dur = 0
+				list.append([s['songName'].encode('ascii', 'ignore'),\
+				s['songID'],\
+				dur,\
+				s['albumName'].encode('ascii', 'ignore'),\
+				s['albumID'],\
+				s['image']['tiny'].encode('ascii', 'ignore'),\
+				s['artistName'].encode('ascii', 'ignore'),\
+				s['artistID'],\
+				s['image']['small'].encode('ascii', 'ignore'),\
+				s['image']['medium'].encode('ascii', 'ignore')])
+				i = i + 1
+			return list
+		else:
+			return []
+			pass
+
+
+	def parseArtists(self, items):
+		if 'result' in items:
+			i = 0
+			list = []
+			artists = items['result']['artists']
+			while(i < len(artists)):
+				s = artists[i]
+				list.append([s['artistName'].encode('ascii', 'ignore'),\
+				s['artistID']])
+				i = i + 1
+			return list
+		else:
+			return []
+
+	def parseAlbums(self, items):
+		if 'result' in items:
+			i = 0
+			list = []
+			albums = items['result']['albums']
+			while(i < len(albums)):
+				s = albums[i]
+				list.append([s['artistName'].encode('ascii', 'ignore'),\
+				s['artistID'],\
+				s['albumName'].encode('ascii', 'ignore'),\
+				s['albumID'],\
+				s['image']['tiny'].encode('ascii', 'ignore')])
+				i = i + 1
+			return list
+		else:
+			return []
 
