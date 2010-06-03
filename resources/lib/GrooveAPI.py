@@ -140,7 +140,6 @@ class GrooveAPI:
 
 	def getStreamURL(self, songID):
 		result = self.callRemote("song.getStreamUrlEx", {"songID": songID})
-		print result
 		if 'result' in result:
 			return result['result']['url']
 		else:
@@ -283,7 +282,6 @@ class GrooveAPI:
 	def playlistReplace(self, playlistId, songIds):
 		if self.loggedIn == 1:
 			result = self.callRemote("playlist.replace", {"playlistID": playlistId, "songIDs": songIds})
-			print result
 			if 'fault' in result:
 				return 0
 			else:
