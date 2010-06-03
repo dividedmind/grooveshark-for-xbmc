@@ -1,9 +1,10 @@
 <window>
 	<resolution>PAL16x9</resolution>
 	<useincludes>false</useincludes>
-	<defaultcontrol>204</defaultcontrol>	
+	<defaultcontrol>205</defaultcontrol>	
 	<allowoverlay>false</allowoverlay>
-	
+<!--	<animation effect="fade" time="1000">WindowOpen</animation>
+	<animation effect="slide" end="0,576" time="1000">WindowClose</animation>-->
 	<controls>
 		<control type="image">
 			<description>Background</description>
@@ -11,7 +12,7 @@
 			<posy>0</posy>
 			<height>576</height>
 			<width>720</width>
-			<texture>art-default-4-3.png</texture>	
+			<texture>gs-bg.png</texture>	
 		</control>
 		<control type="image">
 			<description>Background for playlist or search results</description>
@@ -20,7 +21,10 @@
 			<height>530</height>
 			<width>530</width>
 			<texture>list-bg.png</texture>	
+			<visible>false</visible>
 		</control>
+
+
 		<control type="image">
 			<description>Album Cover</description>
 			<posx>0</posx>
@@ -48,122 +52,101 @@
 			<font>font16</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
-		<control type="fadelabel" id="3001">
-			<description>Now playing label</description>
-			<width>155</width>			
-			<posx>550</posx>
-			<posy>490</posy>
-			<align>center</align>
-			<aligny>center</aligny>
-			<label></label>
-			<scrollout>False</scrollout>
-			<pauseatend>2000</pauseatend>
-			<font>font16</font>
-			<textcolor>FFFFFFFF</textcolor>
-		</control>
-		<control type="group" id="204">	
-			<control type="button" id="1001">
-				<description>Current playlist</description>				
-				<posx>550</posx>
-				<posy>275</posy>
-				<width>155</width>
-				<height>30</height>
-				<label>Current playlist</label>
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>210</onup>
-				<ondown>1002</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
+
+		<control type="group" id="210">
+			<posx>525</posx>
+			<posy>50</posy>
+			<control type="image">
+				<description>Background for now playing</description>
+				<posx>0</posx>
+				<posy>0</posy>
+				<height>220</height>
+				<width>170</width>
+				<texture>gs-bg-menu.png</texture>	
+				<visible>true</visible>
 			</control>
-			<control type="button" id="1002">
-				<description>Search</description>				
-				<posx>550</posx>
-				<posy>310</posy>
-				<width>155</width>
-				<height>30</height>
-				<label>Search</label>
-				<texturefocus>button_focus.png</texturefocus>		
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
+			<control type="fadelabel" id="3001">
+				<description>Now playing label</description>
+				<width>115</width>			
+				<posx>25</posx>
+				<posy>170</posy>
 				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1001</onup>
-				<ondown>1003</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
+				<aligny>center</aligny>
+				<label></label>
+				<scrollout>False</scrollout>
+				<pauseatend>2000</pauseatend>
+				<font>font13</font>
+				<textcolor>grey</textcolor>
 			</control>
-			<control type="button" id="1003">
-				<description>Playlists button</description>				
-				<posx>550</posx>	
-				<posy>345</posy>
-				<width>155</width>
-				<height>30</height>
-				<label>Playlists</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
+			<control type="label" id="3002">
+				<description>Playing label</description>
+				<width>115</width>			
+				<posx>25</posx>
+				<posy>30</posy>
 				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1002</onup>
-				<ondown>1004</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
+				<aligny>center</aligny>
+				<label>Playing Now</label>
+				<font>font13</font>
+				<textcolor>grey</textcolor>
 			</control>
-			<control type="button" id="1004">
-				<description>Popular button</description>				
-				<posx>550</posx>	
-				<posy>380</posy>
-				<width>155</width>
-				<height>30</height>
-				<label>Popular</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1003</onup>
-				<ondown>1005</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1005">
-				<description>Settings button</description>				
-				<posx>550</posx>	
-				<posy>415</posy>
-				<width>155</width>
-				<height>30</height>
-				<label>Settings</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1004</onup>
-				<ondown>210</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
+			<control type="image" id="9001">
+				<description>Cover for playing now</description>
+				<posx>35</posx>
+				<posy>50</posy>
+				<height>100</height>
+				<width>100</width>
+				<texture>/home/solver/.xbmc/scripts/My Scripts/grooveshark-for-xbmc/cache/default-cover.png</texture>
+				<visible>true</visible>
 			</control>
 		</control>
-		<control type="group" id="210">	
+		<control type="group" id="211">
+			<posx>525</posx>
+			<posy>320</posy>
+			<control type="image">
+				<description>Background for playing next</description>
+				<posx>0</posx>
+				<posy>0</posy>
+				<height>220</height>
+				<width>170</width>
+				<texture>gs-bg-menu.png</texture>	
+				<visible>true</visible>
+			</control>
+			<control type="fadelabel" id="4001">
+				<description>Playing next label</description>
+				<width>115</width>			
+				<posx>25</posx>
+				<posy>170</posy>
+				<align>center</align>
+				<aligny>center</aligny>
+				<label></label>
+				<scrollout>False</scrollout>
+				<pauseatend>2000</pauseatend>
+				<font>font13</font>
+				<textcolor>grey</textcolor>
+			</control>
+			<control type="label" id="4002">
+				<description>Playing Next label</description>
+				<width>115</width>			
+				<posx>25</posx>
+				<posy>30</posy>
+				<align>center</align>
+				<aligny>center</aligny>
+				<label>Playing Next</label>
+				<font>font13</font>
+				<textcolor>grey</textcolor>
+			</control>
+			<control type="image" id="9002">
+				<description>Cover for playing next</description>
+				<posx>35</posx>
+				<posy>50</posy>
+				<height>100</height>
+				<width>100</width>
+				<texture>/home/solver/.xbmc/scripts/My Scripts/grooveshark-for-xbmc/cache/default-cover.png</texture>
+				<visible>true</visible>
+			</control>
+		</control>
+		
+		<!--<control type="group" id="210">	
 			<control type="button" id="2001">
 				<description>Prev button</description>				
 				<posx>560</posx>
@@ -259,37 +242,43 @@
 				<font>font12</font>
 				<visible>true</visible>
 			</control>
-		</control>
+		</control>-->
 		<control type="group" id="205">
-				<control type="list" id="50">
+			<control type="list" id="50">
 				<description>Search List</description>
-				<posx>15</posx>
-				<posy>30</posy>
-				<width>510</width>
-				<height>520</height>						
+				<posx>110</posx>
+				<posy>55</posy>
+				<width>600</width>
+				<height>470</height>						
 				<onup>205</onup>
 				<ondown>205</ondown>
-				<onleft>204</onleft>
+				<onleft>300</onleft>
 				<onright>204</onright>
-				<viewtype label="Text Only">list</viewtype>		      
+				<viewtype label="Default">list</viewtype>		      
 				<orientation>vertical</orientation>
 				<pagecontrol>25</pagecontrol>
 				<scrolltime>200</scrolltime>
-				<itemlayout width="525" height="25">
+				<itemlayout width="525" height="60">
+					<!--<control type="image">
+						<width>510</width>
+						<height>70</height>
+						<posx>0</posx>
+						<posy>0</posy>					
+						<texture>gs-bg-item-unfocus.png</texture>
+					</control>-->
 					<control type="image">
 						<posx>5</posx>
-						<posy>3</posy>
-						<width>22</width>
-						<height>22</height>
-						<info>ListItem.Icon</info>
-						<visible>false</visible>
+						<posy>5</posy>
+						<width>50</width>
+						<height>50</height>
+						<info>ListItem.Thumb</info>
 					</control>
 					<control type="label">
-						<posx>5</posx>
-						<posy>0</posy>
-						<width>450</width>
-						<height>25</height>
-						<font>font12</font>
+						<posx>70</posx>
+						<posy>3</posy>
+						<width>400</width>
+						<height>20</height>
+						<font>font13</font>
 						<aligny>center</aligny>					
 						<align>left</align>
 						<info>ListItem.Label</info>
@@ -297,40 +286,40 @@
 						<selectedcolor>FF000000</selectedcolor>
 					</control>
 					<control type="label">
-						<posx>505</posx>
-						<posy>0</posy>
-						<width>50</width>
-						<height>25</height>
+						<posx>80</posx>
+						<posy>13</posy>
+						<width>400</width>
+						<height>45</height>
 						<font>font12</font>
 						<aligny>center</aligny>					
-						<align>right</align>
+						<align>left</align>
 						<info>ListItem.Label2</info>
-						<textcolor>FFFFFFFF</textcolor>					
+						<textcolor>grey</textcolor>					
 						<selectedcolor>FF000000</selectedcolor>
 					</control>
 				</itemlayout>
-				<focusedlayout height="25" width="525">				
+				<focusedlayout height="60" width="525">				
 					<control type="image">
 						<width>510</width>
-						<height>25</height>
+						<height>60</height>
 						<posx>0</posx>
 						<posy>0</posy>					
-						<texture>list_focus.png</texture>
+						<texture>gs-bg-item-unfocus.png</texture>
 					</control>							
 					<control type="image">
 						<posx>5</posx>
-						<posy>3</posy>
-						<width>22</width>
-						<height>22</height>
-						<info>ListItem.Icon</info>
+						<posy>5</posy>
+						<width>50</width>
+						<height>50</height>
+						<info>ListItem.Thumb</info>
 						<visible>true</visible>
 					</control>
 					<control type="label">
-						<posx>5</posx>
-						<posy>0</posy>
-						<width>450</width>
-						<height>25</height>
-						<font>font12</font>
+						<posx>70</posx>
+						<posy>3</posy>
+						<width>400</width>
+						<height>20</height>
+						<font>font13</font>
 						<aligny>center</aligny>					
 						<align>left</align>
 						<info>ListItem.Label</info>
@@ -338,18 +327,150 @@
 						<selectedcolor>FF000000</selectedcolor>
 					</control>
 					<control type="label">
-						<posx>505</posx>
-						<posy>0</posy>
-						<width>50</width>
-						<height>25</height>
+						<posx>80</posx>
+						<posy>13</posy>
+						<width>400</width>
+						<height>45</height>
 						<font>font12</font>
 						<aligny>center</aligny>					
-						<align>right</align>
+						<align>left</align>
 						<info>ListItem.Label2</info>
-						<textcolor>FFFFFFFF</textcolor>					
+						<textcolor>grey</textcolor>					
 						<selectedcolor>FF000000</selectedcolor>
 					</control>
 				</focusedlayout>
+			</control>
+		</control>
+		<control type="group" id="300">
+			<posx>-170</posx>
+			<posy>150</posy>
+			<animation effect="slide" start="0,0" end="120,0" time="200" tween="quadratic">Focus</animation>
+			<animation effect="slide" start="120,0" end="0,0" time="200" tween="quadratic">Unfocus</animation>
+			<!--<animation effect="slide" end="0,0" time="1000">WindowClose</animation>-->
+			<control type="image">
+				<description>Background for menu</description>
+				<posx>0</posx>
+				<posy>0</posy>
+				<height>220</height>
+				<width>220</width>
+				<texture>gs-bg-menu.png</texture>	
+				<visible>visible</visible>
+			</control>
+			<control type="group" id="111">
+			<posx>60</posx>
+			<posy>20</posy>
+			<control type="label" id="5101">
+				<description>Vertical label</description>
+				<width>100</width>			
+				<posx>80</posx>
+				<posy>85</posy>
+				<align>center</align>
+				<aligny>center</aligny>
+				<label>Menu</label>
+				<angle>-90</angle>
+				<font>font16</font>
+				<textcolor>grey</textcolor>
+			</control>
+			<control type="button" id="1001">
+				<description>Current playlist</description>				
+				<posx>0</posx>
+				<posy>0</posy>
+				<width>110</width>
+				<height>30</height>
+				<label>Current playlist</label>
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>210</onup>
+				<ondown>1002</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1002">
+				<description>Search</description>				
+				<posx>0</posx>
+				<posy>35</posy>
+				<width>110</width>
+				<height>30</height>
+				<label>Search</label>
+				<texturefocus>button_focus.png</texturefocus>		
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1001</onup>
+				<ondown>1003</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1003">
+				<description>Playlists button</description>				
+				<posx>0</posx>	
+				<posy>70</posy>
+				<width>110</width>
+				<height>30</height>
+				<label>Playlists</label>		
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1002</onup>
+				<ondown>1004</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1004">
+				<description>Popular button</description>				
+				<posx>0</posx>	
+				<posy>105</posy>
+				<width>110</width>
+				<height>30</height>
+				<label>Popular</label>		
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1003</onup>
+				<ondown>1005</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
+			<control type="button" id="1005">
+				<description>Settings button</description>				
+				<posx>0</posx>	
+				<posy>140</posy>
+				<width>110</width>
+				<height>30</height>
+				<label>Settings</label>		
+				<texturefocus>button_focus.png</texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>0</textoffsetx>
+				<align>center</align>
+				<aligny>center</aligny>					
+				<onup>1004</onup>
+				<ondown>210</ondown>	
+				<onleft>205</onleft>
+				<onright>205</onright>
+				<font>font12</font>
+			</control>
 			</control>
 		</control>
 	</controls>
