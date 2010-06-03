@@ -95,7 +95,7 @@
 				<posy>50</posy>
 				<height>100</height>
 				<width>100</width>
-				<texture>/home/solver/.xbmc/scripts/My Scripts/grooveshark-for-xbmc/cache/default-cover.png</texture>
+				<texture></texture>
 				<visible>true</visible>
 			</control>
 		</control>
@@ -141,7 +141,7 @@
 				<posy>50</posy>
 				<height>100</height>
 				<width>100</width>
-				<texture>/home/solver/.xbmc/scripts/My Scripts/grooveshark-for-xbmc/cache/default-cover.png</texture>
+				<texture></texture>
 				<visible>true</visible>
 			</control>
 		</control>
@@ -304,7 +304,7 @@
 						<height>60</height>
 						<posx>0</posx>
 						<posy>0</posy>					
-						<texture>gs-bg-item-unfocus.png</texture>
+						<texture>gs-list-focus.png</texture>
 					</control>							
 					<control type="image">
 						<posx>5</posx>
