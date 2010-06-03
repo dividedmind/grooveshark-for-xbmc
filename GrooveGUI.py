@@ -40,7 +40,7 @@ class popupBtns(xbmcgui.WindowDialog):
 		y = rh/2 -h/2
 		
 		# Background
-		self.imgBg = xbmcgui.ControlImage(0+x,0+y,w,h, os.path.join(mediaDir,'popup-bg.png'))
+		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
 		self.addControl(self.imgBg)
 		
 		i = 0
@@ -102,9 +102,9 @@ class popupList(xbmcgui.WindowDialog):
 		y = rh/2 -h/2
 		
 		# Background
-		self.imgBg = xbmcgui.ControlImage(5+x,5+y,w,h, os.path.join(mediaDir,'popup-bg-shadow.png'))
-		self.addControl(self.imgBg)
-		self.imgBg = xbmcgui.ControlImage(0+x,0+y,w,h, os.path.join(mediaDir,'popup-bg.png'))
+		#self.imgBg = xbmcgui.ControlImage(5+x,5+y,w,h, os.path.join(mediaDir,'popup-bg-shadow.png'))
+		#self.addControl(self.imgBg)
+		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
 		self.addControl(self.imgBg)
 		self.imgBg = xbmcgui.ControlImage(0+x+pad,yo+y,w-2*pad,h-yo-2*pad, os.path.join(mediaDir,'list-bg2.png'))
 		self.addControl(self.imgBg)
@@ -113,7 +113,7 @@ class popupList(xbmcgui.WindowDialog):
 		self.labelTitle = xbmcgui.ControlLabel(0+x, 0+y, w, hCnt, title, 'font14', '0xFFFFFFFF', alignment=2)
 		self.addControl(self.labelTitle)
 		
-		self.cntList = xbmcgui.ControlList(2*pad+x, yo+y+pad, w-4*pad, h-4*pad, buttonFocusTexture = 'button_focus.png', font='font12', textColor='0xFFFFFFFF', space=0)
+		self.cntList = xbmcgui.ControlList(2*pad+x, yo+y+pad, w-4*pad, h-4*pad, buttonFocusTexture = os.path.join(mediaDir,'button_focus.png'), font='font12', textColor='0xFFFFFFFF', space=0)
 		self.addControl(self.cntList)
 		for item in items:
 			self.cntList.addItem(str(item))
@@ -121,8 +121,10 @@ class popupList(xbmcgui.WindowDialog):
 		
 	def onAction(self, action):
 		if action == 10:
+			self.selected = [-1, -1]
 			self.close()
 		elif action == 9: # Back
+			self.selected = [-1, -1]
 			self.close()	
 		elif (action == 3) or (action == 4):
 			try:	
@@ -141,7 +143,7 @@ class popupList(xbmcgui.WindowDialog):
 				else:
 					del popupMenu
 			else:
-				self.selected = self.cntList.getSelectedPosition()
+				self.selected = [-1, self.cntList.getSelectedPosition()]
 				self.close()
 		else:
 			pass
@@ -168,7 +170,7 @@ class settingsUI(xbmcgui.WindowDialog):
 		#x = 0
 		
 		# Background
-		self.imgBg = xbmcgui.ControlImage(0+x,0+y,w,h, os.path.join(mediaDir,'popup-bg.png'))
+		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
 		self.addControl(self.imgBg)
 
 		# Settings
