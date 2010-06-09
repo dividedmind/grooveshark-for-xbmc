@@ -257,7 +257,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.playlist.append(songs[n])
 		elif result == 3:
 			items = []
-			playlists = self.gs.userGetPlaylists()
+			playlists = self.gs.userGetPlaylists(limit=100)
 			i = 0
 			while (i < len(playlists)):
 				items.append(playlists[i][0])
@@ -709,7 +709,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			if action == 0: #Load
 				self.playlistId = playlists[n][1]
 				self.playlistName = playlists[n][0]
-				self.playlist = self.gs.playlistGetSongs(self.playlistId)
+				self.playlist = self.gs.playlistGetSongs(self.playlistId, limit=100)
 				self.stateList = GrooveClass.STATE_LIST_PLAYLIST
 				self.listMenu()
 				self.playlistHasFocus()
