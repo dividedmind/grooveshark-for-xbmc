@@ -215,9 +215,9 @@ class GrooveAPI:
 		list = self.parseSongs(result)
 		return list
 	
-	def userGetPlaylists(self):
+	def userGetPlaylists(self, limit=25):
 		if self.loggedIn == 1:
-			result = self.callRemote("user.getPlaylists", {"userID": self.userId})
+			result = self.callRemote("user.getPlaylists", {"userID": self.userId, "limit": limit})
 			if 'result' in result:
 				playlists = result['result']['playlists']
 			else:
@@ -242,9 +242,9 @@ class GrooveAPI:
 		else:
 			return 0
 			
-	def playlistGetSongs(self, playlistId):
+	def playlistGetSongs(self, playlistId, limit=25):
 		if self.loggedIn == 1:
-			result = self.callRemote("playlist.getSongs", {"playlistID": playlistId})
+			result = self.callRemote("playlist.getSongs", {"playlistID": playlistId, "limit": limit})
 			list = self.parseSongs(result)
 			return list
 		else:
