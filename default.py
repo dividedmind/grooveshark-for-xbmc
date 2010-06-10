@@ -257,7 +257,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.playlist.append(songs[n])
 		elif result == 3:
 			items = []
-			playlists = self.gs.userGetPlaylists(limit=100)
+			playlists = self.gs.userGetPlaylists(limit=150)
 			i = 0
 			while (i < len(playlists)):
 				items.append(playlists[i][0])
@@ -697,7 +697,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		dialog.create('Getting your playlists...', '')		
 		try:
 			items = []
-			playlists = self.gs.userGetPlaylists()
+			playlists = self.gs.userGetPlaylists(limit=150)
 			i = 0
 			while (i < len(playlists)):
 				items.append(playlists[i][0])
