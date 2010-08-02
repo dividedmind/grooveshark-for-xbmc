@@ -8,39 +8,100 @@ import traceback
 sys.path.append(os.path.join(os.getcwd().replace(";",""),'resources/lib'))
 
 def gShowPlaylists(playlists=[], options=[]):
-	popup = popupList(title= 'Playlists', items=playlists, btns=options, width=400)
-	popup.doModal()
-	selected = popup.selected
-	del popup
-	return selected
+#	popup = popupList(title= 'Playlists', items=playlists, btns=options, width=400)
+#	popup.doModal()
+#	selected = popup.selected
+#	del popup
+#	return selected
+	
+	selected = gSimplePopup(title='Playlists', items=playlists)
+	if selected != -1:
+		if options != []:
+			action = gSimplePopup('Do what?', items=options)
+			if action == -1:
+				return [-1, -1]
+			else:
+				return [action, selected]
+		else:
+			return [-1, -1]
+	else:
+		if options != []:
+			return [-1, selected]
+		else:
+			return [-1, -1]
+	
 	
 def gSimplePopup(title='', items=[], width=300):
-	popupMenu = popupBtns(title='', btns=items, width=width)
-	popupMenu.doModal()
-	selected = popupMenu.selected
-	del popupMenu
-	return selected
+#	popupMenu = popupBtns(title='', btns=items, width=width)
+#	rootDir = os.getcwd()
+#	print 'RootDir: ' + rootDir
+	#popupMenu = popupBtns("button-popup.xml", rootDir, "DefaultSkin")	
+#	popupMenu.doModal()
+#	selected = popupMenu.selected
+#	del popupMenu
+#	return selected
+	dialog = xbmcgui.Dialog()
+	return dialog.select(title, items)
 
-class popupBtns(xbmcgui.WindowDialog):
+#class popupBtns
+#	def __init__(self, title, btns=[], width=100):
+#		dialog = xbmcgui.Dialog()
+#		self.selected = dialog.select(title, btns)
+
+class popupBtnsXml(xbmcgui.WindowXMLDialog):
+	#def __init__(self, title, btns=[], width=100):
+	def __init__(self, *args, **kwargs):
+		self.w=100
+		pass
+
+	def onInit(self):
+		pass
+			
+	def onControl(self, action):
+		print 'control: ' + action.getButtonCode()
+		pass
+
+	def onClick(self, controlId):
+		print 'control, click: ' + controlID
+		pass
+
+	def onFocus(self, controlID):
+		pass
+
+	def onAction(self, action):
+		pass
+
+
+class popupBtnsOld(xbmcgui.WindowDialog):
 	def __init__(self, title, btns=[], width=100):
-		w = width
-		pad = 10
-		hCnt = 30
-		yo = 5
+		self.w = width
 		self.selected = -1
-		h = len(btns) * (hCnt + 5) + yo
 		self.btns = btns
 		self.btnCnts = [0]
 		for i in range(len(btns)-1): # There has to be a better way to do this. zeros doesn't work...
 			self.btnCnts.append(0)
+
+	#def onInit(self):
+		w = self.w		
+		pad = 10
+		hCnt = 30
+		yo = 5
+
+		h = len(self.btns) * (hCnt + 5) + yo
 		mediaDir = os.path.join(os.getcwd().replace(";",""),'resources/skins/DefaultSkin/media')
 		rw = self.getWidth()
 		rh = self.getHeight()
 		x = rw/2 - w/2
 		y = rh/2 -h/2
 		
+		print 'rw: ' + str(rw)
+		print 'rh: ' + str(rh)
+		print 'Media Dir: ' +os.path.join(mediaDir,'gs-bg-menu.png')
+
 		# Background
-		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
+		#self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
+		self.imgBg = xbmcgui.ControlImage(0,0,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
+		print self.imgBg
 		self.addControl(self.imgBg)
 		
 		i = 0
