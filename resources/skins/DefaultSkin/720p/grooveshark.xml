@@ -165,7 +165,7 @@
 				<label>NEXT</label>
 				<font>font13</font>
 				<textcolor>FFFFFFFF</textcolor>
-				<visible>!ControlGroup(210).HasFocus|(Player.HasAudio + Player.Playing|Player.HasAudio + Player.Paused)</visible>
+				<visible>!ControlGroup(210).HasFocus|[Player.HasAudio + Player.Playing]|[Player.HasAudio + Player.Paused]</visible>
 				<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(210).HasFocus">conditional</animation>
 				<animation effect="fade" start="0" end="100" time="400" condition="!ControlGroup(210).HasFocus">conditional</animation>
 			</control>
