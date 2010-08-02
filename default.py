@@ -3,6 +3,7 @@ import os
 import sys
 import xbmcaddon
 __scriptname__ = "GrooveShark"
+__scriptid__ = "script.music.grooveshark"
 __author__ = "Solver"
 __url__ = "http://code.google.com/p/grooveshark-for-xbmc/"
 __svn_url__ = ""
@@ -15,9 +16,9 @@ BASE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources',
 
 sys.path.append (BASE_RESOURCE_PATH)
 
-__settings__ = xbmcaddon.Addon(id='script.music.grooveshark')
+__settings__ = xbmcaddon.Addon(id=__scriptid__)
 
-#__language__ = __settings__.getLocalizedString
+__language__ = __settings__.getLocalizedString
 
 
 if __name__ == "__main__":
