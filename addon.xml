@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.music.grooveshark"
+<addon id="script.audio.grooveshark"
        name="GrooveShark"
        version="0.2.0"
        provider-name="Solver">
