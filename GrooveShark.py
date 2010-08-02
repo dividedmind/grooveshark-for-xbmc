@@ -208,7 +208,6 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 
 	def listMenu(self):
 		n = self.getCurrentListPosition()
-		print 'listMenu, n: ' + str(n)
 		if self.stateList == GrooveClass.STATE_LIST_EMPTY:
 			pass #listpopular
 
@@ -228,7 +227,6 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 			self.listAlbums(self.searchResultAlbums, __language__(3005) + '"' + self.searchText + '"', withArtist=1, p=self.listPos[self.stateList])
 
 		elif self.stateList == GrooveClass.STATE_LIST_SONGS_ON_ALBUM_FROM_SEARCH:
-			print self.searchResultAlbums
 			self.listSongs(self.songs, self.searchResultAlbums[n-1][2] + ' ' + __language__(3006) + ' ' + self.searchResultAlbums[n-1][0], p=self.listPos[self.stateList])
 
 		elif self.stateList == GrooveClass.STATE_LIST_ALBUMS_BY_ARTIST:
