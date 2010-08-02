@@ -3,7 +3,7 @@ import os
 import sys
 import xbmcaddon
 __scriptname__ = "GrooveShark"
-__scriptid__ = "script.music.grooveshark"
+__scriptid__ = "script.audio.grooveshark"
 __author__ = "Solver"
 __url__ = "http://code.google.com/p/grooveshark-for-xbmc/"
 __svn_url__ = ""
