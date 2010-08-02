@@ -79,6 +79,9 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 		self.rootDir = os.getcwd()
 		
 		#self.cacheDir = os.path.join(self.rootDir, 'cache')
+		self.cacheDir = os.path.join('special://profile/', 'addon_data', __scriptid__)
+		if os.path.exists(self.cacheDir) == False:
+			os.mkdir(self.cacheDir)		
 		self.cacheDir = os.path.join('special://profile/', 'addon_data', __scriptid__, 'cache')
 		if os.path.exists(self.cacheDir) == False:
 			os.mkdir(self.cacheDir)
