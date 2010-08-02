@@ -412,7 +412,7 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 	
 	def listSearchResults(self, songs, artists, albums, p=0):
 		xbmcgui.lock()
-		path = os.path.join(os.getcwd(),'resources','skins','DefaultSkin', 'default-cover.png')
+		path = os.path.join(os.getcwd(),'resources','skins','DefaultSkin', 'media', 'default-cover.png')
 		self.clearList()
 		self.setStateLabel('Search results for "' + self.searchText + '"')
 		item = xbmcgui.ListItem (label=__language__(3023), label2=str(len(songs)) + ' ' + __language__(3026), thumbnailImage=path)			
@@ -469,7 +469,7 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 		self.clearList()
 		self.addItem('..')
 		self.setStateLabel(text)
-		path = os.path.join(os.getcwd(),'resources','skins','DefaultSkin', 'default-cover.png')
+		path = os.path.join(os.getcwd(),'resources','skins','DefaultSkin', 'media','default-cover.png')
 		while(i < len(artists)):
 			item = xbmcgui.ListItem (label=artists[i][0], thumbnailImage=path)
 			self.addItem(item)
@@ -876,7 +876,7 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 		if os.path.exists(filePath):
 			return filePath
 		else:
-			return os.path.join(os.getcwd(),'resources','skins','DefaultSkin', 'default-cover.png')
+			return os.path.join(os.getcwd(),'resources','skins','DefaultSkin' ,'media', 'default-cover.png')
 		
 
 			
