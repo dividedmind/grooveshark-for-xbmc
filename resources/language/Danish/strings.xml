@@ -22,7 +22,7 @@
 
     <!-- Dialogs -->
     <string id="1000">Indtast en søgning</string>
-    <string id="1001">afspilningslister</string>
+    <string id="1001">Afspilningslister</string>
     <string id="1002">Gøre hvad?</string>
     <string id="1003">Luk?</string>
     <string id="1004">Vil du lukke GrooveShark?</string>
@@ -36,9 +36,9 @@
     <string id="3000">Start søgning efter sange eller åben afspilningsliste</string>
     <string id="3001">AFSPILLER NU</string>
     <string id="3002">NÆSTE</string>
-    <string id="3003">Sange Fundet under søgningen</string>
-    <string id="3004">kunstnere Fundet under søgning</string>
-    <string id="3005">Albums Fundet under søgning</string>
+    <string id="3003">Sange fundet under søgningen</string>
+    <string id="3004">Kunstnere fundet under søgning</string>
+    <string id="3005">Albums fundet under søgning</string>
     <string id="3006">af</string>
     <string id="3007">Nuværende afspilningsliste</string>
     <string id="3008">Kunne ikke gemme afspilningsliste</string>
@@ -71,5 +71,5 @@
     <string id="3035">Gemt</string>
     <string id="3036">Henter thumbnails</string>
     <string id="3037">Logger ind</string>
-    <string id="3038">Henter din afspilningslistes</string>
+    <string id="3038">Henter din afspilningslister</string>
 </strings>
