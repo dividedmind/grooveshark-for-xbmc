@@ -57,7 +57,7 @@
     <string id="3021">Søgning færdig</string>
     <string id="3022">Søgning fejlede. Prøv igen</string>
     <string id="3023">Sange</string>
-    <string id="3024">kunstnere</string>
+    <string id="3024">Kunstnere</string>
     <string id="3025">Albums</string>
     <string id="3026">Fundet</string>
     <string id="3027">Fejl ved login. Check your login details in settings</string>
@@ -71,5 +71,5 @@
     <string id="3035">Gemt</string>
     <string id="3036">Henter thumbnails</string>
     <string id="3037">Logger ind</string>
-    <string id="3038">Henter din afspilningslister</string>
+    <string id="3038">Henter dine afspilningslister</string>
 </strings>
