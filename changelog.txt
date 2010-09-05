@@ -8,7 +8,7 @@
 
  - Added: Search now returns playlists as well.
 
- - Changed: Removed alphabetic sorting since Grooveshark has a grating system that will show the best results first based on feedback from users
+ - Changed: Removed alphabetic sorting since Grooveshark has a rating system that will show the best results first based on feedback from users
 
 0.2.2:
 
