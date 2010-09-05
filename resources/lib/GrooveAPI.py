@@ -194,11 +194,13 @@ class GrooveAPI:
 		if self.loggedIn == 1:
 			return self.userId
 		result = self.callRemote("session.login", {"username": username, "password": password})
-		if 'fault' in result:
-			return 0
+		if 'result' in result:
+			if 'userID' in result['result']:
+				self.loggedIn = 1
+				self.userId = result['result']['userID']
+				return result['result']['userID'] 
 		else:
-			self.loggedIn = 1
-			return result['result']['userID']
+			return 0
 
 	def loggedInStatus(self):
 		return self.loggedIn
@@ -244,7 +246,7 @@ class GrooveAPI:
 			
 	def playlistGetSongs(self, playlistId, limit=25):
 		if self.loggedIn == 1:
-			result = self.callRemote("playlist.getSongs", {"playlistID": playlistId, "limit": limit})
+			result = self.callRemote("playlist.getSongs", {"playlistID": playlistId})
 			list = self.parseSongs(result)
 			return list
 		else:
