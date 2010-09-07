@@ -1,4 +1,4 @@
-import xbmc, xbmcgui, xbmcaddon
+import xbmc, xbmcgui, xbmcplugin #, xbmcaddon
 import sys
 import pickle
 import os
@@ -12,12 +12,16 @@ from GroovePlayer import GroovePlayer
 from GrooveGUI import *
 from operator import itemgetter, attrgetter
 
+
+
 #_ = sys.modules[ "__main__" ].__language__
 __scriptname__ = sys.modules[ "__main__" ].__scriptname__
 __version__ = sys.modules[ "__main__" ].__version__
 __settings__ = sys.modules[ "__main__" ].__settings__
 __language__ = sys.modules[ "__main__" ].__language__
 __scriptid__ = sys.modules[ "__main__" ].__scriptid__
+__debugging__ = sys.modules["__main__"].__debugging__
+__isXbox__ = sys.modules["__main__"].__isXbox__
 
 class GrooveClass(xbmcgui.WindowXMLDialog):
 
@@ -44,7 +48,7 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 		except:
 			self.initVars()
 			try:
-				self.gs = GrooveAPI(enableDebug = __settings__.getSetting("debug"))
+				self.gs = GrooveAPI(enableDebug = __debugging__, isXbox = __isXbox__)
 				pass
 			except:
 				self.message('Unable to get a new session ID. Wait a few minutes and try again', 'Error')
@@ -57,10 +61,10 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 			self.loginBasic()
 			self.getPopularSongs()
 
-	def startRelayServer(self):
-		from gsrelay import *
-		serverThread().start()
-		counterThread().start()
+#	def startRelayServer(self):
+#		from gsrelay import *
+#		serverThread().start()
+#		counterThread().start()
 
 	def initPlayer(self):
 		try:
@@ -88,10 +92,14 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 		self.rootDir = os.getcwd()
 		
 		#self.cacheDir = os.path.join(self.rootDir, 'cache')
-		self.cacheDir = os.path.join('special://profile/', 'addon_data', __scriptid__)
+		if __isXbox__ == True:
+			self.dataDir = 'script_data'
+		else:
+			self.dataDir = 'addon_data'
+		self.cacheDir = os.path.join('special://profile/', self.dataDir, __scriptid__)
 		if os.path.exists(self.cacheDir) == False:
 			os.mkdir(self.cacheDir)		
-		self.cacheDir = os.path.join('special://profile/', 'addon_data', __scriptid__, 'cache')
+		self.cacheDir = os.path.join('special://profile/', self.dataDir, __scriptid__, 'cache')
 		if os.path.exists(self.cacheDir) == False:
 			os.mkdir(self.cacheDir)
 		self.nowPlaying = -1
@@ -143,7 +151,6 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 			self.listMenu()
 		elif control == 1005:
 			__settings__.openSettings()
-			#self.showSettings()
 		elif control == 2001: #Prev
 			self.playPrevSong()
 		elif control == 2002: #Stop
