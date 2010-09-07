@@ -456,7 +456,7 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 
 	def getPopularSongs(self):
 		try:
-			self.searchResultSongs = self.gs.popularGetSongs(10)
+			self.searchResultSongs = self.gs.popularGetSongs(200)
 			self.stateList = GrooveClass.STATE_LIST_SONGS
 			self.listMenu()
 		except:
