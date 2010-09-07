@@ -3,8 +3,6 @@ import sys
 import pickle
 import os
 import traceback
-import thread
-import subprocess
 sys.path.append(os.path.join(os.getcwd().replace(";",""),'resources','lib'))
 
 from GrooveAPI import *
@@ -12,9 +10,6 @@ from GroovePlayer import GroovePlayer
 from GrooveGUI import *
 from operator import itemgetter, attrgetter
 
-
-
-#_ = sys.modules[ "__main__" ].__language__
 __scriptname__ = sys.modules[ "__main__" ].__scriptname__
 __version__ = sys.modules[ "__main__" ].__version__
 __settings__ = sys.modules[ "__main__" ].__settings__
