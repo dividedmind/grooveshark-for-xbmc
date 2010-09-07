@@ -1,4 +1,4 @@
-import urllib2, simplejson, md5, unicodedata, re, os, traceback, sys, pickle, socket
+import urllib2, md5, unicodedata, re, os, traceback, sys, pickle, socket
 from operator import itemgetter, attrgetter
 
 class LoginTokensExceededError(Exception):
@@ -20,7 +20,14 @@ class SessionIDTryAgainError(Exception):
 		return repr(self.value)
 
 class GrooveAPI:
-	def __init__(self, enableDebug = False):
+	def __init__(self, enableDebug = False, isXbox = False):
+		if isXbox == True:
+			import simplejson_xbox
+			self.simplejson = simplejson_xbox
+			print 'GrooveShark: Initialized as XBOX script'
+		else:
+			import simplejson
+			self.simplejson = simplejson
 		timeout = 40
 		socket.setdefaulttimeout(timeout)
 		self.enableDebug = enableDebug
@@ -106,7 +113,7 @@ class GrooveAPI:
 	def callRemote(self, method, params={}):
 		data = {'header': {'sessionID': self.sessionID}, 'method': method, 'parameters': params}
 		#data = {'header': {'sessionID': None}, 'method': method, 'parameters': params}
-		data = simplejson.dumps(data)
+		data = self.simplejson.dumps(data)
 		#proxy_support = urllib2.ProxyHandler({"http" : "http://wwwproxy.kom.aau.dk:3128"})
 		## build a new opener with proxy details
 		#opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler)
@@ -123,7 +130,7 @@ class GrooveAPI:
 		response.close()
 		#print result
 		try:
-			result = simplejson.loads(result)
+			result = self.simplejson.loads(result)
 			if 'fault' in result:
 				print result
 			return result
