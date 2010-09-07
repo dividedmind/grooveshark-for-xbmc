@@ -23,12 +23,14 @@ def gShowPlaylists(playlists=[], options=[]):
 			else:
 				return [action, selected]
 		else:
-			return [-1, -1]
-	else:
-		if options != []:
 			return [-1, selected]
-		else:
-			return [-1, -1]
+	else:
+		return [-1, -1]
+#	else:
+#		if options != []:
+#			return [-1, selected]
+#		else:
+#			return [-1, -1]
 	
 	
 def gSimplePopup(title='', items=[], width=300):
