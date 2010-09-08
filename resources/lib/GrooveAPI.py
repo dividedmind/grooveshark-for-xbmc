@@ -128,11 +128,11 @@ class GrooveAPI:
 		response = urllib2.urlopen(req)
 		result = response.read()
 		response.close()
-		print result
+		self.debug(result)
 		try:
 			result = self.simplejson.loads(result)
 			if 'fault' in result:
-				print result
+				self.debug(result)
 			return result
 		except:
 			return []
