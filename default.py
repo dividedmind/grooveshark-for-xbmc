@@ -4,31 +4,6 @@ import sys
 import xbmcplugin
 import xbmc
 
-try:
-	# new XBMC 10.05 addons:
-	import xbmcaddon
-except ImportError:
-	# old XBMC - create fake xbmcaddon module with same interface as new XBMC 10.05
-	class xbmcaddon:
-		""" fake xbmcaddon module """
-		__version__ = "(old XBMC)"
-		class Addon:
-			""" fake xbmcaddon.Addon class """
-			def __init__(self, id):
-				self.id = id
-
-			def getSetting(self, key):
-				return xbmcplugin.getSetting(key)
-
-			def setSetting(self, key, value):
-				xbmcplugin.setSetting(key, value)
-
-			def openSettings(self, key, value):
-				xbmc.openSettings()
-
-			def getLocalizedString(self, id):
-				return xbmc.getLocalizedString(id)
-
 __scriptname__ = "GrooveShark"
 __scriptid__ = "script.audio.grooveshark"
 __author__ = "Solver"
