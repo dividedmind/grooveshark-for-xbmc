@@ -243,7 +243,7 @@ class GrooveAPI:
 	
 	def userGetPlaylists(self, limit=25):
 		if self.loggedIn == 1:
-			result = self.callRemote("user.getPlaylists", {"userID": self.userId})
+			result = self.callRemote("user.getPlaylists", {"userID": self.userId, "limit": limit})
 			if 'result' in result:
 				playlists = result['result']['playlists']
 			else:
@@ -475,7 +475,6 @@ class GrooveAPI:
 			else:
 				l = 0
 				index = ''
-			print 'index: ' + index + 'len: ' + str(l)
 			while(i < l):
 				if index == 'songs':
 					s = items['result'][index][i]
