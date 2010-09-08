@@ -63,7 +63,7 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 
 	def initPlayer(self):
 		try:
-			self.player = GroovePlayer(xbmc.PLAYER_CORE_MPLAYER)
+			self.player = GroovePlayer()
 			self.player.setCallBackFunc(self.playerChanged)
 		except:
 			xbmc.log('GrooveShark Exception (initPlayer): ' + str(sys.exc_info()[0]))
@@ -845,7 +845,7 @@ class GrooveClass(xbmcgui.WindowXMLDialog):
 		dialog.update(0)
 		try:
 			items = []
-			playlists = self.gs.userGetPlaylists(limit=150)
+			playlists = self.gs.userGetPlaylists(limit=1000)
 			i = 0
 			while (i < len(playlists)):
 				items.append(playlists[i][0])
