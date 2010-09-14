@@ -250,6 +250,7 @@ class GrooveAPI:
 				return []
 			i = 0
 			list = []
+			print result
 			while(i < len(playlists)):
 				p = playlists[i]
 				list.append([p['playlistName'].encode('ascii', 'ignore'), p['playlistID']])
@@ -261,6 +262,7 @@ class GrooveAPI:
 	def playlistCreate(self, name, about):
 		if self.loggedIn == 1:
 			result = self.callRemote("playlist.create", {"name": name, "about": about})
+			#print result
 			if 'result' in result:
 				return result['result']['playlistID']
 			else:
@@ -462,87 +464,131 @@ class GrooveAPI:
 		list = self.parseSongs(result)
 		return list
 
-	def parseSongs(self, items):
-		if 'result' in items:
-			i = 0
-			list = []
-			if 'songs' in items['result']:
-				l = len(items['result']['songs'])
-				index = 'songs'
-			elif 'song' in items['result']:
-				l = 1
-				index = 'song'
-			else:
-				l = 0
-				index = ''
-			while(i < l):
-				if index == 'songs':
-					s = items['result'][index][i]
-				else:
-					s = items['result'][index]
-				if 'estDurationSecs' in s:
-					dur = s['estDurationSecs']
-				else:
-					dur = 0
-				list.append([s['songName'].encode('ascii', 'ignore'),\
-				s['songID'],\
-				dur,\
-				s['albumName'].encode('ascii', 'ignore'),\
-				s['albumID'],\
-				s['image']['tiny'].encode('ascii', 'ignore'),\
-				s['artistName'].encode('ascii', 'ignore'),\
-				s['artistID'],\
-				s['image']['small'].encode('ascii', 'ignore'),\
-				s['image']['medium'].encode('ascii', 'ignore')])
-				i = i + 1
-			return list
-		else:
-			return []
-			pass
+	def artistGetSimilar(self, artistId, limit):
+		result = self.callRemote("artist.getSimilar", {"artistID": artistId, "limit": limit})
+		list = self.parseArtists(result)
+		return list
 
+	def songAbout(self, songId):
+		result = self.callRemote("song.about", {"songID": songId})
+		return result['result']['song']
+
+	def parseSongs(self, items):
+		try:
+			if 'result' in items:
+				i = 0
+				list = []
+				if 'songs' in items['result']:
+					l = len(items['result']['songs'])
+					index = 'songs'
+				elif 'song' in items['result']:
+					l = 1
+					index = 'song'
+				else:
+					l = 0
+					index = ''
+				while(i < l):
+					if index == 'songs':
+						s = items['result'][index][i]
+					else:
+						s = items['result'][index]
+					if 'estDurationSecs' in s:
+						dur = s['estDurationSecs']
+					else:
+						dur = 0
+					try:
+						list.append([s['songName'].encode('ascii', 'ignore'),\
+						s['songID'],\
+						dur,\
+						s['albumName'].encode('ascii', 'ignore'),\
+						s['albumID'],\
+						s['image']['tiny'].encode('ascii', 'ignore'),\
+						s['artistName'].encode('ascii', 'ignore'),\
+						s['artistID'],\
+						s['image']['small'].encode('ascii', 'ignore'),\
+						s['image']['medium'].encode('ascii', 'ignore')])
+					except:
+						print 'GrooveShark: Could not parse song number: ' + str(i)
+						traceback.print_exc()
+					i = i + 1
+				return list
+			else:
+				return []
+				pass
+		except:
+			print 'GrooveShark: Could not parse songs. Got this:'
+			traceback.print_exc()
+			return []
 
 	def parseArtists(self, items):
-		if 'result' in items:
-			i = 0
-			list = []
-			artists = items['result']['artists']
-			while(i < len(artists)):
-				s = artists[i]
-				list.append([s['artistName'].encode('ascii', 'ignore'),\
-				s['artistID']])
-				i = i + 1
-			return list
-		else:
+		try:
+			if 'result' in items:
+				i = 0
+				list = []
+				artists = items['result']['artists']
+				while(i < len(artists)):
+					s = artists[i]
+					try:
+						list.append([s['artistName'].encode('ascii', 'ignore'),\
+						s['artistID']])
+					except:
+						print 'GrooveShark: Could not parse album number: ' + str(i)
+						traceback.print_exc()
+					i = i + 1
+				return list
+			else:
+				return []
+		except:
+			print 'GrooveShark: Could not parse artists. Got this:'
+			traceback.print_exc()
 			return []
 
 	def parseAlbums(self, items):
-		if 'result' in items:
-			i = 0
-			list = []
-			albums = items['result']['albums']
-			while(i < len(albums)):
-				s = albums[i]
-				list.append([s['artistName'].encode('ascii', 'ignore'),\
-				s['artistID'],\
-				s['albumName'].encode('ascii', 'ignore'),\
-				s['albumID'],\
-				s['image']['tiny'].encode('ascii', 'ignore')])
-				i = i + 1
-			return list
-		else:
+		try:
+			if 'result' in items:
+				i = 0
+				list = []
+				albums = items['result']['albums']
+				while(i < len(albums)):
+					s = albums[i]
+					try: # Avoid ascii ancoding errors
+						list.append([s['artistName'].encode('ascii', 'ignore'),\
+						s['artistID'],\
+						s['albumName'].encode('ascii', 'ignore'),\
+						s['albumID'],\
+						s['image']['tiny'].encode('ascii', 'ignore')])
+					except:
+						print 'GrooveShark: Could not parse album number: ' + str(i)
+						traceback.print_exc()
+					i = i + 1
+				return list
+			else:
+				return []
+		except:
+			print 'GrooveShark: Could not parse albums. Got this'
+			traceback.print_exc()
 			return []
 
 	def parsePlaylists(self, items):
-		if 'result' in items:
-			i = 0
-			list = []
-			playlists = items['result']['playlists']
-			while(i < len(playlists)):
-				s = playlists[i]
-				list.append([s['playlistID'],\
-				s['playlistName'].encode('ascii', 'ignore'),\
-				s['username'].encode('ascii', 'ignore')])
-				i = i + 1
-			return list
-		else:
+		try:
+			if 'result' in items:
+				i = 0
+				list = []
+				playlists = items['result']['playlists']
+				while(i < len(playlists)):
+					s = playlists[i]
+					try: # Avoid ascii ancoding errors
+						list.append([s['playlistID'],\
+						s['playlistName'].encode('ascii', 'ignore'),\
+						s['username'].encode('ascii', 'ignore')])
+					except:
+						print 'GrooveShark: Could not parse playlist number: ' + str(i)
+						traceback.print_exc()
+					i = i + 1
+				return list
+			else:
+				return []
+		except:
+			print 'GrooveShark: Could not parse playlists. Got this:'
+			print items
 			return []
