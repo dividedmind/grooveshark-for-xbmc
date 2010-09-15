@@ -59,7 +59,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			try:
 				self.gs = GrooveAPI(enableDebug = __debugging__, isXbox = __isXbox__)
 			except:
-				self.message(__language__(3011), __language__(3011)) #Unable to get new session ID
+				self.message(__language__(3046), __language__(3011)) #Unable to get new session ID
 				xbmc.log('GrooveShark Exception (onInit): ' + str(sys.exc_info()[0]))
 				traceback.print_exc()
 				self.close()
@@ -468,6 +468,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		else:
 			return text
 
+	# Radio is not stable yet
 	def showOptionsRadioPlaylist(self, songs):
 		items = [__language__(102),'More songs like this','Fewer songs like this', 'Turn off radio'] #FIXME
 		result = gSimplePopup(title='Radio', items=items, width=200)
@@ -518,7 +519,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			#Playlist.PlayOffset
 			self.playSongs(songs, n)
 
-		elif result == 2:
+		elif result == 2: #Queue all
 			#if __isXbox__ == True:
 			#	l = len(songs)
 			#	for n in range(0, l):
@@ -624,9 +625,9 @@ class GrooveClass(xbmcgui.WindowXML):
 			album = song[3]
 			duration = song[2]
 			imgUrl = song[9] # Medium image
-			url = 'plugin://%s/?playSong=%s' % ( __scriptid__, songId )
+			url = 'plugin://%s/?playSong=%s' % (__scriptid__, songId) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
 			listItem = xbmcgui.ListItem('music', thumbnailImage=imgUrl, iconImage=imgUrl)
-			listItem.setProperty('IsPlayable', 'true')
+			listItem.setProperty('IsPlayable', 'true') # Tell XBMC that it is playable and not a folder
 			listItem.setInfo( type = 'music', infoLabels = { 'title': title, 'artist': artist, 'album': album, 'duration': duration} )
 			self.xbmcPlaylist.add(url, listitem=listItem, index = n)			
 
@@ -717,8 +718,8 @@ class GrooveClass(xbmcgui.WindowXML):
 		b = busy()
 		try:
 			self.searchResultSongs = self.gs.popularGetSongs(200)
-			self.setStateListDown(GrooveClass.STATE_LIST_SEARCH, reset = True, folderName = __language__(3041))
-			self.setStateListDown(GrooveClass.STATE_LIST_SONGS)
+			self.setStateListDown(GrooveClass.STATE_LIST_SEARCH, reset = True, folderName = __language__(3041)) # Make sure we have a top folder
+			self.setStateListDown(GrooveClass.STATE_LIST_SONGS) # ...and change to popular songs
 			b.close()
 		except:
 			b.close()
@@ -737,7 +738,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			b.setProgress(100)
 			self.setStateListDown(GrooveClass.STATE_LIST_SEARCH, reset = True, folderName = __language__(3041))
 			b.close()
-			#self.playlistHasFocus()
+			self.playlistHasFocus()
 		except:
 			b.close()
 			self.message(__language__(3012))
@@ -764,6 +765,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			traceback.print_exc()
 	
 	def listSearchResults(self, songs, artists, albums, playlists):
+		self.getControl(300011).setVisible(False)
 		xbmcgui.lock()
 		path = os.path.join(os.getcwd(),'resources','skins','DefaultSkin', 'media', 'default-cover.png')
 		self.clearList()
@@ -795,6 +797,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def listSongs(self, songs):
 		try:
+			self.getControl(300011).setVisible(True)
 			i = 0
 			self.clearList()
 			self.addItem('..')
@@ -833,6 +836,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			traceback.print_exc()
 
 	def listArtists(self, artists):
+		self.getControl(300011).setVisible(False)
 		xbmcgui.lock()
 		i = 0
 		self.clearList()
@@ -847,11 +851,12 @@ class GrooveClass(xbmcgui.WindowXML):
 		xbmcgui.unlock()
 		
 	def listAlbums(self, albums, withArtist=0):
+		self.clearList()
+		self.addItem('..')
+		self.getControl(300011).setVisible(False)
 		if len(albums) == 0:
 			return
 		i = 0
-		self.clearList()
-		self.addItem('..')
 		items = []
 		while(i < len(albums)):
 			items.append([albums[i][3], albums[i][4]])
@@ -874,6 +879,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.setCurrentListPosition(p)
 
 	def listPlaylists(self, playlists):
+		self.getControl(300011).setVisible(False)
 		xbmcgui.lock()
 		i = 0
 		self.clearList()
