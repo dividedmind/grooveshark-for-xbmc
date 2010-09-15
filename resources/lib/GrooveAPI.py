@@ -143,6 +143,7 @@ class GrooveAPI:
 	def startSession(self):
 		response = urllib2.urlopen("http://www.moovida.com/services/grooveshark/session_start")
 		result = response.read()
+		self.debug(result)
 		result = simplejson.loads(result)
 		response.close()
 		if 'fault' in result:
