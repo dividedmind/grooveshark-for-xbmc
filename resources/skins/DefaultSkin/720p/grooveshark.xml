@@ -643,10 +643,10 @@
 			<posy>665</posy>
 			<align>left</align>
 			<aligny>center</aligny>
-			<label>Tracks: [COLOR ffffffff]$INFO[Container(50).NumItems][/COLOR]</label>
+			<label>$LOCALIZE[SCRIPT3049]:: [COLOR ffffffff]$INFO[Container(50).NumItems][/COLOR]</label>
 			<font>font16</font>
 			<textcolor>FFFFFFFF</textcolor>
-			<visible>!SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT106],Left)+!SubString(Control.GetLabel(3000) ,Songs found,Left)+!SubString(Control.GetLabel(3000) ,Albums found,Left)+ !SubString(Control.GetLabel(3000) ,Artists found,Left)+ !SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT106],Left)+ !SubString(Control.GetLabel(3000) ,Albums by,Left)</visible>
+			<visible>True</visible>
 			<animation effect="zoom" time="500" center="auto" start="180" end="100" tween="cubic" easing="out">WindowOpen</animation>
 			<animation effect="fade" time="500" start="0" end="100">WindowOpen</animation>
 		</control>
