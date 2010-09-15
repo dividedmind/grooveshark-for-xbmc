@@ -86,4 +86,5 @@
     <string id="3046">Unable to get a new session ID. Wait a few minutes and try again</string>
     <string id="3047">Could not get similar items</string>
     <string id="3048">Searching for playlists...</string>
+    <string id="3049">Tracks</string>
 </strings>
