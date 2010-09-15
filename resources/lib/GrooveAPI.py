@@ -55,8 +55,11 @@ class GrooveAPI:
 		self.debug('sessionID: ' + self.sessionID)
 
 	def __del__(self):
-		if self.loggedIn == 1:
-			self.logout()
+		try:
+			if self.loggedIn == 1:
+				self.logout()
+		except:
+			pass
 			
 	def debug(self, msg):
 		if self.enableDebug == True:
