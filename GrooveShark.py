@@ -63,6 +63,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				xbmc.log('GrooveShark Exception (onInit): ' + str(sys.exc_info()[0]))
 				traceback.print_exc()
 				self.close()
+				return
 			self.initialized = True
 			self.showPlayButton()
 			if __isXbox__ == True:
