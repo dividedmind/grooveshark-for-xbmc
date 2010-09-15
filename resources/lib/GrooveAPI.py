@@ -24,10 +24,11 @@ class GrooveAPI:
 		if isXbox == True:
 			import simplejson_xbox
 			self.simplejson = simplejson_xbox
-			print 'GrooveShark: Initialized as XBOX script'
+			print 'GrooveShark API: Initialized as XBOX script'
 		else:
 			import simplejson
 			self.simplejson = simplejson
+			print 'GrooveShark API: Initialized as Dharma script'
 		timeout = 40
 		socket.setdefaulttimeout(timeout)
 		self.enableDebug = enableDebug
@@ -144,7 +145,7 @@ class GrooveAPI:
 		response = urllib2.urlopen("http://www.moovida.com/services/grooveshark/session_start")
 		result = response.read()
 		self.debug(result)
-		result = simplejson.loads(result)
+		result = self.simplejson.loads(result)
 		response.close()
 		if 'fault' in result:
 			return ''
