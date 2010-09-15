@@ -74,7 +74,7 @@ else: #Run as a plugin to open datestreams
 		songId = get('playSong')
 		playlist = get('playlist')
 
-		if (playlist != None):
+		if (playlist != None): # Far from fully implemented
 			listitem=xbmcgui.ListItem('Playlists')#, iconImage=icon, thumbnailImage=thumbnail )
 			#listitem.addContextMenuItems( cm, replaceItems=True )
 			listitem.setProperty( "Folder", "true" )
@@ -86,7 +86,7 @@ else: #Run as a plugin to open datestreams
 			if url != "":
 				info = gs.songAbout(str(songId))
 				listitem=xbmcgui.ListItem(label=info['songName'], iconImage=info['image']['medium'], thumbnailImage=info['image']['medium'], path=url);
-				listitem.setInfo(type='Music', infoLabels = { 'title': info['songName'], 'artist': info['artistName'] , 'path':url, 'audiocodec':'mp3'})
+				listitem.setInfo(type='Music', infoLabels = { 'title': info['songName'], 'artist': info['artistName'] , 'url':url})
 				xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=True, listitem=listitem)
 			else:
 				xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
