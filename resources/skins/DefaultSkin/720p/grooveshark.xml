@@ -643,7 +643,7 @@
 			<posy>665</posy>
 			<align>left</align>
 			<aligny>center</aligny>
-			<label>$LOCALIZE[SCRIPT3049]:: [COLOR ffffffff]$INFO[Container(50).NumItems][/COLOR]</label>
+			<label>$LOCALIZE[SCRIPT3049]: [COLOR ffffffff]$INFO[Container(50).NumItems][/COLOR]</label>
 			<font>font16</font>
 			<textcolor>FFFFFFFF</textcolor>
 			<visible>True</visible>
