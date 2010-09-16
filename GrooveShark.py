@@ -628,8 +628,10 @@ class GrooveClass(xbmcgui.WindowXML):
 			imgUrl = song[9] # Medium image
 			url = 'plugin://%s/?playSong=%s' % (__scriptid__, songId) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
 			listItem = xbmcgui.ListItem('music', thumbnailImage=imgUrl, iconImage=imgUrl)
+			listItem.setProperty( 'Music', "true" )
+			listItem.setProperty('mimetype', 'audio/mpeg')
 			listItem.setProperty('IsPlayable', 'true') # Tell XBMC that it is playable and not a folder
-			listItem.setInfo( type = 'music', infoLabels = { 'title': title, 'artist': artist, 'album': album, 'duration': duration} )
+			listItem.setInfo( type = 'Music', infoLabels = { 'title': title, 'artist': artist, 'album': album, 'duration': duration} )
 			self.xbmcPlaylist.add(url, listitem=listItem, index = n)			
 
 	def queueSongs(self, songs, queueFrom = -1):
