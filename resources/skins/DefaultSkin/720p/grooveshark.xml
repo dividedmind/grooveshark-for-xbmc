@@ -59,7 +59,7 @@
 				<posy>400</posy>
 				<height>150</height>
 				<width>150</width>
-				<texture>MusicPlayer.Cover</texture>
+				<texture>$INFO[MusicPlayer.Cover]</texture>
 				<visible>Player.HasAudio + Player.Playing|Player.HasAudio + Player.Paused</visible>
 			</control>
 			<control type="image">
