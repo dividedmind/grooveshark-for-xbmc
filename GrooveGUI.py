@@ -6,6 +6,8 @@ import pickle
 import os
 import traceback
 import threading
+from MusicSuggestions import getTextThread
+
 sys.path.append(os.path.join(os.getcwd().replace(";",""),'resources','lib'))
 __language__ = sys.modules[ "__main__" ].__language__
 
@@ -16,7 +18,7 @@ def gShowPlaylists(playlists=[], options=[]):
 #	del popup
 #	return selected
 	
-	selected = gSimplePopup(title='Playlists', items=playlists)
+	selected = gSimplePopup(title=__language__(1001), items=playlists)
 	if selected != -1:
 		if options != []:
 			action = gSimplePopup(__language__(1002), items=options)
@@ -459,3 +461,93 @@ class settingsUI(xbmcgui.WindowDialog):
 
 		return ret
 
+class SearchXml(xbmcgui.WindowXMLDialog):
+	def onInit(self):
+		self.query = ''
+		self.result = None
+		self.showKeyboard()
+		pass
+			
+	def onAction(self, action):
+		aId = action.getId()
+		if aId == 10:
+			self.close()
+		elif aId == 2: #Right		
+			if self.getFocusId() == 502:
+				self.showKeyboard()
+			elif self.getFocusId() == 501:
+				self.setFocus(self.getControl(502))
+			elif self.getFocusId() == 500:
+				self.setFocus(self.getControl(501))
+			else:
+				pass
+		if aId == 1: #Left
+			if self.getFocusId() == 500:
+				self.showKeyboard()
+			elif self.getFocusId() == 501:
+				self.setFocus(self.getControl(500))
+			elif self.getFocusId() == 502:
+				self.setFocus(self.getControl(501))
+			else:
+				pass
+		else:
+			pass
+
+	def onClick(self, controlId):
+		print 'control, click: ' + str(controlId)
+		if controlId == 500: #Songs
+			self.result = {'type': 'song', 'query': self.getControl(500).getSelectedItem().getLabel()}
+			self.close()
+		elif controlId == 501: #Artists
+			self.result = {'type': 'artist', 'query': self.getControl(501).getSelectedItem().getLabel()}
+			self.close()
+		elif controlId == 502: #Albums
+			self.result = {'type': 'album', 'query': self.getControl(502).getSelectedItem().getLabel()}
+			self.close()
+		else:
+			pass
+
+	def onFocus(self, controlId):
+		print 'onFocus: ' + str(controlId)
+		pass
+
+	def showKeyboard(self):
+		keyboard = xbmc.Keyboard(self.query, __language__(1000))
+		path = os.path.join(os.getcwd(), 'resources', 'lib')
+		g = getTextThread(keyboard, path, self.showResults)
+		g.start()
+		keyboard.doModal()
+		g.closeThread()
+		if keyboard.isConfirmed():
+			ret = keyboard.getText()
+			self.result = {'type': 'all', 'query': ret}
+			self.close()
+		else:
+			self.query = keyboard.getText()
+			if self.query != '':
+				self.getControl(1000).setLabel(__language__(3051) + ' "' + self.query + '"')
+			else:
+				self.close()
+	
+	def getResult(self):
+		return self.result
+
+	def showResults(self, songs, artists, albums):
+		self.getControl(500).reset()
+		self.getControl(500).addItems(songs)
+
+		self.getControl(501).reset()
+		self.getControl(501).addItems(artists)
+
+		self.getControl(502).reset()
+		self.getControl(502).addItems(albums)
+
+class Search(object):
+	def __init__(self):
+		w = SearchXml("search.xml", os.getcwd(), "DefaultSkin")
+		w.doModal()
+		self.result = w.getResult()
+		del w
+	
+	def getResult(self):
+		return self.result
