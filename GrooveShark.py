@@ -531,7 +531,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			name = __language__(3040) #Similar
 
 		elif state == GrooveClass.STATE_LIST_BROWSE_ALBUM_FOR_SONG:
-			name = self.songs[n-1][3] + ' ' + __language__(3006) + ' ' + self.songs[n-1][6] #Album by artist
+			name = self.searchResultSongs[n-1][3] + ' ' + __language__(3006) + ' ' + self.searchResultSongs[n-1][6] #Album by artist
 
 		else:
 			name = '*unknown name*'
