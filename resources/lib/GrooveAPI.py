@@ -319,8 +319,10 @@ class GrooveAPI:
 			
 	def playlistReplace(self, playlistId, songIds):
 		if self.loggedIn == 1:
+			print "######## Logged in"
 			result = self.callRemote("playlist.replace", {"playlistID": playlistId, "songIDs": songIds})
 			if 'fault' in result:
+				print "########### Fault"
 				return 0
 			else:
 				return 1
