@@ -49,7 +49,6 @@ try: #It's post-dharma
 	print 'GrooveShark: Initialized as a post-dharma plugin'
 
 except: #It's an XBOX/pre-dharma
-	traceback.print_exc()
 	__settings__ = xbmc.Settings(path=os.getcwd())
 	__language__ = xbmc.Language(os.getcwd().replace( ";", "" )).getLocalizedString
 	__debugging__ = __settings__.getSetting("debug")
@@ -64,6 +63,7 @@ else:
 	print 'GrooveShark: Debugging disabled'
 
 def startGUI():
+	print "GrooveShark version " + str(__version__)
 	from GrooveShark import *
 	w = GrooveClass("grooveshark.xml", os.getcwd(), "DefaultSkin", isXbox = __isXbox__)
 	w.doModal()
