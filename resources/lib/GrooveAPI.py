@@ -141,7 +141,6 @@ class GrooveAPI:
 		response = urllib2.urlopen(req)
 		result = response.read()
 		response.close()
-		self.debug(result)
 		try:
 			result = self.simplejson.loads(result)
 			if 'fault' in result:
