@@ -144,7 +144,6 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.setStateListDown(GrooveClass.STATE_LIST_NOW_PLAYING, reset = True)
 			else:
 				wId = xbmcgui.getCurrentWindowId()
-				print 'wId: ' + str(wId) + ', self: ' + str(self)
 				gWin = xbmcgui.Window(wId)
 				pWin = xbmcgui.Window(10500)
 				self.location[len(self.location)-1]['itemFocused'] = self.getCurrentListPosition() # Make sure we end up at the index when the playlist is close and the __init__ is run again for the class
@@ -219,10 +218,8 @@ class GrooveClass(xbmcgui.WindowXML):
 			if n == 0:
 				self.setStateListDown(GrooveClass.STATE_LIST_SEARCH, reset = True)
 			else:
-				p = self.getCurrentListPosition()-1
-				self.playSong(p) #blaher
-				pass
-				#self.showOptionsSearch(self.searchResultSongs, withBrowse = True)
+				self.showOptionsNowPlaying(self.nowPlayingList)
+
 		elif self.stateList == GrooveClass.STATE_LIST_ARTISTS:
 			if n == 0:
 				self.setStateListUp(GrooveClass.STATE_LIST_SEARCH)
@@ -603,6 +600,18 @@ class GrooveClass(xbmcgui.WindowXML):
 		else:
 			pass
 
+	def showOptionsNowPlaying(self, songs):
+		items = [__language__(102),__language__(113)]
+		result = gSimplePopup(title='', items=items, width=200)
+
+		n = self.getCurrentListPosition()-1
+		if result == 0: #Play
+			self.playSong(n)
+
+		elif result == 1: #Remove song
+			self.nowPlayingList.pop(n)
+			self.listMenu()
+
 	def showOptionsSearch(self, songs, withBrowse = False):
 		items = [__language__(102),__language__(101),__language__(103),__language__(104), __language__(119)]
 		if withBrowse == True:
@@ -611,22 +620,13 @@ class GrooveClass(xbmcgui.WindowXML):
 
 		if result == 1: #Queue
 			n = self.getCurrentListPosition()-1
-			#self.playlist.append(songs[n-1])
 			self.queueSong(songs[n])
 
 		elif result == 0: #Play
 			n = self.getCurrentListPosition()-1
-			#self.playlist = songs
-			#self.playSong(n, offset=-1)
-			#Playlist.PlayOffset
 			self.playSongs(songs, n)
 
 		elif result == 2: #Queue all
-			#if __isXbox__ == True:
-			#	l = len(songs)
-			#	for n in range(0, l):
-			#		self.playlist.append(songs[n])
-			#else:
 			self.queueSongs(songs)
 				
 		elif result == 3: #Add to playlist
@@ -1021,7 +1021,6 @@ class GrooveClass(xbmcgui.WindowXML):
 			pass
 			
 		elif event == 1: # Ended
-			print "################# Playback ended"
 			self.playNextSong()		
 			
 		elif event == 2: # Started
@@ -1054,9 +1053,11 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.playlist.pop(0)
 				self.playlist.append(self.gs.radioGetNextSong()[0])
 
-	def playSong(self, n, offset=0):
+	def playSong(self, n, offset=0, timesCalled = 0):
+		if timesCalled > 10:
+			print 'GrooveShark: Gving up in playSong()'
+			return 0
 		# Missing some sort of fallback mechanism if playback fails. 'playbackStarted' from callback func. from player might come in handy for this
-		p = n+offset		
 		#if self.gs.radioTurnedOn() == 1:
 		#	self.newRadioPlaylist(createFromNumber = p)
 		#	p = 0
@@ -1067,13 +1068,13 @@ class GrooveClass(xbmcgui.WindowXML):
 			xbmc.Player().stop()
 			xbmc.executebuiltin('XBMC.Playlist.PlayOffset(music,' + str(n) + ')')
 			return 1
+		p = n+offset
 		songId = self.nowPlayingList[p][1]
 		title = self.nowPlayingList[p][0]
 		albumId = self.nowPlayingList[p][4]
 		artist = self.nowPlayingList[p][6]
 		imgUrl = self.nowPlayingList[p][9] # Medium image
 		self.nowPlaying = p
-		print 'Now playing: ' + str(self.nowPlaying)
 		try:
 			path = self.getThumbPath([self.nowPlayingList[p][1], self.nowPlayingList[p][8]])
 			listItem = xbmcgui.ListItem('music', thumbnailImage=path, iconImage=path)
@@ -1088,13 +1089,13 @@ class GrooveClass(xbmcgui.WindowXML):
 				return 1
 			else:
 				print 'Didn\'t receive an URL for: ' + str(self.nowPlayingList[p])
+				self.playNextSong(timesCalled = timesCalled + 1)
 				return 0
 		except:
 			xbmc.log('GrooveShark Exception (playSong): ' + str(sys.exc_info()[0]))
 			traceback.print_exc()
 			self.setPlayerLabel('Playback failed')
 			print 'Playback failed'
-			self.showPlayButton()
 			return 0
 			
 	def setPlaying(self, song, labelId=0, imgId=0, title=''):
@@ -1114,7 +1115,7 @@ class GrooveClass(xbmcgui.WindowXML):
 	def setPlayingNext(self, song):
 		self.setPlaying(song, labelId=4001, imgId=9002, title='Playing Next')
 	
-	def playNextSong(self):
+	def playNextSong(self, timesCalled = 0):
 		if __isXbox__ == True:
 			# Try to play the next song on the current playlist
 			if self.nowPlaying != -1:
@@ -1159,9 +1160,6 @@ class GrooveClass(xbmcgui.WindowXML):
 		# Stop playback
 		if self.player.isPlayingAudio():
 			self.player.stop()
-			#self.setPlayerLabel('')
-
-		#self.showPlayButton()
 					
 	def playPause(self):
 		if self.player.isPlayingAudio():
