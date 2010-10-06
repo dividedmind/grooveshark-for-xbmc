@@ -37,7 +37,7 @@ __author__ = "Solver"
 __url__ = "http://code.google.com/p/grooveshark-for-xbmc/"
 __svn_url__ = ""
 __credits__ = ""
-__version__ = "0.2.8"
+__version__ = "0.2.9"
 __XBMC_Revision__ = "31000"
 
 try: #It's post-dharma
@@ -64,7 +64,6 @@ else:
 
 def startGUI():
 	print "GrooveShark version " + str(__version__)
-	from GrooveShark import *
 	w = GrooveClass("grooveshark.xml", os.getcwd(), "DefaultSkin", isXbox = __isXbox__)
 	w.doModal()
 	del w
@@ -73,6 +72,7 @@ def startGUI():
 
 if __isXbox__ == True:
 	if __name__ == "__main__":
+		from GrooveShark import *
 		startGUI()
 else: 
 	if len(sys.argv) != 3:#Run as a plugin to open datastreams
@@ -114,5 +114,6 @@ else:
 			traceback.print_exc()
 	else:
 		if __name__ == "__main__":
+			from GrooveShark import *
 			startGUI()
 
