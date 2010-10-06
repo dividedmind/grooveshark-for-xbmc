@@ -106,6 +106,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			pass
  
 	def onClick(self, control):
+		self.debug('onClick: ' + str(control))
 		if control == 1006: # Save queue
 			if __isXbox__ == True:
 				if len(self.nowPlayingList) > 0:
@@ -303,6 +304,10 @@ class GrooveClass(xbmcgui.WindowXML):
 			else:
 				self.showOptionsSearch(self.songs)
 
+	def debug(self, msg):
+		if __debugging__ == True:
+			print 'GrooveShark: ' + str(msg)
+
 	def initVars(self):
 		self.stateList = GrooveClass.STATE_LIST_EMPTY
 		self.searchResultSongs = []
@@ -388,8 +393,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			f.close()
 			return True
 		except:
-			print "An unknown error occured reloading state: " + str(sys.exc_info()[0])
-			traceback.print_exc()
+			self.debug(str(sys.exc_info()[0]))
 			return False
 			pass		
 
@@ -481,8 +485,8 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.playlistHasFocus()
 
 	def setStateListDown(self, state, query = '', reset = False, folderName = '', truncate = True):
-		print 'Down, stateList: ' + str(self.stateList)
-		print 'Down, New state: ' + str(state)
+		self.debug('Down, stateList: ' + str(self.stateList))
+		self.debug('Down, New state: ' + str(state))
 		self.prevState = self.stateList
 		self.stateList = state
 		if reset == True:
@@ -497,8 +501,8 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.listMenu()
 
 	def setStateListUp(self, state = -1):
-		print 'Up, stateList: ' + str(self.stateList)
-		print 'Up, New state: ' + str(state)
+		self.debug('Up, stateList: ' + str(self.stateList))
+		self.debug('Up, New state: ' + str(state))
 		if state == -1:
 			self.stateList = self.prevState
 		else:
@@ -702,7 +706,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		elif result == 5: # Save As
 			self.savePlaylist()
 
-		elif result == 6: #Close playlist FIXME: Does it make sence to keep it?
+		elif result == 6: #Close playlist FIXME: Does it make sense to keep it?
 			self.closePlaylist()
 		else:
 			pass
