@@ -116,7 +116,6 @@ class popupBusyXml(xbmcgui.WindowXMLDialog):
 	def onAction(self, action):
 		#self.close()
 		aId = action.getId()
-		print 'Busy closed by user: ' + str(aId)
 		if aId == 10:
 			self.close()
 
@@ -559,7 +558,7 @@ class Search(object):
 				ret = keyboard.getText()
 				self.result = {'type': 'all', 'query': ret}
 			else:
-				self.query = None
+				self.result = None
 	
 	def getResult(self):
 		return self.result
