@@ -163,6 +163,9 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.getPopular()
 		elif control == 1005:
 			__settings__.openSettings()
+		elif control == 1007: #Exit
+			self.saveState()
+			self.close()
 		elif control == 2001: #Prev
 			self.playPrevSong()
 		elif control == 2002: #Stop
