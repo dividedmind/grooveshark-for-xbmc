@@ -75,7 +75,7 @@ if __isXbox__ == True:
 		from GrooveShark import *
 		startGUI()
 else: 
-	if len(sys.argv) != 3:#Run as a plugin to open datastreams
+	if len(sys.argv) == 3:#Run as a plugin to open datastreams
 		from GrooveAPI import *
 		import xbmcplugin
 		import xbmcgui
