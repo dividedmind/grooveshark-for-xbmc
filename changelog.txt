@@ -4,6 +4,8 @@
 
  - Added: Added Korean translation. Thanks neurostar.
 
+ - Added: Exit button in menu.
+
 0.2.8:
 
  - New feature: Search makes suggestions for songs, artists, and albums to speed up text entry. Based on AcclaimedMusic.net and the most played tracks on last.fm.
