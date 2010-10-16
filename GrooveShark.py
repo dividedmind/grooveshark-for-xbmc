@@ -634,6 +634,17 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.queueSongs(songs)
 				
 		elif result == 3: #Add to playlist
+			if self.gs.loggedInStatus() != 1:
+				result = self.login()
+				if result == 1:
+					pass
+				elif result == -1:
+					return None
+				elif result == -2:
+					self.message(__language__(3028),__language__(3029))
+					return None
+				else:
+					return None
 			items = []
 			b = busy()
 			playlists = self.gs.userGetPlaylists(limit=150)
@@ -641,6 +652,8 @@ class GrooveClass(xbmcgui.WindowXML):
 			while (i < len(playlists)):
 				items.append(playlists[i][0])
 				i += 1
+			b.close()
+			del b
 			result = gShowPlaylists(playlists=items,options=[])
 			action = result[0]
 			selected = result[1]
@@ -649,8 +662,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				n = self.getCurrentListPosition()
 				songId = songs[n-1][1]
 				self.gs.playlistAddSong(pId, songId, 0)
-			b.close()
-			del b
+
 		elif result == 4: #Similar
 			b = busy()
 			try:
@@ -1197,7 +1209,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				if basic == 1:
 					self.userId = self.gs.loginBasic(username, password)
 				else:
-					self.userId = self.gs.login(username, password)
+					self.userId = self.gs.loginExt(username, password)
 
 				if self.userId != 0:
 					b.close()
@@ -1216,7 +1228,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				result = dialog.yesno('Failed to login', 'Exceeded number of allowed authentication tokens.','Try plain text authentication?')
 				traceback.print_exc()
 				if result == True:
-					self.loginBasic()
+					self.login()
 				else:
 					pass
 			except:
@@ -1230,7 +1242,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def showPlaylists(self):
 		if self.gs.loggedInStatus() != 1:
-			result = self.loginBasic()
+			result = self.login()
 			if result == 1:
 				pass
 			elif result == -1:
@@ -1295,13 +1307,13 @@ class GrooveClass(xbmcgui.WindowXML):
 							self.closePlaylist()
 					else:
 						pass
+					b.close()
+					del b
 					self.showPlaylists()
-					b.close()
-					del b
 				except:
+					traceback.print_exc()
 					b.close()
 					del b
-					traceback.print_exc()
 					self.message(__language__(3044), __language__(3011)) #Could not delete the playlist
 
 			elif action == 3: #Radio
@@ -1337,7 +1349,7 @@ class GrooveClass(xbmcgui.WindowXML):
 	def savePlaylist(self, playlistId = 0, name = '', about = '', songList = []):
 		try:
 			if self.gs.loggedInStatus() != 1:
-				result = self.loginBasic()
+				result = self.login()
 				if result == 1:
 					pass
 				elif result == -1:
