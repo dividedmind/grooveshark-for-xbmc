@@ -1,4 +1,4 @@
-import urllib2, md5, unicodedata, re, os, traceback, sys, pickle, socket
+import urllib2, md5, unicodedata, re, os, traceback, sys, pickle, socket, string
 from operator import itemgetter, attrgetter
 
 __scriptid__ = sys.modules[ "__main__" ].__scriptid__
@@ -222,6 +222,20 @@ class GrooveAPI:
 				self.loggedIn = 1
 				return self.userId
 				
+
+	def loginExt(self, username, password):
+		if self.loggedIn == 1:
+			return self.userId
+		token = md5.new(username.lower() + md5.new(password).hexdigest()).hexdigest()
+		result = self.callRemote("session.loginExt", {"username": username, "token": token})
+		if 'result' in result:
+			if 'userID' in result['result']:
+				self.loggedIn = 1
+				self.userId = result['result']['userID']
+				return result['result']['userID'] 
+		else:
+			return 0
+
 	def loginBasic(self, username, password):
 		if self.loggedIn == 1:
 			return self.userId
@@ -233,11 +247,6 @@ class GrooveAPI:
 				return result['result']['userID'] 
 		else:
 			return 0
-#		if 'fault' in result:
-#			return 0
-#		else:
-#			self.loggedIn = 1
-#			return result['result']['userID']
 
 	def loggedInStatus(self):
 		return self.loggedIn
@@ -275,7 +284,6 @@ class GrooveAPI:
 	def playlistCreate(self, name, about):
 		if self.loggedIn == 1:
 			result = self.callRemote("playlist.create", {"name": name, "about": about})
-			#print result
 			if 'result' in result:
 				return result['result']['playlistID']
 			else:
@@ -321,7 +329,6 @@ class GrooveAPI:
 			print "######## Logged in"
 			result = self.callRemote("playlist.replace", {"playlistID": playlistId, "songIDs": songIds})
 			if 'fault' in result:
-				print "########### Fault"
 				return 0
 			else:
 				return 1
@@ -367,7 +374,6 @@ class GrooveAPI:
 			return []
 		else:
 			result = self.autoplayGetNextSongEx(self.seedArtists, self.frowns, self.songIDsAlreadySeen, self.recentArtists)
-#			print result
 			if 'fault' in result:
 				return []
 			else:
