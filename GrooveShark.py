@@ -473,16 +473,16 @@ class GrooveClass(xbmcgui.WindowXML):
 		location = ''
 		for i in range(len(self.location)):
 			if self.location[i]['query'] != '':
-				query = '(' + self.truncateText(self.location[i]['query'], 15) + ')'
+				query = '(' + self.truncateText(self.location[i]['query'].encode('ascii', 'ignore'), 15) + ')'
 			else:
 				query = ''
 			if i == 0:
-				location = self.location[0]['folderName'] + ' ' + query
+				location = self.location[0]['folderName'].encode('ascii', 'ignore') + ' ' + query
 			else:
 				if self.location[i]['truncate'] == True:
-					folderName = self.truncateText(self.location[i]['folderName'],15)
+					folderName = self.truncateText(self.location[i]['folderName'].encode('ascii', 'ignore'),15)
 				else:
-					folderName = self.location[i]['folderName']
+					folderName = self.location[i]['folderName'].encode('ascii', 'ignore')
 				location += ' > ' + folderName + ' ' + query
 		self.setStateLabel(location)
 		self.playlistHasFocus()
