@@ -87,7 +87,16 @@ else:
 			get = tools.getCmd
 			songId = get('playSong')
 			playlist = get('playlist')
-	
+			title = get('title')
+			album = get('album')
+			artist = get('artist')
+			cover = 'http://' + get('cover')
+			duration = get('duration')
+			try:
+				duration = int(duration)
+			except:
+				duration = 0
+
 			if (playlist != None): # To be implemented...
 				#listitem=xbmcgui.ListItem('Playlists')#, iconImage=icon, thumbnailImage=thumbnail )
 				#listitem.addContextMenuItems( cm, replaceItems=True )
@@ -100,15 +109,16 @@ else:
 				print 'GrooveShark: Song ID: ' + str(songId)
 				url = gs.getStreamURL(str(songId))
 				if url != "":
-					info = gs.songAbout(str(songId))
-					listitem=xbmcgui.ListItem(label=info['songName'], iconImage=info['image']['medium'], thumbnailImage=info['image']['medium'], path=url);
-					listitem.setInfo(type='Music', infoLabels = { 'title': info['songName'], 'artist': info['artistName'] , 'url':url})
+					#info = gs.songAbout(str(songId))
+					listitem=xbmcgui.ListItem(label=title, iconImage=cover, thumbnailImage=cover, path=url);
+					listitem.setInfo(type='Music', infoLabels = { 'title': title, 'artist': artist , 'url': url, 'duration': duration})
+					listitem.setProperty('mimetype', 'audio/mpeg')
 					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=True, listitem=listitem)
 				else:
 					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
 			else:
 				xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
-				print 'Unknown command'
+				print 'GrooveShark: Unknown command'
 		except:
 			xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
 			traceback.print_exc()
