@@ -36,6 +36,7 @@
     <string id="2000">Brugernavn</string>
     <string id="2001">Password</string>
     <string id="2002">Debugging (Genstart script for at anvende)</string>
+    <string id="2003">XBOX kompabilitet</string>
 
     <!-- Labels -->
     <string id="3000">Start søgning efter sange eller åbn spilleliste</string>
