@@ -5,9 +5,7 @@ import xbmc
 import xbmcgui
 import traceback
 import threading
-
-sys.path.append(os.path.join(os.getcwd().replace(";",""),'resources','lib'))
-
+from datetime import datetime
 
 class tools(object):
 	def __init__(self):
@@ -28,32 +26,41 @@ class tools(object):
 		else:
 			return None
 
-BASE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'lib' ) )
-sys.path.append (BASE_RESOURCE_PATH)
-
 __scriptid__ = "script.audio.grooveshark"
 __scriptname__ = "GrooveShark"
 __author__ = "Solver"
 __url__ = "http://code.google.com/p/grooveshark-for-xbmc/"
 __svn_url__ = ""
 __credits__ = ""
-__version__ = "0.2.9"
 __XBMC_Revision__ = "31000"
 
-try: #It's post-dharma
+try: #It's an XBOX/pre-dharma
+	__cwd__ = os.getcwd()
+	__settings__ = xbmc.Settings(path=__cwd__)
+	__language__ = xbmc.Language(__cwd__.replace( ";", "" )).getLocalizedString
+	__debugging__ = __settings__.getSetting("debug")
+	__isXbox__ = True
+	__version__ = "0.3.0"
+	BASE_RESOURCE_PATH = xbmc.translatePath(os.path.join(__cwd__, 'resources', 'lib' ))
+	print 'GrooveShark: Initialized as a XBOX plugin'
+
+except: #It's post-dharma
 	import xbmcaddon
 	__settings__ = xbmcaddon.Addon(id=__scriptid__)
 	__language__ = __settings__.getLocalizedString
 	__debugging__ = __settings__.getSetting("debug")
 	__isXbox__ = False
+	__version__ = __settings__.getAddonInfo('version')
+	BASE_RESOURCE_PATH = xbmc.translatePath(os.path.join(__settings__.getAddonInfo('path'), 'resources', 'lib' ))
+	__cwd__ = __settings__.getAddonInfo('path')
 	print 'GrooveShark: Initialized as a post-dharma plugin'
+	traceback.print_exc()
 
-except: #It's an XBOX/pre-dharma
-	__settings__ = xbmc.Settings(path=os.getcwd())
-	__language__ = xbmc.Language(os.getcwd().replace( ";", "" )).getLocalizedString
-	__debugging__ = __settings__.getSetting("debug")
-	__isXbox__ = True
-	print 'GrooveShark: Initialized as a XBOX plugin'
+__isXbox__ = True
+if __isXbox__ == True:
+	__settings__.setSetting("xbox", "true")
+else:
+	__settings__.setSetting("xbox", "false")
 
 if __debugging__ == 'true':
 	__debugging__ = True
@@ -62,9 +69,11 @@ else:
 	__debugging__ = False
 	print 'GrooveShark: Debugging disabled'
 
+sys.path.append(BASE_RESOURCE_PATH)
+
 def startGUI():
 	print "GrooveShark version " + str(__version__)
-	w = GrooveClass("grooveshark.xml", os.getcwd(), "DefaultSkin", isXbox = __isXbox__)
+	w = GrooveClass("grooveshark.xml", __cwd__, "DefaultSkin", isXbox = __isXbox__)
 	w.doModal()
 	del w
 	print 'GrooveShark: Closed'
@@ -109,7 +118,6 @@ else:
 				print 'GrooveShark: Song ID: ' + str(songId)
 				url = gs.getStreamURL(str(songId))
 				if url != "":
-					#info = gs.songAbout(str(songId))
 					listitem=xbmcgui.ListItem(label=title, iconImage=cover, thumbnailImage=cover, path=url);
 					listitem.setInfo(type='Music', infoLabels = { 'title': title, 'artist': artist , 'url': url, 'duration': duration})
 					listitem.setProperty('mimetype', 'audio/mpeg')
