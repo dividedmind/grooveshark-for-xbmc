@@ -36,6 +36,7 @@
     <string id="2000">Username</string>
     <string id="2001">Password</string>
     <string id="2002">Debugging (restart script to apply)</string>
+    <string id="2003">XBOX compatibility</string>
 
     <!-- Labels -->
     <string id="3000">Start searching for songs or load a playlist</string>
