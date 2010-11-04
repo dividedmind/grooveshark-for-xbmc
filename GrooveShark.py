@@ -824,7 +824,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			url = 'plugin://%s/?playSong=%s&album=%s&title=%s&artist=%s&cover=%s&duration=%s' % (__scriptid__, songId, album, title, artist, imgUrl.replace('http://', ''), duration) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
 			listItem = xbmcgui.ListItem('music', thumbnailImage=imgUrl, iconImage=imgUrl)
 			listItem.setProperty( 'Music', "true" )
-			#listItem.setProperty('mimetype', 'audio/mpeg')
+			listItem.setProperty('mimetype', 'audio/mpeg')
 			listItem.setProperty('IsPlayable', 'true') # Tell XBMC that it is playable and not a folder
 			listItem.setInfo( type = 'Music', infoLabels = {'title': title, 'artist': artist, 'album': album, 'duration': duration})
 			self.xbmcPlaylist.add(url, listitem=listItem, index = n)			
