@@ -56,7 +56,6 @@ except: #It's post-dharma
 	print 'GrooveShark: Initialized as a post-dharma plugin'
 	traceback.print_exc()
 
-__isXbox__ = True
 if __isXbox__ == True:
 	__settings__.setSetting("xbox", "true")
 else:
