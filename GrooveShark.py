@@ -1150,7 +1150,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		imgUrl = self.nowPlayingList[p][9] # Medium image
 		self.nowPlaying = p
 		try:
-			path = self.getThumbPath([self.nowPlayingList[p][1], self.nowPlayingList[p][8]])
+			path = imgUrl
 			listItem = xbmcgui.ListItem('music', thumbnailImage=path, iconImage=path)
 			listItem.setInfo( type = 'music', infoLabels = { 'title': title, 'artist': artist } )
 			url = self.gs.getStreamURL(str(songId))
