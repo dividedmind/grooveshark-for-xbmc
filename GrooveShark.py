@@ -704,7 +704,9 @@ class GrooveClass(xbmcgui.WindowXML):
 	def showOptionsSearch(self, songs, withBrowse = False):
 		items = [__language__(102),__language__(101),__language__(103),__language__(104), __language__(119)]
 		if __isXbox__ == False:
-			 items.append(__language__(123))
+			items.append(__language__(123))
+			if self.isRadioOn() == True:
+				items.append(__language__(124))
 		if withBrowse == True:
 			items.append(__language__(120)) #Browse this songs album
 		result = gSimplePopup(title='', items=items, width=200, returnAll = True)
@@ -786,6 +788,10 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.queueSong(song[0], options = 'radio')
 			self.playSong(0)
 			pass
+
+		elif result == __language__(123):
+			n = self.getCurrentListPosition()
+			self.gs.radioAddArtist(self.searchResultSongs[n-1])
 		else:
 			pass
 
@@ -793,6 +799,10 @@ class GrooveClass(xbmcgui.WindowXML):
 		items = [__language__(102),__language__(101),__language__(103),__language__(113),__language__(114),__language__(115)]
 #		if __isXbox__:
 #			items.append(__language__(116))
+		if __isXbox__ == False:
+			items.append(__language__(123))
+			if self.isRadioOn() == True:
+				items.append(__language__(124))
 		result = gSimplePopup(title='', items=items, width=200)
 		n = self.getCurrentListPosition()-1
 		if result == 0: #Play
@@ -817,10 +827,39 @@ class GrooveClass(xbmcgui.WindowXML):
 		elif result == 5: # Save As
 			self.savePlaylist()
 
-		elif result == 6: #Close playlist FIXME: Does it make sense to keep it?
+		elif result == 6: # Use for radio
+			self.xbmcPlaylist.clear()
+			self.queueSong(self.playlist[n], options = 'radio')
+			self.playSong(0)
+			pass
+
+		elif result == 7: # Add to radio
+			self.gs.radioAddArtist(self.playlist[n])
+			pass
+
+		elif result == -2: #Close playlist FIXME: Does it make sense to keep it?
 			self.closePlaylist()
 		else:
 			pass
+
+	def isRadioOn(self):
+		protocol = 'plugin://' + __scriptid__ + '/?playSong'
+		songList = []
+		try:
+			url = self.xbmcPlaylist[0].getfilename()
+		except:
+			return False
+		parts = url.split('=')
+		try:
+			if parts[0] == protocol:
+				parts = url.split('&')
+				print parts[2]
+				if parts[2] == 'options=radio':
+					return True
+			else:
+				return False
+		except:
+			return False
 
 	def playSongs(self, songs, n):
 		if __isXbox__ == True:
