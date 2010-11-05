@@ -25,6 +25,8 @@
     <string id="120">Browse this songs album</string>
     <string id="121">Exit</string>
     <string id="122">Remove all songs</string>
+    <string id="123">Use for radio</string>
+    <string id="124">Add to radio</string>
 
     <!-- Dialogs -->
     <string id="1000">Enter a search phrase</string>
