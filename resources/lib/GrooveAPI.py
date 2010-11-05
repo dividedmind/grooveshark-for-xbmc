@@ -371,12 +371,15 @@ class GrooveAPI:
 		if radio == None:
 			return None
 		else:
-			result = self.autoplayGetNextSongEx(radio['seedArtists'], radio['frowns'], radio['songIDsAlreadySeen'], radio['recentArtists'])
+			seedArtists = []
+			for song in radio['seedArtists']:
+				seedArtists.append(song[7])
+			result = self.autoplayGetNextSongEx(seedArtists, radio['frowns'], radio['songIDsAlreadySeen'], radio['recentArtists'])
 			if 'fault' in result:
 				return []
 			else:
 				song = self.parseSongs(result)
-				#self.radioAlreadySeen(song[0][1])
+				self.radioSetAlreadyListenedSong(songId = song[0][1])
 				return song
 
 	def radioFrown(self, songId):
@@ -385,8 +388,13 @@ class GrooveAPI:
 	def radioAlreadySeen(self, songId):
 		self.songIDsAlreadySeen.append(songId)
 
-	def radioAddArtist(self, artistId):
-		self.seedArtists.append(artistId)
+	def radioAddArtist(self, song = None, radioName = None):
+		radio = self.getSavedRadio(name = radioName)
+		if radio != None and song != None:
+			radio['seedArtists'].append(song)
+			return self.saveRadio(radio = radio)
+		else:
+			return 0
 
 	def radioStart(self, artists = [], frowns = []):
 		for artist in artists:
@@ -409,6 +417,14 @@ class GrooveAPI:
 
 	def radioTurnedOn(self):
 		return self.radioEnabled
+
+	def radioSetAlreadyListenedSong(self, name = None, songId = ''):
+		radio = self.getSavedRadio(name = name)
+		if radio != None and songId != '':
+			radio['songIDsAlreadySeen'].append(songId)
+			return self.saveRadio(radio = radio)
+		else:
+			return 0
 
 	def getSavedRadio(self, name = None):
 		if name == None:
@@ -437,12 +453,13 @@ class GrooveAPI:
 			f = open(path, 'wb')
 			pickle.dump(radio, f, protocol=pickle.HIGHEST_PROTOCOL)
 			f.close()
+			return 1
 		except IOError, e:
 			print 'There was an error while saving the radio pickle (%s)' % e
-			pass
+			return 0
 		except:
 			print "An unknown error occured during save radio: " + str(sys.exc_info()[0])
-			pass
+			return 0
 
 	def favoriteSong(self, songID):
 		return self.callRemote("song.favorite", {"songID": songID})
