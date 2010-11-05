@@ -25,6 +25,8 @@
     <string id="120">Se denne sangs album</string>
     <string id="121">Afslut</string>
     <string id="122">Fjern alle sange</string>
+    <string id="123">Anvend til radio</string>
+    <string id="124">Tilføj til radio</string>
 
     <!-- Dialogs -->
     <string id="1000">Indtast en søgning</string>
