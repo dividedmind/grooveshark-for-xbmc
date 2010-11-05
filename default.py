@@ -54,7 +54,9 @@ except: #It's post-dharma
 	BASE_RESOURCE_PATH = xbmc.translatePath(os.path.join(__settings__.getAddonInfo('path'), 'resources', 'lib' ))
 	__cwd__ = __settings__.getAddonInfo('path')
 	print 'GrooveShark: Initialized as a post-dharma plugin'
-	traceback.print_exc()
+	#traceback.print_exc()
+
+__isXbox__ = True
 
 if __isXbox__ == True:
 	__settings__.setSetting("xbox", "true")
@@ -89,22 +91,16 @@ else:
 		import xbmcgui
 		import traceback
 		try:
+			print '############'
 			tools = tools()
 			tools.loadParameters(sys.argv[2])
 			gs = GrooveAPI()
 			get = tools.getCmd
 			songId = get('playSong')
 			playlist = get('playlist')
-			title = get('title')
-			album = get('album')
-			artist = get('artist')
-			cover = 'http://' + get('cover')
-			duration = get('duration')
-			try:
-				duration = int(duration)
-			except:
-				duration = 0
-
+			options = get('options')
+			radio = get('radio')
+			print '########## ' + str(radio)
 			if (playlist != None): # To be implemented...
 				#listitem=xbmcgui.ListItem('Playlists')#, iconImage=icon, thumbnailImage=thumbnail )
 				#listitem.addContextMenuItems( cm, replaceItems=True )
@@ -117,12 +113,60 @@ else:
 				print 'GrooveShark: Song ID: ' + str(songId)
 				url = gs.getStreamURL(str(songId))
 				if url != "":
-					listitem=xbmcgui.ListItem(label=title, iconImage=cover, thumbnailImage=cover, path=url);
+					title = get('title')
+					album = get('album')
+					artist = get('artist')
+					cover = 'http://' + get('cover')
+					duration = get('duration')
+					try:
+						duration = int(duration)
+					except:
+						duration = 0
+					listitem=xbmcgui.ListItem(label=title, iconImage=cover, thumbnailImage=cover, path=url)
 					listitem.setInfo(type='Music', infoLabels = { 'title': title, 'artist': artist , 'url': url, 'duration': duration})
 					listitem.setProperty('mimetype', 'audio/mpeg')
+					if options == 'radio':
+						print 'GrooveShark: Radio mode'
+						#Fixme: Put song in playlist on alreadyListened before its cleared
+						playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+						playlist.clear()
+						song = gs.radioGetNextSong()
+						if song != None:
+							song = song[0]
+							songId = song[1]
+							title = song[0].replace('&', 'and').replace('?', '')
+							albumId = song[4]
+							album = song[3].replace('&', 'and').replace('?', '')
+							artist = song[6].replace('&', 'and').replace('?', '')
+							cover = song[9] # Medium image
+							duration = song[2]
+							url = 'plugin://%s/?playSong=%s&album=%s&title=%s&artist=%s&cover=%s&duration=%s&options=%s' % (__scriptid__, songId, album, title, artist, cover.replace('http://', ''), duration, 'radio')
+							listitemNext=xbmcgui.ListItem(label=title, iconImage=cover, thumbnailImage=cover, path=url)
+							listitemNext.setInfo(type='Music', infoLabels = { 'title': title, 'artist': artist, 'album': album , 'url': url})
+							listitemNext.setProperty('mimetype', 'audio/mpeg')
+							playlist.add(url, listitemNext, 0)
 					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=True, listitem=listitem)
 				else:
 					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
+			elif (radio != None):
+				print 'GrooveShark: Radio'
+				song = gs.radioGetNextSong()
+				if song != None:
+					song = song[0]
+					songId = song[1]
+					title = song[0]
+					albumId = song[4]
+					artist = song[6]
+					cover = song[9] # Medium image				pass
+					url = gs.getStreamURL(str(songId))
+					print song
+					listitem=xbmcgui.ListItem(label=title, iconImage=cover, thumbnailImage=cover, path=url)
+					listitem.setInfo(type='Music', infoLabels = { 'title': title, 'artist': artist , 'url': url})
+					listitem.setProperty('mimetype', 'audio/mpeg')
+					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=True, listitem=listitem)					
+				else:
+					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
+
 			else:
 				xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
 				print 'GrooveShark: Unknown command'
