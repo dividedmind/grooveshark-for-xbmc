@@ -35,7 +35,7 @@ def gShowPlaylists(playlists=[], options=[]):
 		return [-1, -1]
 	
 	
-def gSimplePopup(title='', items=[], width=300):
+def gSimplePopup(title='', items=[], width=300, returnAll = False):
 #	popupMenu = popupBtns(title='', btns=items, width=width)
 #	rootDir = os.getcwd()
 #	print 'RootDir: ' + rootDir
@@ -45,7 +45,14 @@ def gSimplePopup(title='', items=[], width=300):
 #	del popupMenu
 #	return selected
 	dialog = xbmcgui.Dialog()
-	return dialog.select(title, items)
+	n = dialog.select(title, items)
+	if returnAll == False:
+		return n
+	else:
+		if n == -1:
+			return [n, '']
+		else:
+			return [n, items[n]]
 
 #class popupBtns
 #	def __init__(self, title, btns=[], width=100):
