@@ -704,7 +704,7 @@ class GrooveClass(xbmcgui.WindowXML):
 	def showOptionsSearch(self, songs, withBrowse = False):
 		items = [__language__(102),__language__(101),__language__(103),__language__(104), __language__(119)]
 		if __isXbox__ == False:
-			 items.append("Use for radio")
+			 items.append(__language__(123))
 		if withBrowse == True:
 			items.append(__language__(120)) #Browse this songs album
 		result = gSimplePopup(title='', items=items, width=200, returnAll = True)
@@ -777,14 +777,14 @@ class GrooveClass(xbmcgui.WindowXML):
 				b.close()
 				del b
 
-		elif result == "Use for radio":
+		elif result == __language__(123): #Use for radio
 			n = self.getCurrentListPosition()
 			radio = {'seedArtists':[self.searchResultSongs[n-1]], 'frowns':[], 'songIDsAlreadySeen':[], 'recentArtists':[]}
 			self.gs.saveRadio(radio = radio)
 			song = self.gs.radioGetNextSong()
-			#self.queueRadio(radio = 'default')
 			self.xbmcPlaylist.clear()
-			self.queueSong(song[0], options = 'radio') #blaher
+			self.queueSong(song[0], options = 'radio')
+			self.playSong(0)
 			pass
 		else:
 			pass
@@ -841,13 +841,14 @@ class GrooveClass(xbmcgui.WindowXML):
 				n = i
 			replace = [{'searchFor':'&','replaceWith':'and'}, {'searchFor':'?','replaceWith':''}]
 			songId = song[1]
-			title = self.replaceCharacters(song[0], replace)
+			title = song[0]
 			albumId = song[4]
-			artist = self.replaceCharacters(song[6], replace)
-			album = self.replaceCharacters(song[3], replace)
+			artist = song[6]
+			artistId = song[7]
+			album = song[3]
 			duration = song[2]
 			imgUrl = song[9] # Medium image
-			url = 'plugin://%s/?playSong=%s&album=%s&title=%s&artist=%s&cover=%s&duration=%s&options=%s' % (__scriptid__, songId, album, title, artist, imgUrl.replace('http://', ''), duration, options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
+			url = 'plugin://%s/?playSong=%s&artistId=%s&options=%s' % (__scriptid__, songId, artistId, options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
 			listItem = xbmcgui.ListItem('music', thumbnailImage=imgUrl, iconImage=imgUrl)
 			listItem.setProperty( 'Music', "true" )
 			listItem.setProperty('mimetype', 'audio/mpeg')
@@ -1368,7 +1369,10 @@ class GrooveClass(xbmcgui.WindowXML):
 				i += 1
 			b.close()
 			del b
-			result = gShowPlaylists(playlists=items,options=[__language__(110),__language__(111),__language__(112)])
+			options=[__language__(110),__language__(111),__language__(112)]
+			if __isXbox__ == False:
+				options.append(__language__(123))
+			result = gShowPlaylists(playlists=items,options=options)
 			action = result[0]
 			n = result[1]
 			if action == 0: #Load
@@ -1425,16 +1429,12 @@ class GrooveClass(xbmcgui.WindowXML):
 			elif action == 3: #Radio
 				playlistId = playlists[n][1]
 				playlistName = playlists[n][0]
-				playlist = self.gs.playlistGetSongs(playlistId, limit=100)
-				seedArtists = []
-				for i in range(len(playlist)):
-					seedArtists.append(playlist[i][7])
-				print 'Before radioStart'
-				self.gs.radioStart(artists = seedArtists)
-				print 'After radioStart'
-				self.playlist = []
-				for i in range(5):
-					self.playlist.append(self.gs.radioGetNextSong()[0])
+				playlist = self.gs.playlistGetSongs(playlistId)
+				radio = {'seedArtists':playlist, 'frowns':[], 'songIDsAlreadySeen':[], 'recentArtists':[]}
+				self.gs.saveRadio(radio = radio)
+				song = self.gs.radioGetNextSong()
+				self.xbmcPlaylist.clear()
+				self.queueSong(song[0], options = 'radio')
 				self.playSong(0)
 			
 		except:
