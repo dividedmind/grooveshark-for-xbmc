@@ -85,8 +85,7 @@ class GrooveAPI:
 			f.close()
 		except:
 			sessionID = ''
-			pass		
-		
+			pass				
 		return sessionID
 
 	def saveSession(self):
@@ -281,7 +280,6 @@ class GrooveAPI:
 				return []
 			i = 0
 			list = []
-			print result
 			while(i < len(playlists)):
 				p = playlists[i]
 				list.append([p['playlistName'].encode('ascii', 'ignore'), p['playlistID']])
@@ -361,15 +359,6 @@ class GrooveAPI:
 			self.radioEnabled = 1
 			return 1
 
-	def autoplayStop(self):
-		result = self.callRemote("autoplay.stop", {})
-		if 'fault' in result:
-			self.radioEnabled = 1
-			return 0
-		else:
-			self.radioEnabled = 0
-			return 1
-
 	def autoplayGetNextSongEx(self, seedArtists = [], frowns = [], songIDsAlreadySeen = [], recentArtists = []):
 		result = self.callRemote("autoplay.getNextSongEx", {"seedArtists": seedArtists, "frowns": frowns, "songIDsAlreadySeen": songIDsAlreadySeen, "recentArtists": recentArtists})
 		if 'fault' in result:
@@ -378,15 +367,16 @@ class GrooveAPI:
 			return result
 	
 	def radioGetNextSong(self):
-		if self.seedArtists == []:
-			return []
+		radio = self.getSavedRadio()
+		if radio == None:
+			return None
 		else:
-			result = self.autoplayGetNextSongEx(self.seedArtists, self.frowns, self.songIDsAlreadySeen, self.recentArtists)
+			result = self.autoplayGetNextSongEx(radio['seedArtists'], radio['frowns'], radio['songIDsAlreadySeen'], radio['recentArtists'])
 			if 'fault' in result:
 				return []
 			else:
 				song = self.parseSongs(result)
-				self.radioAlreadySeen(song[0][1])
+				#self.radioAlreadySeen(song[0][1])
 				return song
 
 	def radioFrown(self, songId):
@@ -419,6 +409,40 @@ class GrooveAPI:
 
 	def radioTurnedOn(self):
 		return self.radioEnabled
+
+	def getSavedRadio(self, name = None):
+		if name == None:
+			path = os.path.join(self.confDir, 'radio', 'default.txt')
+		else:
+			path = os.path.join(self.confDir, 'radio', 'saved', name)
+		try:
+			f = open(path, 'rb')
+			radio = pickle.load(f)
+			f.close()
+		except:
+			radio = None
+		return radio
+
+	def saveRadio(self, name = None, radio = {}): #blaher
+		try:
+			dir = os.path.join(self.confDir, 'radio')
+			# Create the 'data' directory if it doesn't exist.
+			if not os.path.exists(dir):
+				os.mkdir(dir)
+				os.mkdir(os.path.join(dir, 'saved'))
+			if name == None:
+				path = os.path.join(dir, 'default.txt')
+			else:
+				path = os.path.join(dir, 'saved', name)
+			f = open(path, 'wb')
+			pickle.dump(radio, f, protocol=pickle.HIGHEST_PROTOCOL)
+			f.close()
+		except IOError, e:
+			print 'There was an error while saving the radio pickle (%s)' % e
+			pass
+		except:
+			print "An unknown error occured during save radio: " + str(sys.exc_info()[0])
+			pass
 
 	def favoriteSong(self, songID):
 		return self.callRemote("song.favorite", {"songID": songID})
@@ -505,6 +529,10 @@ class GrooveAPI:
 	def songAbout(self, songId):
 		result = self.callRemote("song.about", {"songID": songId})
 		return result['result']['song']
+
+	def getVersion(self):
+		result = self.callRemote("service.getVersion", {})
+		return result
 
 	def parseSongs(self, items):
 		try:
