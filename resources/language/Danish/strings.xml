@@ -37,8 +37,8 @@
 
     <!-- Settings -->
     <string id="2000">Brugernavn</string>
-    <string id="2001">Password</string>
-    <string id="2002">Debugging (Genstart script for at anvende)</string>
+    <string id="2001">Kodeord</string>
+    <string id="2002">Fejlfinding</string>
     <string id="2003">XBOX</string>
     <string id="2004">Shuffle</string>
 
