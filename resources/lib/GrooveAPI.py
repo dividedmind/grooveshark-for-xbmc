@@ -76,6 +76,12 @@ class GrooveAPI:
 		if self.enableDebug == True:
 			print msg
 			
+	def setRemoveDuplicates(self, enable):
+		if enable == True or enable == 'true' or enable == 'True':
+			self.removeDuplicates = True
+		else:
+			self.removeDuplicates = False
+
 	def getSavedSession(self):
 		sessionID = ''
 		path = os.path.join(self.confDir, 'session', 'session.txt')
@@ -580,8 +586,9 @@ class GrooveAPI:
 							songName = s['songName'].encode('ascii', 'ignore')
 							albumName = s['albumName'].encode('ascii', 'ignore')
 							artistName = s['artistName'].encode('ascii', 'ignore')
-							if (entry[0].lower() == songName.lower()) and (entry[3].lower() == albumName.lower()) and (entry[6].lower() == artistName.lower()):
-								notIn = False
+							if self.removeDuplicates == True:
+								if (entry[0].lower() == songName.lower()) and (entry[3].lower() == albumName.lower()) and (entry[6].lower() == artistName.lower()):
+									notIn = False
 						if notIn == True:
 							list.append([s['songName'].encode('ascii', 'ignore'),\
 							s['songID'],\
