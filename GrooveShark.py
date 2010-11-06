@@ -23,18 +23,19 @@ from GrooveGUI import *
 from operator import itemgetter, attrgetter
 
 class searchThread(threading.Thread):
-	def __init__(self, item, query):
+	def __init__(self, item, query, searchLimit):
 		threading.Thread.__init__(self)
 		self.item = item
 		self.query = query
+		self.searchLimit = searchLimit
 
 	def run (self):
 		try:
 			function = self.item['function']
 			if self.query == None:
-				self.item['result'] = function(GrooveClass.SEARCH_LIMIT)
+				self.item['result'] = function(self.searchLimit)
 			else:
-				self.item['result'] = function(self.query, GrooveClass.SEARCH_LIMIT)
+				self.item['result'] = function(self.query, self.searchLimit)
 		except:
 			self.item['result'] = None
 			print "GrooveShark: Search thread failed"
@@ -75,6 +76,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.loadState()
 			try:
 				self.gs = GrooveAPI(enableDebug = __debugging__, isXbox = __isXbox__)
+				self.gs.setRemoveDuplicates(__settings__.getSetting('remove_duplicates'))
 			except:
 				self.message(__language__(3046), __language__(3011)) #Unable to get new session ID
 				xbmc.log('GrooveShark Exception (onInit): ' + str(sys.exc_info()[0]))
@@ -207,7 +209,27 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.getPopular()
 		elif control == 1005:
 			try:
+				username = __settings__.getSetting('username')
+				password = __settings__.getSetting('password')
+				core = __settings__.getSetting('player_core')
+				debug = __settings__.getSetting('debug')
 				__settings__.openSettings()
+				self.searchLimit = int(__settings__.getSetting('search_limit'))
+				self.gs.setRemoveDuplicates(__settings__.getSetting('remove_duplicates'))
+				self.useCoverArt = self.convertToBool(__settings__.getSetting('covers_in_script'))
+				self.useCoverArtNowPlaying = self.convertToBool(__settings__.getSetting('cover_now_playing'))
+				# Check to see if things have changed:
+				if __settings__.getSetting('username') != username or __settings__.getSetting('password') != password:
+					self.gs.logout()
+				if __settings__.getSetting('player_core') != core:
+					self.initPlayer()
+				if __settings__.getSetting('debug') != debug:
+					debug = __settings__.getSetting('debug')
+					if debug == 'false':
+						__debugging__ = False
+					else:
+						__debugging__ = True
+					self.gs = GrooveAPI(enableDebug = __debugging__, isXbox = __isXbox__)
 			except:
 				traceback.print_exc()
 		elif control == 1007: #Exit
@@ -276,11 +298,11 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.setStateListUp(GrooveClass.STATE_LIST_SEARCH)
 			else:
 				#if self.settings[2] == True: # Get verified albums. Disabled in API so skip it for now
-					#self.albums = self.gs.artistGetVerifiedAlbums(self.searchResultArtists[n-1][1],GrooveClass.SEARCH_LIMIT)
-				#	self.albums = self.gs.artistGetAlbums(self.searchResultArtists[n-1][1],GrooveClass.SEARCH_LIMIT)
+					#self.albums = self.gs.artistGetVerifiedAlbums(self.searchResultArtists[n-1][1],self.searchLimit)
+				#	self.albums = self.gs.artistGetAlbums(self.searchResultArtists[n-1][1],self.searchLimit)
 				#else: # Get all albums
 				b = busy()
-				self.albums = self.gs.artistGetAlbums(self.searchResultArtists[n-1][1],GrooveClass.SEARCH_LIMIT)
+				self.albums = self.gs.artistGetAlbums(self.searchResultArtists[n-1][1],self.searchLimit)
 				self.setStateListDown(GrooveClass.STATE_LIST_ALBUMS_BY_ARTIST)
 				b.close()
 				del b
@@ -289,7 +311,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.setStateListUp(GrooveClass.STATE_LIST_SEARCH)
 			else:
 				b = busy()
-				self.songs = self.gs.albumGetSongs(self.searchResultAlbums[n-1][3],GrooveClass.SEARCH_LIMIT)
+				self.songs = self.gs.albumGetSongs(self.searchResultAlbums[n-1][3],self.searchLimit)
 				self.setStateListDown(GrooveClass.STATE_LIST_SONGS_ON_ALBUM_FROM_SEARCH)
 				b.close()
 				del b
@@ -313,7 +335,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.setStateListUp(GrooveClass.STATE_LIST_ARTISTS)
 			else:
 				b = busy()
-				self.songs = self.gs.albumGetSongs(self.albums[n-1][3],GrooveClass.SEARCH_LIMIT)
+				self.songs = self.gs.albumGetSongs(self.albums[n-1][3],self.searchLimit)
 				self.setStateListDown(GrooveClass.STATE_LIST_SONGS_ON_ALBUM)
 				b.close()
 				del b
@@ -344,7 +366,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				self.setStateListUp(GrooveClass.STATE_LIST_SIMILAR)
 			else:
 				b = busy()
-				self.songs = self.gs.artistGetSongs(self.albums[n-1][7],GrooveClass.SEARCH_LIMIT)
+				self.songs = self.gs.artistGetSongs(self.albums[n-1][7],self.searchLimit)
 				self.setStateListDown(GrooveClass.STATE_LIST_SIMILAR_SONGS)
 				b.close()
 				del b
@@ -357,6 +379,12 @@ class GrooveClass(xbmcgui.WindowXML):
 	def debug(self, msg):
 		if __debugging__ == True:
 			print 'GrooveShark: ' + str(msg)
+
+	def convertToBool(self, s):
+		if s == 'true' or s == 'True' or s == True:
+			return True
+		else:
+			return False
 
 	def initVars(self):
 		self.stateList = GrooveClass.STATE_LIST_EMPTY
@@ -377,6 +405,9 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.rootDir = __cwd__
 		self.xbmcPlaylist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 		self.location = []
+		self.searchLimit = int(__settings__.getSetting('search_limit'))
+		self.useCoverArt = self.convertToBool(__settings__.getSetting('covers_in_script'))
+		self.useCoverArtNowPlaying = self.convertToBool(__settings__.getSetting('cover_now_playing'))
 		if __isXbox__ == True:
 			self.dataDir = 'script_data'
 			dataRoot = os.path.join('special://profile/', self.dataDir)
@@ -770,7 +801,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			b = busy()
 			n = self.getCurrentListPosition()
 			try:
-				self.songs = self.gs.albumGetSongs(self.searchResultSongs[n-1][4],GrooveClass.SEARCH_LIMIT)
+				self.songs = self.gs.albumGetSongs(self.searchResultSongs[n-1][4],self.searchLimit)
 				self.setStateListDown(GrooveClass.STATE_LIST_BROWSE_ALBUM_FOR_SONG, truncate = False)
 				b.close()
 				del b
@@ -886,7 +917,10 @@ class GrooveClass(xbmcgui.WindowXML):
 			artistId = song[7]
 			album = song[3]
 			duration = song[2]
-			imgUrl = song[9] # Medium image
+			if self.useCoverArt == True:
+				imgUrl = song[9] # Medium image
+			else:
+				imgUrl = os.path.join(__cwd__, 'resources','skins','DefaultSkin','media','default-cover.png')
 			url = 'plugin://%s/?playSong=%s&artistId=%s&options=%s' % (__scriptid__, songId, artistId, options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
 			listItem = xbmcgui.ListItem('music', thumbnailImage=imgUrl, iconImage=imgUrl)
 			listItem.setProperty( 'Music', "true" )
@@ -936,9 +970,9 @@ class GrooveClass(xbmcgui.WindowXML):
 			b.setProgress(25)
 			self.searchResultArtists = self.getSimilarArtists(artistId)
 			b.setProgress(50)
-			self.searchResultAlbums = self.gs.artistGetAlbums(artistId, GrooveClass.SEARCH_LIMIT)
+			self.searchResultAlbums = self.gs.artistGetAlbums(artistId, self.searchLimit)
 			b.setProgress(75)
-			self.searchResultPlaylists = self.gs.searchPlaylists(artistName, GrooveClass.SEARCH_LIMIT)
+			self.searchResultPlaylists = self.gs.searchPlaylists(artistName, self.searchLimit)
 			b.setProgress(100)
 			xbmc.sleep(500)
 			self.setStateListDown(GrooveClass.STATE_LIST_SIMILAR, reset = True, query = artistName)
@@ -989,7 +1023,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def getSimilarSongs(self, songId):
 		try:
-			return self.gs.songGetSimilar(songId, GrooveClass.SEARCH_LIMIT)
+			return self.gs.songGetSimilar(songId, self.searchLimit)
 		except:
 			return []
 			traceback.print_exc()
@@ -997,7 +1031,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def getSimilarArtists(self, artistId):
 		try:
-			return self.gs.artistGetSimilar(artistId, GrooveClass.SEARCH_LIMIT)
+			return self.gs.artistGetSimilar(artistId, self.searchLimit)
 		except:
 			traceback.print_exc()
 			pass
@@ -1037,7 +1071,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		b = busy()
 		searchList = []
 		for item in lst:
-			f = searchThread(item, text)
+			f = searchThread(item, text, self.searchLimit)
 			searchList.append(f)
 			f.start()
 		total = len(searchList)
@@ -1105,7 +1139,10 @@ class GrooveClass(xbmcgui.WindowXML):
 					else:
 						durStr = '(' + str(durMin) + ':' + str(durSec) + ')'
 				songId = str(songs[i][1])
-				path = songs[i][8]
+				if self.useCoverArt == True:
+					path = songs[i][8]
+				else:
+					path = os.path.join(__cwd__, 'resources','skins','DefaultSkin','media','default-cover.png')
 				l1 = songs[i][0]
 				l2 = songs[i][6] + '\n' + songs[i][3]
 				item = xbmcgui.ListItem (label=l1,label2=l2, thumbnailImage=path, iconImage=path)			
@@ -1140,7 +1177,10 @@ class GrooveClass(xbmcgui.WindowXML):
 			return
 		i = 0
 		while(i < len(albums)):
-			path = albums[i][4]
+			if self.useCoverArt == True:
+				path = albums[i][4]
+			else:
+				path = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media','default-cover.png')
 			if withArtist == 0:
 				item = xbmcgui.ListItem (label=albums[i][2], thumbnailImage=path, iconImage=path)
 			else:
@@ -1235,7 +1275,10 @@ class GrooveClass(xbmcgui.WindowXML):
 		imgUrl = self.nowPlayingList[p][9] # Medium image
 		self.nowPlaying = p
 		try:
-			path = imgUrl
+			if self.useCoverArtNowPlaying == True:
+				path = imgUrl
+			else:
+				path = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media','default-cover.png')
 			listItem = xbmcgui.ListItem('music', thumbnailImage=path, iconImage=path)
 			listItem.setInfo( type = 'music', infoLabels = { 'title': title, 'artist': artist } )
 			listItem.setProperty('mimetype', 'audio/mpeg')
