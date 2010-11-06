@@ -38,7 +38,7 @@
     <!-- Settings -->
     <string id="2000">Username</string>
     <string id="2001">Password</string>
-    <string id="2002">Debugging (restart script to apply)</string>
+    <string id="2002">Debugging</string>
     <string id="2003">XBOX</string>
     <string id="2004">Shuffle</string>
 
