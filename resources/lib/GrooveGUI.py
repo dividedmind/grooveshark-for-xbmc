@@ -163,19 +163,19 @@ class popupBtns(xbmcgui.WindowDialog):
 #	def onInit(self):
 		w = self.w		
 		w = int(self.getWidth()*width)
-		pad = 10
-		hCnt = 30
-		yo = 5
+		pad = self.getHeight()/100
+		hCnt = 5*pad
+		yo = pad
 
 		h = len(self.btns) * (hCnt + 5) + yo
 		mediaDir = os.path.join(os.getcwd().replace(";",""),'resources','skins','DefaultSkin','media')
 		rw = self.getWidth()
 		rh = self.getHeight()
 		x = rw/2 - w/2
-		y = rh/2 -h/2
+		y = rh/2 - h/2
 
 		# Background
-		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
+		self.imgBg = xbmcgui.ControlImage(0+x-4*pad,0+y-4*pad,w+8*pad,h+8*pad, os.path.join(mediaDir,'gs-bg-menu.png'))
 		self.addControl(self.imgBg)
 		
 		i = 0
