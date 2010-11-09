@@ -225,7 +225,7 @@ class popupBtns(xbmcgui.WindowDialog):
 class popupList(xbmcgui.WindowDialog):
 	def __init__(self, title, btns=[], items=[], width=100):
 		w = int(self.getWidth()*width)
-		pad = 5
+		pad = int(self.getHeight()/100)
 		hCnt = 30
 		yo = 30
 		self.selected = [-1, -1]
