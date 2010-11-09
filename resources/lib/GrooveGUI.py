@@ -229,7 +229,7 @@ class popupList(xbmcgui.WindowDialog):
 		hCnt = 30
 		yo = 30
 		self.selected = [-1, -1]
-		h = 420
+		h = self.getHeight()-30*pad
 		self.btns = btns
 		mediaDir = os.path.join(os.getcwd(),'resources','skins','DefaultSkin','media')
 		rw = self.getWidth()
