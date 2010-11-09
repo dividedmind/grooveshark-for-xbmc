@@ -56,6 +56,8 @@ except: #It's post-dharma
 	print 'GrooveShark: Initialized as a post-dharma plugin'
 	#traceback.print_exc()
 
+#__isXbox__ = True
+
 if __isXbox__ == True:
 	__settings__.setSetting("xbox", "true")
 else:
@@ -114,7 +116,7 @@ else:
 					listitem.setProperty('mimetype', 'audio/mpeg')
 					if options == 'radio':
 						print 'GrooveShark: Radio mode'
-						#Fixme: Put song in playlist on alreadyListened before its cleared
+						gs.radioSetAlreadyListenedSong(songId = songId) # Set this song as listened to
 						playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 						playlist.clear()
 						song = gs.radioGetNextSong()
