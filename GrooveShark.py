@@ -1216,8 +1216,8 @@ class GrooveClass(xbmcgui.WindowXML):
 			pass
 			
 		elif event == 1: # Ended
-			self.playNextSong()
 			if __isXbox__ == True:
+				self.playNextSong()
 				if windowId != None:
 					if windowId == 12006: #Visualization
 						xbmcgui.Window(windowId).show()
@@ -1240,6 +1240,11 @@ class GrooveClass(xbmcgui.WindowXML):
 				pass
 
 		elif event == 5: # Play next
+			if __isXbox__ == True:
+				self.playNextSong()
+				if windowId != None:
+					if windowId == 12006: #Visualization
+						xbmcgui.Window(windowId).show()
 			pass
 			
 	def newRadioPlaylist(self, createFromNumber = 0):
@@ -1319,6 +1324,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.setPlaying(song, labelId=4001, imgId=9002, title='Playing Next')
 	
 	def playNextSong(self, timesCalled = 0):
+		print '########### Play next'
 		if __isXbox__ == True:
 			# Try to play the next song on the current playlist
 			if self.nowPlaying != -1:
