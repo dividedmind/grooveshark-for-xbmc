@@ -242,14 +242,14 @@ class popupList(xbmcgui.WindowDialog):
 		#self.addControl(self.imgBg)
 		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
 		self.addControl(self.imgBg)
-		self.imgBg = xbmcgui.ControlImage(0+x+pad,yo+y,w-2*pad,h-yo, os.path.join(mediaDir,'list-bg2.png'))
+		self.imgBg = xbmcgui.ControlImage(0+x+pad,5*pad+y,w-2*pad,h-5*pad, os.path.join(mediaDir,'list-bg2.png'))
 		self.addControl(self.imgBg)
 		
 		# Title
 		self.labelTitle = xbmcgui.ControlLabel(0+x, 0+y, w, hCnt, title, 'font14', '0xFFFFFFFF', alignment=2)
 		self.addControl(self.labelTitle)
 		
-		self.cntList = xbmcgui.ControlList(2*pad+x, yo+y+pad, w-4*pad, h-4*pad, buttonFocusTexture = os.path.join(mediaDir,'button_focus.png'), font='font12', textColor='0xFFFFFFFF', space=0)
+		self.cntList = xbmcgui.ControlList(2*pad+x, yo+y+5*pad, w-4*pad, h-4*pad, buttonFocusTexture = os.path.join(mediaDir,'button_focus.png'), font='font12', textColor='0xFFFFFFFF', space=3)
 		self.addControl(self.cntList)
 		for item in items:
 			self.cntList.addItem(str(item))
