@@ -15,37 +15,17 @@ if __isXbox__ == False: # MusicSuggestions is not supported fox XBOX yet
 	from MusicSuggestions import getTextThread
 
 def gShowPlaylists(playlists=[], options=[]):
-#	popup = popupList(title= 'Playlists', items=playlists, btns=options, width=400)
-#	popup.doModal()
-#	selected = popup.selected
-#	del popup
-#	return selected
-	
-	selected = gSimplePopup(title=__language__(1001), items=playlists)
-	if selected != -1:
-		if options != []:
-			action = gSimplePopup(__language__(1002), items=options)
-			if action == -1:
-				return [-1, -1]
-			else:
-				return [action, selected]
-		else:
-			return [-1, selected]
-	else:
-		return [-1, -1]
-	
+	popup = popupList(title= 'Playlists', items=playlists, btns=options, width=400)
+	popup.doModal()
+	selected = popup.selected
+	del popup
+	return selected	
 	
 def gSimplePopup(title='', items=[], width=300, returnAll = False):
-#	popupMenu = popupBtns(title='', btns=items, width=width)
-#	rootDir = os.getcwd()
-#	print 'RootDir: ' + rootDir
-	#popupMenu = popupBtns("button-popup.xml", rootDir, "DefaultSkin")	
-#	popupMenu.doModal()
-#	selected = popupMenu.selected
-#	del popupMenu
-#	return selected
-	dialog = xbmcgui.Dialog()
-	n = dialog.select(title, items)
+	popupMenu = popupBtns(title='', btns=items, width=width)
+	popupMenu.doModal()
+	n = popupMenu.selected
+	del popupMenu
 	if returnAll == False:
 		return n
 	else:
@@ -54,11 +34,6 @@ def gSimplePopup(title='', items=[], width=300, returnAll = False):
 		else:
 			return [n, items[n]]
 
-#class popupBtns
-#	def __init__(self, title, btns=[], width=100):
-#		dialog = xbmcgui.Dialog()
-#		self.selected = dialog.select(title, btns)
-
 class popupBtnsXml(xbmcgui.WindowXMLDialog):
 	#def __init__(self, title, btns=[], width=100):
 	def __init__(self, *args, **kwargs):
@@ -66,6 +41,24 @@ class popupBtnsXml(xbmcgui.WindowXMLDialog):
 		pass
 
 	def onInit(self):
+		print "################## INIT"
+		#h = len(self.btns) * (hCnt + 5) + yo
+		mediaDir = os.path.join(os.getcwd().replace(";",""),'resources','skins','DefaultSkin','media')
+		#rw = self.getWidth()
+		#rh = self.getHeight()
+		#x = rw/2 - w/2
+		#y = rh/2 -h/2
+		
+		#print 'rw: ' + str(rw)
+		#print 'rh: ' + str(rh)
+		#print 'Media Dir: ' +os.path.join(mediaDir,'gs-bg-menu.png')
+		w = 100
+		h = 100
+		# Background
+		#self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
+		self.imgBg = xbmcgui.ControlImage(0,0,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
+		print self.imgBg
+		self.addControl(self.imgBg)
 		pass
 			
 	def onAction(self, action):
@@ -98,8 +91,6 @@ def busy():
 	t = busyThread()
 	w = t.getWindow()
 	t.start()
-	#xbmc.sleep(100)
-	#w.place()
 	return w
 
 
@@ -127,7 +118,6 @@ class popupBusyXml(xbmcgui.WindowXMLDialog):
 			self.close()
 
 	def onClick(self, controlId):
-		print 'control, click: ' + controlID
 		aId = controlId.getId()
 		if aId == 10:
 			self.close()
@@ -161,8 +151,8 @@ class popupBusyXml(xbmcgui.WindowXMLDialog):
 			i = n
 		self.getControl(300).setLabel(str(i) + '%')
 
-class popupBtnsOld(xbmcgui.WindowDialog):
-	def __init__(self, title, btns=[], width=100):
+class popupBtns(xbmcgui.WindowDialog):
+	def __init__(self, title='', btns=[], width=100):
 		self.w = width
 		self.selected = -1
 		self.btns = btns
@@ -170,31 +160,26 @@ class popupBtnsOld(xbmcgui.WindowDialog):
 		for i in range(len(btns)-1): # There has to be a better way to do this. zeros doesn't work...
 			self.btnCnts.append(0)
 
-	#def onInit(self):
+#	def onInit(self):
 		w = self.w		
 		pad = 10
 		hCnt = 30
 		yo = 5
 
 		h = len(self.btns) * (hCnt + 5) + yo
-		mediaDir = os.path.join(os.getcwd().replace(";",""),'resources/skins/DefaultSkin/media')
+		mediaDir = os.path.join(os.getcwd().replace(";",""),'resources','skins','DefaultSkin','media')
 		rw = self.getWidth()
 		rh = self.getHeight()
 		x = rw/2 - w/2
 		y = rh/2 -h/2
-		
-		print 'rw: ' + str(rw)
-		print 'rh: ' + str(rh)
-		print 'Media Dir: ' +os.path.join(mediaDir,'gs-bg-menu.png')
 
 		# Background
-		#self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
-		self.imgBg = xbmcgui.ControlImage(0,0,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
-		print self.imgBg
+		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
 		self.addControl(self.imgBg)
 		
 		i = 0
-		while i < len(btns):
+		while i < len(self.btns):
+			print self.btns[i]
 			self.btnCnts[i] = xbmcgui.ControlButton(pad+x, yo+y, w-2*pad, hCnt, str(self.btns[i]), os.path.join(mediaDir,'button_focus.png'), '', font='font12', textColor='0xFFFFFFFF', alignment=2)
 			self.addControl(self.btnCnts[i])
 			yo += hCnt + 5
@@ -256,7 +241,7 @@ class popupList(xbmcgui.WindowDialog):
 		#self.addControl(self.imgBg)
 		self.imgBg = xbmcgui.ControlImage(0+x-30,0+y-30,w+60,h+60, os.path.join(mediaDir,'gs-bg-menu.png'))
 		self.addControl(self.imgBg)
-		self.imgBg = xbmcgui.ControlImage(0+x+pad,yo+y,w-2*pad,h-yo-2*pad, os.path.join(mediaDir,'list-bg2.png'))
+		self.imgBg = xbmcgui.ControlImage(0+x+pad,yo+y,w-2*pad,h-yo, os.path.join(mediaDir,'list-bg2.png'))
 		self.addControl(self.imgBg)
 		
 		# Title
@@ -284,7 +269,7 @@ class popupList(xbmcgui.WindowDialog):
 				return None
 		elif action == 7:
 			if len(self.btns) != 0:
-				popupMenu = popupBtnsOld(title='', btns=self.btns, width=150)
+				popupMenu = popupBtns(title='', btns=self.btns, width=150)
 				popupMenu.doModal()
 				if popupMenu.selected != -1:
 					self.selected = [popupMenu.selected, self.cntList.getSelectedPosition()]
