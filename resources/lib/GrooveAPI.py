@@ -130,14 +130,7 @@ class GrooveAPI:
 
 	def callRemote(self, method, params={}):
 		data = {'header': {'sessionID': self.sessionID}, 'method': method, 'parameters': params}
-		#data = {'header': {'sessionID': None}, 'method': method, 'parameters': params}
 		data = self.simplejson.dumps(data)
-		#proxy_support = urllib2.ProxyHandler({"http" : "http://wwwproxy.kom.aau.dk:3128"})
-		## build a new opener with proxy details
-		#opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler)
-		## install it
-		#urllib2.install_opener(opener)
-		#print data
 		req = urllib2.Request("http://api.grooveshark.com/ws/1.0/?json")
 		req.add_header('Host', 'api.grooveshark.com')
 		req.add_header('Content-type', 'text/json')
@@ -157,10 +150,11 @@ class GrooveAPI:
 						self.saveSession()
 						return self.callRemote(method, params)
 					else:
-						self.debug('SessionID expired, but unable to get new')
+						self.debug('GrooveShark: SessionID expired, but unable to get new')
 						return []
 			return result
 		except:
+			traceback.print_exc()
 			return []
 
 	def startSession(self):
@@ -428,6 +422,8 @@ class GrooveAPI:
 		radio = self.getSavedRadio(name = name)
 		if radio != None and songId != '':
 			radio['songIDsAlreadySeen'].append(songId)
+			while len(radio['songIDsAlreadySeen']) > 20:
+				radio['songIDsAlreadySeen'].pop(0) # Trim
 			return self.saveRadio(radio = radio)
 		else:
 			return 0
