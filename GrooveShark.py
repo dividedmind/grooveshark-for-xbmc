@@ -655,7 +655,7 @@ class GrooveClass(xbmcgui.WindowXML):
 	# Radio is not stable yet
 	def showOptionsRadioPlaylist(self, songs):
 		items = [__language__(102),'More songs like this','Fewer songs like this', 'Turn off radio'] #FIXME
-		result = gSimplePopup(title='Radio', items=items, width=200)
+		result = gSimplePopup(title='Radio', items=items, width=0.2)
 
 		if result == 0: #Play
 			n = self.getCurrentListPosition()
@@ -671,7 +671,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def showOptionsRadioSearch(self, songs):
 		items = ['Add song','Add all songs','Add artist','Turn off radio'] #FIXME
-		result = gSimplePopup(title='Radio', items=items, width=200)
+		result = gSimplePopup(title='Radio', items=items, width=0.2)
 
 		if result == 0: #Play
 			n = self.getCurrentListPosition()
@@ -687,7 +687,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def showOptionsNowPlaying(self, songs):
 		items = [__language__(102),__language__(113), __language__(122), __language__(104)]
-		result = gSimplePopup(title='', items=items, width=200)
+		result = gSimplePopup(title='', items=items, width=0.2)
 
 		n = self.getCurrentListPosition()-1
 		if result == 0: #Play
@@ -740,7 +740,7 @@ class GrooveClass(xbmcgui.WindowXML):
 				items.append(__language__(124))
 		if withBrowse == True:
 			items.append(__language__(120)) #Browse this songs album
-		result = gSimplePopup(title='', items=items, width=200, returnAll = True)
+		result = gSimplePopup(title='', items=items, width=0.2, returnAll = True)
 		n = result[0]
 		result = result[1]
 
@@ -834,7 +834,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			items.append(__language__(123))
 			if self.isRadioOn() == True:
 				items.append(__language__(124))
-		result = gSimplePopup(title='', items=items, width=200)
+		result = gSimplePopup(title='', items=items, width=0.2)
 		n = self.getCurrentListPosition()-1
 		if result == 0: #Play
 			self.playSongs(self.playlist, n)
