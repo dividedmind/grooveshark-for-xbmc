@@ -15,7 +15,7 @@ if __isXbox__ == False: # MusicSuggestions is not supported fox XBOX yet
 	from MusicSuggestions import getTextThread
 
 def gShowPlaylists(playlists=[], options=[]):
-	popup = popupList(title= 'Playlists', items=playlists, btns=options, width=400)
+	popup = popupList(title= 'Playlists', items=playlists, btns=options, width=0.5)
 	popup.doModal()
 	selected = popup.selected
 	del popup
@@ -152,7 +152,7 @@ class popupBusyXml(xbmcgui.WindowXMLDialog):
 		self.getControl(300).setLabel(str(i) + '%')
 
 class popupBtns(xbmcgui.WindowDialog):
-	def __init__(self, title='', btns=[], width=100):
+	def __init__(self, title='', btns=[], width=1):
 		self.w = width
 		self.selected = -1
 		self.btns = btns
@@ -162,6 +162,7 @@ class popupBtns(xbmcgui.WindowDialog):
 
 #	def onInit(self):
 		w = self.w		
+		w = int(self.getWidth()*width)
 		pad = 10
 		hCnt = 30
 		yo = 5
@@ -223,7 +224,7 @@ class popupBtns(xbmcgui.WindowDialog):
 
 class popupList(xbmcgui.WindowDialog):
 	def __init__(self, title, btns=[], items=[], width=100):
-		w = width
+		w = int(self.getWidth()*width)
 		pad = 5
 		hCnt = 30
 		yo = 30
@@ -269,7 +270,7 @@ class popupList(xbmcgui.WindowDialog):
 				return None
 		elif action == 7:
 			if len(self.btns) != 0:
-				popupMenu = popupBtns(title='', btns=self.btns, width=150)
+				popupMenu = popupBtns(title='', btns=self.btns, width=0.2)
 				popupMenu.doModal()
 				if popupMenu.selected != -1:
 					self.selected = [popupMenu.selected, self.cntList.getSelectedPosition()]
