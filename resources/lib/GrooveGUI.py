@@ -249,7 +249,7 @@ class popupList(xbmcgui.WindowDialog):
 		self.labelTitle = xbmcgui.ControlLabel(0+x, 0+y, w, hCnt, title, 'font14', '0xFFFFFFFF', alignment=2)
 		self.addControl(self.labelTitle)
 		
-		self.cntList = xbmcgui.ControlList(2*pad+x, yo+y+5*pad, w-4*pad, h-4*pad, buttonFocusTexture = os.path.join(mediaDir,'button_focus.png'), font='font12', textColor='0xFFFFFFFF', space=3)
+		self.cntList = xbmcgui.ControlList(2*pad+x, yo+y+3*pad, w-4*pad, h-10*pad, buttonFocusTexture = os.path.join(mediaDir,'button_focus.png'), font='font12', textColor='0xFFFFFFFF', space=0, itemHeight=7*pad)
 		self.addControl(self.cntList)
 		for item in items:
 			self.cntList.addItem(str(item))
