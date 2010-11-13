@@ -56,8 +56,6 @@ except: #It's post-dharma
 	print 'GrooveShark: Initialized as a post-dharma plugin'
 	#traceback.print_exc()
 
-#__isXbox__ = True
-
 if __isXbox__ == True:
 	__settings__.setSetting("xbox", "true")
 else:
@@ -74,7 +72,7 @@ sys.path.append(BASE_RESOURCE_PATH)
 
 def startGUI():
 	print "GrooveShark version " + str(__version__)
-	w = GrooveClass("grooveshark.xml", __cwd__, "DefaultSkin", isXbox = __isXbox__)
+	w = GrooveClass("grooveshark.xml", __cwd__, "DefaultSkin")
 	w.doModal()
 	del w
 	print 'GrooveShark: Closed'
@@ -116,7 +114,6 @@ else:
 					listitem.setProperty('mimetype', 'audio/mpeg')
 					if options == 'radio':
 						print 'GrooveShark: Radio mode'
-						gs.radioSetAlreadyListenedSong(songId = songId) # Set this song as listened to
 						playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 						playlist.clear()
 						song = gs.radioGetNextSong()
