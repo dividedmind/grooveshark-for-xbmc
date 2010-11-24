@@ -97,7 +97,7 @@ class GrooveAPI:
 	def saveSession(self):
 		try:
 			dir = os.path.join(self.confDir, 'session')
-			# Create the 'data' directory if it doesn't exist.
+			# Create the 'session' directory if it doesn't exist.
 			if not os.path.exists(dir):
 				os.mkdir(dir)
 			path = os.path.join(dir, 'session.txt')
@@ -166,7 +166,7 @@ class GrooveAPI:
 		if 'fault' in result:
 			return ''
 		else:
-			return result['header']['sessionID']
+			return result['result']['sessionID']
 
 	def sessionDestroy(self):
 		return self.callRemote("session.destroy")
@@ -396,12 +396,16 @@ class GrooveAPI:
 		else:
 			return 0
 
-	def radioStart(self, artists = [], frowns = []):
-		for artist in artists:
-			self.seedArtists.append(artist)
-		for artist in frowns:
-			self.frowns.append(artist)
-		if self.autoplayStartWithArtistIDs(self.seedArtists) == 1:
+	def radioStart(self):
+		return 1
+		radio = self.getSavedRadio()
+		if radio == None:
+			return 0
+		else:
+			seedArtists = []
+			for song in radio['seedArtists']:
+				seedArtists.append(song[7])
+		if self.autoplayStartWithArtistIDs(seedArtists) == 1:
 			self.radioEnabled = 1
 			return 1
 		else:
@@ -422,8 +426,8 @@ class GrooveAPI:
 		radio = self.getSavedRadio(name = name)
 		if radio != None and songId != '':
 			radio['songIDsAlreadySeen'].append(songId)
-			while len(radio['songIDsAlreadySeen']) > 20:
-				radio['songIDsAlreadySeen'].pop(0) # Trim
+			#while len(radio['songIDsAlreadySeen']) > 20:
+			#	radio['songIDsAlreadySeen'].pop(0) # Trim
 			return self.saveRadio(radio = radio)
 		else:
 			return 0
