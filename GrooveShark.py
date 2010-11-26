@@ -811,16 +811,24 @@ class GrooveClass(xbmcgui.WindowXML):
 				del b
 
 		elif result == __language__(123): #Use for radio
+			print '########### Use for radio god dammit'
 			n = self.getCurrentListPosition()
 			radio = {'seedArtists':[self.searchResultSongs[n-1]], 'frowns':[], 'songIDsAlreadySeen':[], 'recentArtists':[]}
-			self.gs.saveRadio(radio = radio)
-			song = self.gs.radioGetNextSong()
-			self.xbmcPlaylist.clear()
-			self.queueSong(song[0], options = 'radio')
-			self.playSong(0)
+			if self.gs.saveRadio(radio = radio) == 1:
+				print 'GrooveShark: Radio saved'
+				print self.gs.getSavedRadio()
+			else:
+				print 'GrooveShark: Radio not saved'
+			if self.gs.radioStart() == 1:
+				song = self.gs.radioGetNextSong()
+				self.xbmcPlaylist.clear()
+				self.queueSong(song[0], options = 'radio')
+				self.playSong(0)
+			else:
+				print 'GrooveShark: Could not start radio'
 			pass
 
-		elif result == __language__(123):
+		elif result == __language__(124):
 			n = self.getCurrentListPosition()
 			self.gs.radioAddArtist(self.searchResultSongs[n-1])
 		else:
@@ -1480,17 +1488,12 @@ class GrooveClass(xbmcgui.WindowXML):
 					self.message(__language__(3043),__language__(3011)) #Could not get the playlist
 			elif action == 1: #Rename
 				name = self.getInput(__language__(3030), default=playlists[n][0])
-				b = busy()
 				try:
 					if name != '':
 						if self.gs.playlistRename(playlists[n][1], name) == 0:
 							self.message(__language__(3031), __language__(3011))
-					b.close()
-					del b
 					self.showPlaylists()
 				except:
-					b.close()
-					del b
 					traceback.print_exc()
 					self.message(__language__(3031), __language__(3011)) #Could not rename the playlist
 
