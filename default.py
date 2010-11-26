@@ -56,6 +56,8 @@ except: #It's post-dharma
 	print 'GrooveShark: Initialized as a post-dharma plugin'
 	#traceback.print_exc()
 
+#__isXbox__ = True
+
 if __isXbox__ == True:
 	__settings__.setSetting("xbox", "true")
 else:
@@ -72,7 +74,7 @@ sys.path.append(BASE_RESOURCE_PATH)
 
 def startGUI():
 	print "GrooveShark version " + str(__version__)
-	w = GrooveClass("grooveshark.xml", __cwd__, "DefaultSkin")
+	w = GrooveClass("grooveshark.xml", __cwd__, "DefaultSkin", isXbox = __isXbox__)
 	w.doModal()
 	del w
 	print 'GrooveShark: Closed'
@@ -114,6 +116,7 @@ else:
 					listitem.setProperty('mimetype', 'audio/mpeg')
 					if options == 'radio':
 						print 'GrooveShark: Radio mode'
+						gs.radioSetAlreadyListenedSong(songId = songId) # Set this song as listened to
 						playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 						playlist.clear()
 						song = gs.radioGetNextSong()
@@ -137,9 +140,12 @@ else:
 							listitemNext.setProperty('mimetype', 'audio/mpeg')
 							listitemNext.setProperty('IsPlayable', 'true')
 							playlist.add(url, listitemNext, 0)
+					print 'GrooveShark: Found stream url: (' + url + ')'
 					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=True, listitem=listitem)
 				else:
-					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
+					print 'GrooveShark: No stream url returned for song id'
+					listitem=xbmcgui.ListItem(label='music', path='')
+					xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, listitem)
 			elif (radio != None):
 				print 'GrooveShark: Radio'
 				song = gs.radioGetNextSong()
@@ -160,10 +166,13 @@ else:
 					xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
 
 			else:
-				xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
+				listitem=xbmcgui.ListItem(label='music', path='')
+				xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=listitem)
 				print 'GrooveShark: Unknown command'
 		except:
-			xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=None)
+			print 'GrooveShark: Exception thrown when determining stream url for song id'
+			listitem=xbmcgui.ListItem(label='music', path='')
+			xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False, listitem=listitem)
 			traceback.print_exc()
 	else:
 		if __name__ == "__main__":
