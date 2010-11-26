@@ -180,7 +180,6 @@ class popupBtns(xbmcgui.WindowDialog):
 		
 		i = 0
 		while i < len(self.btns):
-			print self.btns[i]
 			self.btnCnts[i] = xbmcgui.ControlButton(pad+x, yo+y, w-2*pad, hCnt, str(self.btns[i]), os.path.join(mediaDir,'button_focus.png'), '', font='font12', textColor='0xFFFFFFFF', alignment=2)
 			self.addControl(self.btnCnts[i])
 			yo += hCnt + 5
