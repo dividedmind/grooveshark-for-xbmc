@@ -811,7 +811,6 @@ class GrooveClass(xbmcgui.WindowXML):
 				del b
 
 		elif result == __language__(123): #Use for radio
-			print '########### Use for radio god dammit'
 			n = self.getCurrentListPosition()
 			radio = {'seedArtists':[self.searchResultSongs[n-1]], 'frowns':[], 'songIDsAlreadySeen':[], 'recentArtists':[]}
 			if self.gs.saveRadio(radio = radio) == 1:
