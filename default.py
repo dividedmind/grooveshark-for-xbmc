@@ -40,7 +40,7 @@ try: #It's an XBOX/pre-dharma
 	__language__ = xbmc.Language(__cwd__.replace( ";", "" )).getLocalizedString
 	__debugging__ = __settings__.getSetting("debug")
 	__isXbox__ = True
-	__version__ = "0.3.0"
+	__version__ = "0.3.1"
 	BASE_RESOURCE_PATH = xbmc.translatePath(os.path.join(__cwd__, 'resources', 'lib' ))
 	print 'GrooveShark: Initialized as a XBOX plugin'
 
@@ -155,9 +155,8 @@ else:
 					title = song[0]
 					albumId = song[4]
 					artist = song[6]
-					cover = song[9] # Medium image				pass
+					cover = song[9] # Medium image
 					url = gs.getStreamURL(str(songId))
-					print song
 					listitem=xbmcgui.ListItem(label=title, iconImage=cover, thumbnailImage=cover, path=url)
 					listitem.setInfo(type='Music', infoLabels = { 'title': title, 'artist': artist , 'url': url})
 					listitem.setProperty('mimetype', 'audio/mpeg')
