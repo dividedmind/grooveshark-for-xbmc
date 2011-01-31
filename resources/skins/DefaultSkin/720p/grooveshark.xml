@@ -47,7 +47,52 @@
 			<width>720</width>
 			<texture>gs_logo.png</texture>	
 		</control>-->
-
+		<control type="group" id="7001">
+			<posx>-100</posx>
+			<posy>-100</posy>
+			<visible allowhiddenfocus="true">true</visible>
+			<control type="button" id="7002">
+				<description>dummy button for notification</description>				
+				<posx>0</posx>
+				<posy>0</posy>
+				<width>10</width>
+				<height>10</height>		
+				<texturefocus></texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>17</textoffsetx>
+				<aligny>center</aligny>
+				<onup></onup>	
+				<onleft></onleft>
+				<onright></onright>
+				<font>font12</font>
+				<visible allowhiddenfocus="true">False</visible>
+			</control>
+		</control>
+		<control type="group" id="7005">
+			<posx>-100</posx>
+			<posy>-100</posy>
+			<visible allowhiddenfocus="true">true</visible>
+			<control type="button" id="7006">
+				<description>dummy button for busy</description>				
+				<posx>0</posx>
+				<posy>0</posy>
+				<width>10</width>
+				<height>10</height>		
+				<texturefocus></texturefocus>
+				<texturenofocus></texturenofocus>
+				<textcolor>ffffffff</textcolor>
+				<disabledcolor>60ffffff</disabledcolor>
+				<textoffsetx>17</textoffsetx>
+				<aligny>center</aligny>
+				<onup></onup>	
+				<onleft></onleft>
+				<onright></onright>
+				<font>font12</font>
+				<visible allowhiddenfocus="true">False</visible>
+			</control>
+		</control>
 		<control type="group" id="210">
 			<posx>1024</posx>
 			<posy>0</posy>
@@ -479,6 +524,44 @@
 				<posy>700</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
 				<visible>StringCompare(Container(50).NumItems,6)</visible>
+			</control>
+		</control>
+		<control type="group" id="7000">
+			<posx>300</posx>
+			<posy>263</posy>
+			<control type="image">
+				<animation type="Conditional" reversible="false" condition="!ControlGroup(7001).HasFocus" loop="false">
+					<effect type="fade" time="1000" start="100" end="0" reversible="false" delay="1000"/>
+				</animation>
+				<animation type="Conditional" reversible="false" condition="ControlGroup(7001).HasFocus" loop="false">
+					<effect type="fade" time="1000" start="0" end="100" reversible="false" delay="0"/>
+				</animation>
+				<description>Background quick message</description>
+				<posx>0</posx>
+				<posy>0</posy>
+				<height>50</height>
+				<width>120</width>
+				<texture>notification-bg.png</texture>	
+				<visible>true</visible>			
+			</control>
+			<control type="label" id="7003">
+				<animation type="Conditional" reversible="false" condition="!ControlGroup(7001).HasFocus" loop="false">
+					<effect type="fade" time="1000" start="100" end="0" reversible="false" delay="1000"/>
+				</animation>
+				<animation type="Conditional" reversible="false" condition="ControlGroup(7001).HasFocus" loop="false">
+					<effect type="fade" time="1000" start="0" end="100" reversible="false" delay="0"/>
+				</animation>
+				<description>Label for quick message</description>
+				<heigth>30</heigth>
+				<width>100</width>			
+				<posx>10</posx>
+				<posy>25</posy>
+				<align>center</align>
+				<aligny>center</aligny>
+				<label>Updated</label>
+				<font>font14</font>
+				<textcolor>FFFFFFFF</textcolor>
+				<visible>true</visible>
 			</control>
 		</control>
 		<control type="group" id="300">
