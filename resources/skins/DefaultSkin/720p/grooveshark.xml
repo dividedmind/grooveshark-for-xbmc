@@ -655,6 +655,162 @@
 			</control>
 			</control>
 		</control>
+		<control type="group" id="400">
+			<posx>730</posx>
+			<posy>-30</posy>
+			<animation effect="slide" start="0,0" end="-230,0" time="200" tween="quadratic">Focus</animation>
+			<animation effect="slide" start="-230,0" end="0,0" time="200" tween="quadratic">Unfocus</animation>
+			<control type="image">
+				<description>Background for menu</description>
+				<posx>0</posx>
+				<posy>0</posy>
+				<height>800</height>
+				<width>210</width>
+				<texture>gs-bg-leftmenu.png</texture>	
+				<visible>true </visible>			
+			</control>
+			<control type="group" id="112">
+			<posx>0</posx>
+			<posy>30</posy>
+			<control type="image" id="410">
+				<description>Icon for menu</description>
+				<posx>60</posx>
+				<posy>20</posy>
+				<height>90</height>
+				<width>90</width>
+				<texture>song.png</texture>	
+				<visible>true </visible>			
+			</control>
+			<control type="label" id="4100">
+				<description>Vertical label</description>
+				<width>170</width>			
+				<posx>20</posx>
+				<posy>130</posy>
+				<align>center</align>
+				<aligny>center</aligny>
+				<label>OPTIONS</label>
+				<angle>0</angle>
+				<font>font14</font>
+				<textcolor>FFFFFFFF</textcolor>
+				<animation effect="fade" start="100" end="0" time="200" condition="!ControlGroup(112).HasFocus">conditional</animation>
+				<animation effect="fade" start="0" end="100" time="400" condition="ControlGroup(112).HasFocus">conditional</animation>
+			</control>
+			<control type="list" id="500">
+				<animation effect="fade" start="100" end="0" time="200" condition="!ControlGroup(112).HasFocus">conditional</animation>
+				<animation effect="fade" start="0" end="100" time="400" condition="ControlGroup(112).HasFocus">conditional</animation>
+				<description>Options list</description>
+				<posx>0</posx>
+				<posy>155</posy>
+				<width>210</width>
+				<height>250</height>						
+				<onup></onup>
+				<ondown></ondown>
+				<onleft></onleft>
+				<onright></onright>
+				<viewtype label="Default">list</viewtype>		      
+				<orientation>vertical</orientation>
+				<pagecontrol>25</pagecontrol>
+				<scrolltime>200</scrolltime>
+				<itemlayout width="200" height="35">
+					<control type="image">
+						<posx>170</posx>
+						<posy>2</posy>
+						<width>25</width>
+						<height>25</height>
+						<info>ListItem.Thumb</info>
+					</control>
+					<control type="label">
+						<posx>20</posx>
+						<posy>5</posy>
+						<width>170</width>
+						<height>20</height>
+						<font>font13</font>
+						<aligny>center</aligny>					
+						<align>left</align>
+						<info>ListItem.Label</info>
+						<textcolor>FFFFFFFF</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+					<control type="label">
+						<posx>5</posx>
+						<posy>5</posy>
+						<width>200</width>
+						<height>45</height>
+						<font>font12</font>
+						<aligny>center</aligny>					
+						<align>center</align>
+						<info>ListItem.Label2</info>
+						<textcolor>ffffffff</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+				</itemlayout>
+				<focusedlayout height="35" width="210">				
+					<control type="image">
+						<width>210</width>
+						<height>30</height>
+						<posx>0</posx>
+						<posy>0</posy>					
+						<texture>button_focus2.png</texture>
+						<visible>ControlGroup(400).HasFocus</visible>
+					</control>							
+					<control type="image">
+						<posx>170</posx>
+						<posy>2</posy>
+						<width>25</width>
+						<height>25</height>
+						<info>ListItem.Thumb</info>
+						<visible>true</visible>
+					</control>
+					<control type="label">
+						<posx>20</posx>
+						<posy>5</posy>
+						<width>170</width>
+						<height>20</height>
+						<font>font13</font>
+						<aligny>center</aligny>					
+						<align>left</align>
+						<info>ListItem.Label</info>
+						<textcolor>FFFFFFFF</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+					<control type="label">
+						<posx>5</posx>
+						<posy>5</posy>
+						<width>200</width>
+						<height>30</height>
+						<font>font12</font>
+						<aligny>center</aligny>					
+						<align>center</align>
+						<info>ListItem.Label2</info>
+						<textcolor>ffffffff</textcolor>					
+						<selectedcolor>FF000000</selectedcolor>
+					</control>
+				</focusedlayout>
+			</control>
+			<control type="image">
+				<description>Arrow down</description>
+				<posx>100</posx>
+				<posy>400</posy>
+				<height>10</height>
+				<width>10</width>
+				<texture>arrowdown.png</texture>	
+				<visible>Container(500).HasNext</visible>
+				<animation effect="zoom" time="500" center="auto" start="180" end="100" tween="cubic" easing="out">WindowOpen</animation>
+				<animation effect="fade" time="500" start="0" end="100">WindowOpen</animation>
+			</control>
+			<control type="image">
+				<description>Arrow up</description>
+				<posx>100</posx>
+				<posy>145</posy>
+				<height>10</height>
+				<width>10</width>
+				<texture>arrowup.png</texture>	
+				<visible>Container(500).HasPrevious</visible>
+				<animation effect="zoom" time="500" center="auto" start="180" end="100" tween="cubic" easing="out">WindowOpen</animation>
+				<animation effect="fade" time="500" start="0" end="100">WindowOpen</animation>
+			</control>
+			</control>
+		</control>
 
 		<control type="label" id="300011">
 			<description>State label</description>
