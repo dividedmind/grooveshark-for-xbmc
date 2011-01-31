@@ -165,6 +165,7 @@ class GS_FavoriteSongs(GS_Songs):
 			response = gsapi.request(parameters, "getFavorites").send()
 			return response['result']
 		else:
+			return None
 			print 'Fav, could not auth'
 
 	def getFavorites(self, gsapi, ofWhat = 'Songs'):
@@ -193,8 +194,10 @@ class GS_Playlists:
 			for item in data:
 				playlist = self.playlistContainer(item, defaultCoverArt = self.defaultCoverArt)
 				self.playlists.append(playlist)
+			return True
 		else:
 			print 'Fav, could not auth'
+			return False
 
 	def get(self, n):
 		return self.playlists[n]
