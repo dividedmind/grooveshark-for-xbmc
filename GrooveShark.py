@@ -296,6 +296,9 @@ class Favorites(GS_FavoriteSongs):
 
 	def _list(self, gui, gsapi):
 		data = self._favorites(gsapi)
+		if data == None:
+			gui.notification('Wrong username/password')
+			return None
 		return Songs(data, self.defaultCoverArt)._list(gui, gsapi)
 
 class Playlists(GS_Playlists):
@@ -307,7 +310,10 @@ class Playlists(GS_Playlists):
 		self.playlistContainer = Playlist
 
 	def _list(self, gui, gsapi):
-		self.getPlaylists(gsapi)
+		if self.getPlaylists(gsapi) == False:
+			print 'argggghhhhh fuck'
+			gui.notification('Wrong username/password')
+			return [None, None]
 		n = self.count()
 		self.info = str(n) + ' playlists'
 		listItems = []
@@ -812,7 +818,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.useCoverArtNowPlaying = self.convertToBool(__settings__.getSetting('cover_now_playing'))
 			# Check to see if things have changed:
 			if __settings__.getSetting('username') != username or __settings__.getSetting('password') != password:
-				self.gs.startSession(username, password)
+				self.gs.startSession(__settings__.getSetting('username'), __settings__.getSetting('password'))
 			if __settings__.getSetting('player_core') != core:
 				self.initPlayer()
 			if __settings__.getSetting('debug') != debug:
@@ -1006,8 +1012,8 @@ class GrooveClass(xbmcgui.WindowXML):
 				return
 			self.initialized = True
 			self.initPlayer()
-			if self.loadState() == False:
-				self.getPopularSongs()
+			#if self.loadState() == False:
+			#	self.getPopularSongs()
 			self.optionsRight = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.optionsPlaylists = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.optionsMenu = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
