@@ -483,7 +483,7 @@
 		</control>
 		<control type="group" id="300">
 			<posx>-260</posx>
-			<posy>200</posy>
+			<posy>0</posy>
 			<animation effect="slide" start="0,0" end="170,0" time="200" tween="quadratic">Focus</animation>
 			<animation effect="slide" start="170,0" end="0,0" time="200" tween="quadratic">Unfocus</animation>
 			<animation effect="slide" start="-170,0" end="0,0" time="200" tween="quadratic">WindowOpen</animation>
@@ -491,7 +491,7 @@
 				<description>Background for menu</description>
 				<posx>0</posx>
 				<posy>0</posy>
-				<height>335</height>
+				<height>1300</height>
 				<width>300</width>
 				<texture>gs-bg-leftmenu.png</texture>	
 				<visible>true </visible>			
