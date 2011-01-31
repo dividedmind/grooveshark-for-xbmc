@@ -665,7 +665,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 		self.options.reset()
 		self.options.setLabel('Which?')
-		self.options.setImage(os.path.join(self.imageDir, 'playlist.png'))
+		self.options.setImage(os.path.join(self.imageDir, 'gs_addsong.png'))
 		self.options.addOptions(items)
 		self.options.update()
 
