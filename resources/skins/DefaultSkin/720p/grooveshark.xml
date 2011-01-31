@@ -304,8 +304,8 @@
 				<height>580</height>						
 				<onup>205</onup>
 				<ondown>205</ondown>
-				<onleft>300</onleft>
-				<onright>2001</onright>
+				<onleft></onleft>
+				<onright></onright>
 				<viewtype label="Default">list</viewtype>		      
 				<orientation>vertical</orientation>
 				<pagecontrol>25</pagecontrol>
