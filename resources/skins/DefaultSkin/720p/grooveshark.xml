@@ -94,8 +94,8 @@
 			</control>
 		</control>
 		<control type="group" id="210">
-			<posx>310</posx>
-			<posy>238</posy>	
+			<posx>590</posx>
+			<posy>310</posy>	
 			<control type="image" id="220">
 				<animation type="Conditional" reversible="false" condition="true" loop="true">
 					<effect type="rotate" start="0" end="360" time="700" center="50,50" loop="true" reversible="false" />
@@ -143,11 +143,60 @@
 				<visible>!StringCompare(Control.GetLabel(300),)</visible>
 			</control>
 		</control>
+		<control type="image">
+			<description>Background for playing next</description>
+			<posx>0</posx>
+			<posy>650</posy>
+			<height>50</height>
+			<width>1280</width>
+			<texture>gs-bg-menu-next.png</texture>	
+			<visible>true</visible>
+		</control>
 		<control type="group" id="210">
 			<posx>1024</posx>
 			<posy>0</posy>
 			<animation effect="zoom" time="500" center="auto" start="180" end="100" tween="cubic" easing="out">WindowOpen</animation>
 			<animation effect="fade" time="500" start="0" end="100">WindowOpen</animation>
+			<animation effect="fade" start="0" end="100" time="200" tween="quadratic" condition="!ControlGroup(112).HasFocus">conditional</animation>
+			<animation effect="fade" start="100" end="0" time="200" tween="quadratic" condition="ControlGroup(112).HasFocus">conditional</animation>
+			<control type="image" id="9010">
+				<description>Icon options</description>
+				<posx>180</posx>
+				<posy>10</posy>
+				<height>48</height>
+				<width>48</width>
+				<texture>gs_info.png</texture>
+				<!--<visible>Control(4100).IsVisible</visible>-->
+				<visible>true</visible>
+			</control>
+			<control type="image" id="9011">
+				<description>Arrow options</description>
+				<posx>230</posx>
+				<posy>22</posy>
+				<height>24</height>
+				<width>24</width>
+				<texture>gs_next.png</texture>
+				<visible>Control(4100).IsVisible</visible>
+			</control>
+			<control type="image" id="9020">
+				<description>Icon menu</description>
+				<posx>-990</posx>
+				<posy>10</posy>
+				<height>48</height>
+				<width>48</width>
+				<texture>gs_home.png</texture>
+				<visible>true</visible>
+			</control>
+			<control type="image" id="9021">
+				<description>Arrow menu</description>
+				<posx>-1014</posx>
+				<posy>22</posy>
+				<height>24</height>
+				<width>24</width>
+				<texture>gs_prev.png</texture>
+				<visible>Control(4100).IsVisible</visible>
+			</control>
+
 			<control type="image" id="9001">
 				<description>Cover for playing now</description>
 				<posx>0</posx>
@@ -217,26 +266,18 @@
 				<textcolor>FFFFFFFF</textcolor>
 				<visible>Player.HasDuration</visible>
 			</control>
-		</control>
+		
 
 		<control type="group" id="211">
 			<posx>0</posx>
 			<posy>650</posy>
 			<animation effect="zoom" time="500" center="auto" start="180" end="100" tween="cubic" easing="out">WindowOpen</animation>
 			<animation effect="fade" time="500" start="0" end="100">WindowOpen</animation>
-			<control type="image">
-				<description>Background for playing next</description>
-				<posx>0</posx>
-				<posy>0</posy>
-				<height>50</height>
-				<width>1280</width>
-				<texture>gs-bg-menu-next.png</texture>	
-				<visible>true</visible>
-			</control>
+			
 			<control type="fadelabel" id="4001">
 				<description>Playing next label</description>
 				<width>130</width>			
-				<posx>1045</posx>
+				<posx>10</posx>
 				<posy>35</posy>
 				<align>right</align>
 				<aligny>center</aligny>
@@ -253,7 +294,7 @@
 			<control type="label" id="4002">
 				<description>Playing Next label</description>
 				<width>115</width>			
-				<posx>1170</posx>
+				<posx>140</posx>
 				<posy>15</posy>
 				<align>right</align>
 				<aligny>center</aligny>
@@ -266,7 +307,7 @@
 			</control>
 			<control type="image" id="9002">
 				<description>Cover for playing next</description>
-				<posx>1180</posx>
+				<posx>150</posx>
 				<posy>-15</posy>
 				<height>80</height>
 				<width>80</width>
@@ -277,8 +318,9 @@
 				<animation effect="fade" start="0" end="100" time="400" condition="!ControlGroup(210).HasFocus">conditional</animation>
 			</control>
 		</control>
-		
-		<control type="group" id="210">	
+		</control>
+
+		<control type="group" id="2210">	
 			<posx>1040</posx>
 			<posy>647</posy>
 			<visible allowhiddenfocus="true">ControlGroup(210).HasFocus</visible>
@@ -377,7 +419,7 @@
 				<visible>true</visible>
 			</control>
 		</control>
-
+      	
 		<control type="group" id="205">
 			<posx>80</posx>
 			<posy>0</posy>
@@ -487,6 +529,7 @@
 					</control>
 				</focusedlayout>
 			</control>
+		
 			<control type="image">
 				<width>700</width>
 				<height>85</height>
@@ -523,7 +566,7 @@
 				<width>700</width>
 				<height>480</height>
 				<posx>97</posx>
-				<posy>240</posy>					
+				<posy>155</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
 				<visible>StringCompare(Container(50).NumItems,1) </visible>
 			</control>
@@ -531,33 +574,25 @@
 				<width>700</width>
 				<height>395</height>
 				<posx>97</posx>
-				<posy>325</posy>					
+				<posy>240</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
 				<visible>StringCompare(Container(50).NumItems,2) </visible>
 			</control>
 			<control type="image">
 				<width>700</width>
-				<height>310</height>
+				<height>400</height>
 				<posx>97</posx>
-				<posy>410</posy>					
+				<posy>325</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
 				<visible>StringCompare(Container(50).NumItems,3)</visible>
 			</control>
 			<control type="image">
 				<width>700</width>
-				<height>310</height>
+				<height>395</height>
 				<posx>97</posx>
 				<posy>410</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
-				<visible>StringCompare(Container(50).NumItems,4) + [SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT106],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3040],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3041],Left)]</visible>
-			</control>
-			<control type="image">
-				<width>700</width>
-				<height>225</height>
-				<posx>97</posx>
-				<posy>495</posy>					
-				<texture>gs-bg-item-unfocus.png</texture>'
-				<visible>StringCompare(Container(50).NumItems,4) + ![SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT106],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3040],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3041],Left)]</visible>
+				<visible>StringCompare(Container(50).NumItems,4)</visible>
 			</control>
 			<control type="image">
 				<width>700</width>
@@ -577,8 +612,8 @@
 			</control>
 		</control>
 		<control type="group" id="7000">
-			<posx>300</posx>
-			<posy>263</posy>
+			<posx>480</posx>
+			<posy>310</posy>
 			<control type="image">
 				<animation type="Conditional" reversible="false" condition="!ControlGroup(7001).HasFocus" loop="false">
 					<effect type="fade" time="1000" start="100" end="0" reversible="false" delay="1000"/>
@@ -589,10 +624,10 @@
 				<description>Background quick message</description>
 				<posx>0</posx>
 				<posy>0</posy>
-				<height>50</height>
-				<width>120</width>
+				<height>100</height>
+				<width>320</width>
 				<texture>notification-bg.png</texture>	
-				<visible>true</visible>			
+				<visible>true</visible>
 			</control>
 			<control type="label" id="7003">
 				<animation type="Conditional" reversible="false" condition="!ControlGroup(7001).HasFocus" loop="false">
@@ -603,9 +638,9 @@
 				</animation>
 				<description>Label for quick message</description>
 				<heigth>30</heigth>
-				<width>100</width>			
-				<posx>10</posx>
-				<posy>25</posy>
+				<width>280</width>			
+				<posx>20</posx>
+				<posy>50</posy>
 				<align>center</align>
 				<aligny>center</aligny>
 				<label>Updated</label>
@@ -614,191 +649,17 @@
 				<visible>true</visible>
 			</control>
 		</control>
-		<control type="group" id="300">
-			<posx>-260</posx>
-			<posy>0</posy>
-			<animation effect="slide" start="0,0" end="170,0" time="200" tween="quadratic">Focus</animation>
-			<animation effect="slide" start="170,0" end="0,0" time="200" tween="quadratic">Unfocus</animation>
-			<animation effect="slide" start="-170,0" end="0,0" time="200" tween="quadratic">WindowOpen</animation>
-			<control type="image">
-				<description>Background for menu</description>
-				<posx>0</posx>
-				<posy>0</posy>
-				<height>1300</height>
-				<width>300</width>
-				<texture>gs-bg-leftmenu.png</texture>	
-				<visible>true </visible>			
-			</control>
-			<control type="group" id="111">
-			<posx>100</posx>
-			<posy>50</posy>
-			<control type="label" id="5101">
-				<description>Vertical label</description>
-				<width>100</width>			
-				<posx>130</posx>
-				<posy>110</posy>
-				<align>center</align>
-				<aligny>center</aligny>
-				<label>MENU</label>
-				<angle>-90</angle>
-				<font>font16</font>
-				<textcolor>FFFFFFFF</textcolor>
-				<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(111).HasFocus">conditional</animation>
-				<animation effect="fade" start="0" end="100" time="400" condition="!ControlGroup(111).HasFocus">conditional</animation>
-			</control>
-			<control type="button" id="1001">
-				<description>Now playing</description>				
-				<posx>0</posx>
-				<posy>0</posy>
-				<width>180</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT107]</label>
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1007</onup>
-				<ondown>1002</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1002">
-				<description>Search</description>				
-				<posx>0</posx>
-				<posy>35</posy>
-				<width>180</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT106]</label>
-				<texturefocus>button_focus.png</texturefocus>		
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1001</onup>
-				<ondown>1003</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1003">
-				<description>Playlists button</description>				
-				<posx>0</posx>	
-				<posy>70</posy>
-				<width>180</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT117]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1002</onup>
-				<ondown>1004</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1004">
-				<description>Popular button</description>				
-				<posx>0</posx>	
-				<posy>105</posy>
-				<width>180</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT108]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1003</onup>
-				<ondown>1006</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1006">
-				<description>Save queue</description>				
-				<posx>0</posx>	
-				<posy>140</posy>
-				<width>180</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT118]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1004</onup>
-				<ondown>1005</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1005">
-				<description>Settings button</description>				
-				<posx>0</posx>	
-				<posy>175</posy>
-				<width>180</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT109]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1006</onup>
-				<ondown>1007</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1007">
-				<description>Exit button</description>				
-				<posx>0</posx>	
-				<posy>210</posy>
-				<width>180</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT121]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1005</onup>
-				<ondown>1001</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			</control>
-		</control>
 		<control type="group" id="400">
-			<posx>730</posx>
+			<posx>1280</posx>
 			<posy>-30</posy>
-			<animation effect="slide" start="0,0" end="-230,0" time="200" tween="quadratic">Focus</animation>
-			<animation effect="slide" start="-230,0" end="0,0" time="200" tween="quadratic">Unfocus</animation>
+			<animation effect="slide" start="0,0" end="-395,0" time="200" tween="quadratic">Focus</animation>
+			<animation effect="slide" start="-395,0" end="0,0" time="200" tween="quadratic">Unfocus</animation>
 			<control type="image">
 				<description>Background for menu</description>
 				<posx>0</posx>
 				<posy>0</posy>
 				<height>800</height>
-				<width>210</width>
+				<width>385</width>
 				<texture>gs-bg-leftmenu.png</texture>	
 				<visible>true </visible>			
 			</control>
@@ -807,7 +668,7 @@
 			<posy>30</posy>
 			<control type="image" id="410">
 				<description>Icon for menu</description>
-				<posx>60</posx>
+				<posx>145</posx>
 				<posy>20</posy>
 				<height>90</height>
 				<width>90</width>
@@ -816,7 +677,7 @@
 			</control>
 			<control type="label" id="4100">
 				<description>Vertical label</description>
-				<width>170</width>			
+				<width>345</width>			
 				<posx>20</posx>
 				<posy>130</posy>
 				<align>center</align>
@@ -834,8 +695,8 @@
 				<description>Options list</description>
 				<posx>0</posx>
 				<posy>155</posy>
-				<width>210</width>
-				<height>250</height>						
+				<width>385</width>
+				<height>350</height>						
 				<onup></onup>
 				<ondown></ondown>
 				<onleft></onleft>
@@ -844,9 +705,9 @@
 				<orientation>vertical</orientation>
 				<pagecontrol>25</pagecontrol>
 				<scrolltime>200</scrolltime>
-				<itemlayout width="200" height="35">
+				<itemlayout width="365" height="35">
 					<control type="image">
-						<posx>170</posx>
+						<posx>340</posx>
 						<posy>2</posy>
 						<width>25</width>
 						<height>25</height>
@@ -855,7 +716,7 @@
 					<control type="label">
 						<posx>20</posx>
 						<posy>5</posy>
-						<width>170</width>
+						<width>345</width>
 						<height>20</height>
 						<font>font13</font>
 						<aligny>center</aligny>					
@@ -867,7 +728,7 @@
 					<control type="label">
 						<posx>5</posx>
 						<posy>5</posy>
-						<width>200</width>
+						<width>345</width>
 						<height>45</height>
 						<font>font12</font>
 						<aligny>center</aligny>					
@@ -879,7 +740,7 @@
 				</itemlayout>
 				<focusedlayout height="35" width="210">				
 					<control type="image">
-						<width>210</width>
+						<width>385</width>
 						<height>30</height>
 						<posx>0</posx>
 						<posy>0</posy>					
@@ -887,7 +748,7 @@
 						<visible>ControlGroup(400).HasFocus</visible>
 					</control>							
 					<control type="image">
-						<posx>170</posx>
+						<posx>340</posx>
 						<posy>2</posy>
 						<width>25</width>
 						<height>25</height>
@@ -897,7 +758,7 @@
 					<control type="label">
 						<posx>20</posx>
 						<posy>5</posy>
-						<width>170</width>
+						<width>345</width>
 						<height>20</height>
 						<font>font13</font>
 						<aligny>center</aligny>					
@@ -909,7 +770,7 @@
 					<control type="label">
 						<posx>5</posx>
 						<posy>5</posy>
-						<width>200</width>
+						<width>345</width>
 						<height>30</height>
 						<font>font12</font>
 						<aligny>center</aligny>					
@@ -922,8 +783,8 @@
 			</control>
 			<control type="image">
 				<description>Arrow down</description>
-				<posx>100</posx>
-				<posy>400</posy>
+				<posx>190</posx>
+				<posy>505</posy>
 				<height>10</height>
 				<width>10</width>
 				<texture>arrowdown.png</texture>	
@@ -933,7 +794,7 @@
 			</control>
 			<control type="image">
 				<description>Arrow up</description>
-				<posx>100</posx>
+				<posx>190</posx>
 				<posy>145</posy>
 				<height>10</height>
 				<width>10</width>
