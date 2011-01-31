@@ -90,6 +90,7 @@ class GrooveAPI(gwAPI):
 		self._password = ''
 
 	def authenticate(self):
+		print self._username
 		if self._isAuthenticated == True:
 			if self._authenticatedUser == self._username:
 				self.debug('Already logged in')
@@ -105,9 +106,14 @@ class GrooveAPI(gwAPI):
 			try:
 				response = AuthRequest(self, parameters, "authenticateUser").send()
 				res = response['result']
-				self._authenticatedUserId= res['userID']
-				self._authenticatedUser = self._username
-				self._isAuthenticated = True
+				if res['userID'] > 0: 
+					self._authenticatedUserId= res['userID']
+					self._authenticatedUser = self._username
+					self._isAuthenticated = True
+				else:
+					self._isAuthenticated = False
+					self._authenticatedUserId = -1
+					self._authenticatedUser = ''
 			except:
 				self.debug('Failed to log in')
 				self._isAuthenticated = False
@@ -157,6 +163,8 @@ class GrooveAPI(gwAPI):
 		self.debug('Saved instance: ' + str(s))
 		try:
 			self._session, self._lastSessionTime, self._token, self._lastTokenTime, self._uuid, self._authenticatedUser, self._isAuthenticated, self._authenticatedUserId = s
+			if self._authenticatedUser != self._username:
+				self.generateInstance()
 			if (time.time() - self._lastSessionTime) >= VALIDITY_SESSION:
 				self.debug('_startSession(): Session has expired')
 				self.generateInstance()
@@ -183,7 +191,7 @@ class GrooveAPI(gwAPI):
 		except:
 			pass
 
-	def enabledDebug(self, v):
+	def enableDebug(self, v):
 		if v == True:
 			self.enableDebug == True
 		if v == False:
