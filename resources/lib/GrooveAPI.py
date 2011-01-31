@@ -1,8 +1,19 @@
-import urllib2, md5, unicodedata, re, os, traceback, sys, pickle, socket, string
+import urllib, urllib2, unicodedata, re, os, traceback, sys, pickle, socket, string, time, random, sha, md5
 from operator import itemgetter, attrgetter
 
-__scriptid__ = sys.modules[ "__main__" ].__scriptid__
-__cwd__ = sys.modules[ "__main__" ].__cwd__
+sys.path.append('/home/solver/.xbmc/addons/script.module.simplejson/lib')
+import simplejson as json
+
+import traceback
+from gw import Request as Request
+from gw import JsonRPC as gwAPI
+
+CLIENT_NAME = "gslite" #htmlshark #jsqueue
+CLIENT_VERSION = "20101012.37" #"20100831.25"
+
+RANDOM_CHARS = "1234567890abcdef"
+VALIDITY_SESSION = 172800 #2 days
+VALIDITY_TOKEN = 1000 # ca. 16 min.
 
 class LoginTokensExceededError(Exception):
 	def __init__(self):
@@ -22,18 +33,42 @@ class SessionIDTryAgainError(Exception):
 	def __str__(self):
 		return repr(self.value)
 
-class GrooveAPI:
-	def __init__(self, enableDebug = False, isXbox = False):
-		if isXbox == True:
-			import simplejson_xbox
-			self.simplejson = simplejson_xbox
-			print 'GrooveShark API: Initialized as XBOX script'
-			self.isXbox = True
-		else:
-			import simplejson
-			self.simplejson = simplejson
-			print 'GrooveShark API: Initialized as Dharma script'
-			self.isXbox = False
+class AuthRequest(Request):
+	def __init__(self, api, parameters, method, type="default", clientVersion=None):
+		if clientVersion != None:
+			if float(clientVersion) < float(CLIENT_VERSION):
+				clientVersion = CLIENT_VERSION
+		if clientVersion == None:
+			clientVersion = CLIENT_VERSION
+		postData = {
+			"header": {
+				"client": CLIENT_NAME,
+				"clientRevision": clientVersion,
+				"uuid": api._uuid,
+				"session": api._session},
+				"country": {"IPR":"1021", "ID":"223", "CC1":"0", "CC2":"0", "CC3":"0", "CC4":"2147483648"},
+				"privacy": 1,
+			"parameters": parameters,
+			"method": method}
+			
+		headers = {
+			"Content-Type": "application/json",
+			"User-Agent": "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12 (.NET CLR 3.5.30729)",			
+			"Referer": "http://listen.grooveshark.com/main.swf?cowbell=fe87233106a6cef919a1294fb2c3c05f"
+			}
+		url = 'https://cowbell.grooveshark.com/more.php?' + method
+		postData["header"]["token"] = api._generateToken(method)
+		postData = json.dumps(postData)
+		self._request = urllib2.Request(url, postData, headers)
+		
+
+class GrooveAPI(gwAPI):
+	def __init__(self, cwd = None, enableDebug = False, clientUuid = None, clientVersion = None):
+#		import simplejson
+#		self.simplejson = simplejson
+		sys.path.append(os.path.join(cwd,'uuid'))
+		import uuid
+		self.clientVersion = clientVersion
 		timeout = 40
 		socket.setdefaulttimeout(timeout)
 		self.enableDebug = enableDebug
@@ -44,26 +79,102 @@ class GrooveAPI:
 		self.frowns = []
 		self.songIDsAlreadySeen = []
 		self.recentArtists = []
-		self.rootDir = __cwd__
-		if self.isXbox == True:
-			self.dataDir = 'script_data'
-		else:
-			self.dataDir = 'addon_data'
-		self.confDir = os.path.join('special://profile/', self.dataDir, __scriptid__)
-		self.sessionID = self.getSavedSession()
-		self.debug('Saved sessionID: ' + self.sessionID)
-		#self.sessionID = self.getSessionFromAPI()
-		#self.debug('API sessionID: ' + self.sessionID)
-		if self.sessionID == '':
-			self.sessionID = self.startSession()
-			self.debug('Start() sessionID: ' + self.sessionID)
-			if self.sessionID == '':
-				self.debug('Could not get a sessionID. Try again in a few minutes')
-				raise SessionIDTryAgainError()
+		self.rootDir = cwd
+		self.dataDir = 'addon_data'
+		self.confDir = cwd
+		#self.startSession()
+		self._isAuthenticated = False
+		self._authenticatedUserId = -1
+		self._authenticatedUser = ''
+		self._username = ''
+		self._password = ''
+
+	def authenticate(self):
+		if self._isAuthenticated == True:
+			if self._authenticatedUser == self._username:
+				self.debug('Already logged in')
+				return True
 			else:
-				self.saveSession()
+				self.generateInstance()
+		if (self._username != '') and (self._password != ''):
+			parameters = {
+				"username": self._username,
+				"password": self._password,
+				"savePassword": 0,
+				}
+			try:
+				response = AuthRequest(self, parameters, "authenticateUser").send()
+				res = response['result']
+				self._authenticatedUserId= res['userID']
+				self._authenticatedUser = self._username
+				self._isAuthenticated = True
+			except:
+				self.debug('Failed to log in')
+				self._isAuthenticated = False
+				self._authenticatedUserId = -1
+				self._authenticatedUser = ''
+		else:
+			self._isAuthenticated = False
+			self._authenticatedUserId = -1
+			self._authenticatedUser = ''
 		
-		self.debug('sessionID: ' + self.sessionID)
+		self.saveInstance()
+		return self._isAuthenticated
+
+	def getUserId(self):
+		return self._authenticatedUserId
+
+	def isLoggedIn(self):
+		return self._isAuthenticated
+
+	def _generateToken(self, method):
+		#Overload _generateToken()
+		if (time.time() - self._lastTokenTime) >= VALIDITY_TOKEN:
+			self.debug('_generateToken(): Token has expired')
+			self._token = self._getToken()
+			self._lastTokenTime = time.time()
+			self.saveInstance()
+
+		randomChars = ""
+		while 6 > len(randomChars):
+			randomChars = randomChars + random.choice(RANDOM_CHARS)
+
+		token = sha.new(method + ":" + self._token + ":quitStealinMahShit:" + randomChars).hexdigest()
+				#:quitBasinYoBidnessPlanOnBuildingALargeUserbaseViaCopyrightInfringment:
+
+		if (time.time() - self._lastSessionTime) >= VALIDITY_SESSION:
+			self.debug('_generateToken(): Session has expired')
+			self.generateInstance()
+
+		return randomChars + token
+
+	def startSession(self, username = '', password = ''):
+		#Overload startSession()
+		self._username = username
+		self._password = password
+		self.debug('Starting session')
+		s = self.loadInstance()
+		self.debug('Saved instance: ' + str(s))
+		try:
+			self._session, self._lastSessionTime, self._token, self._lastTokenTime, self._uuid, self._authenticatedUser, self._isAuthenticated, self._authenticatedUserId = s
+			if (time.time() - self._lastSessionTime) >= VALIDITY_SESSION:
+				self.debug('_startSession(): Session has expired')
+				self.generateInstance()
+		except:
+			self.generateInstance()
+			traceback.print_exc()
+
+	def generateInstance(self):
+		self.debug('Generating new instance')
+		self._uuid = self._generateUUID()
+		self._session = self._parseHomePage()
+		self._token = self._getToken()
+		self._lastTokenTime = time.time()
+		self._lastSessionTime = time.time()
+		self._isAuthenticated = False
+		self._authenticatedUserId = -1
+		self._authenticatedUser = ''
+		self.saveInstance()
 
 	def __del__(self):
 		try:
@@ -71,10 +182,16 @@ class GrooveAPI:
 				self.logout()
 		except:
 			pass
+
+	def enabledDebug(self, v):
+		if v == True:
+			self.enableDebug == True
+		if v == False:
+			self.enableDebug == False
 			
 	def debug(self, msg):
 		if self.enableDebug == True:
-			print msg
+			print 'GrooveAPI: ' + str(msg)
 			
 	def setRemoveDuplicates(self, enable):
 		if enable == True or enable == 'true' or enable == 'True':
@@ -82,44 +199,53 @@ class GrooveAPI:
 		else:
 			self.removeDuplicates = False
 
-	def getSavedSession(self):
-		sessionID = ''
-		path = os.path.join(self.confDir, 'session', 'session.txt')
+	def loadInstance(self):
+		path = os.path.join(self.confDir, 'instance.txt')
 		try:
 			f = open(path, 'rb')
-			sessionID = pickle.load(f)
+			res = pickle.load(f)
 			f.close()
 		except:
-			sessionID = ''
-			pass				
-		return sessionID
+			res = None
+			pass	
+		return res
 
-	def saveSession(self):
+	def saveInstance(self):
+		print 'Saving instance'
 		try:
-			dir = os.path.join(self.confDir, 'session')
-			# Create the 'session' directory if it doesn't exist.
-			if not os.path.exists(dir):
-				os.mkdir(dir)
-			path = os.path.join(dir, 'session.txt')
-			f = open(path, 'wb')
-			pickle.dump(self.sessionID, f, protocol=pickle.HIGHEST_PROTOCOL)
-			f.close()
-		except IOError, e:
-			print 'There was an error while saving the session pickle (%s)' % e
-			pass
+			var = (self._session, self._lastSessionTime, self._token, self._lastTokenTime, self._uuid, self._authenticatedUser, self._isAuthenticated, self._authenticatedUserId)
+			print 'Saving: ' + str(var)
+			path = os.path.join(self.confDir, 'instance.txt')
+			self.savePickle(path, var)
 		except:
-			print "An unknown error occured during save session: " + str(sys.exc_info()[0])
-			pass
-			
-	def saveSettings(self):			
+			print 'Exception in saveSession: ' + str(sys.exc_info()[0])		
+			traceback.print_exc()
+
+	def saveSettings(self):
 		try:
 			dir = os.path.join(self.rootDir, 'data')
 			# Create the 'data' directory if it doesn't exist.
 			if not os.path.exists(dir):
 				os.mkdir(dir)
-			path = os.path.join(dir, 'settings1.txt')
+			path = os.path.join(dir, 'settings.txt')
+			self.savePickle(path, self.settings)
+		except:
+			print 'Exception in saveSettings()'
+
+	def loadPickle(self, path):
+		try:
+			f = open(path, 'rb')
+			res = pickle.load(f)
+			f.close()
+		except:
+			res = None
+			pass				
+		return res
+
+	def savePickle(self, path, var):
+		try:
 			f = open(path, 'wb')
-			pickle.dump(self.settings, f, protocol=pickle.HIGHEST_PROTOCOL)
+			pickle.dump(var, f, protocol=pickle.HIGHEST_PROTOCOL)
 			f.close()
 		except IOError, e:
 			print 'There was an error while saving the settings pickle (%s)' % e
@@ -128,90 +254,26 @@ class GrooveAPI:
 			print "An unknown error occured during save settings\n"
 			pass
 
-	def callRemote(self, method, params={}):
-		data = {'header': {'sessionID': self.sessionID}, 'method': method, 'parameters': params}
-		data = self.simplejson.dumps(data)
-		req = urllib2.Request("http://api.grooveshark.com/ws/1.0/?json")
-		req.add_header('Host', 'api.grooveshark.com')
-		req.add_header('Content-type', 'text/json')
-		req.add_header('Content-length', str(len(data)))
-		req.add_data(data)
-		response = urllib2.urlopen(req)
-		result = response.read()
-		response.close()
+	def getStreamURL(self, songID):
+		parameters = {
+			"songID": songID,
+			"prefetch": False,
+			"mobile": False, 
+			"country": {"IPR":"1021","ID":"223", "CC1":"0", "CC2":"0", "CC3":"0", "CC4":"2147483648"}
+			}
+		response = Request(self, parameters,"getStreamKeyFromSongIDEx").send()
 		try:
-			result = self.simplejson.loads(result)
-			if 'fault' in result:
-				self.debug(result)
-				if result['fault']['code'] == 8: #Session ID has expired. Get a new and try again if possible.
-					self.debug(result['fault']['message'])
-					self.sessionID = self.startSession()
-					if self.sessionID != '':
-						self.saveSession()
-						return self.callRemote(method, params)
-					else:
-						self.debug('GrooveShark: SessionID expired, but unable to get new')
-						return []
-			return result
+			streamKey = response["result"]["streamKey"]
+			streamServer = response["result"]["ip"]
+			streamServerID = response["result"]["streamServerID"]
+			postData = {"streamKey": streamKey}
+			postData = urllib.urlencode(postData)
+			url = "http://" + streamServer + "/stream.php?" + str(postData)
+			return url
 		except:
 			traceback.print_exc()
-			return []
-
-	def startSession(self):
-		response = urllib2.urlopen("http://www.moovida.com/services/grooveshark/session_start")
-		result = response.read()
-		self.debug(result)
-		result = self.simplejson.loads(result)
-		response.close()
-		if 'fault' in result:
 			return ''
-		else:
-			return result['result']['sessionID']
-
-	def sessionDestroy(self):
-		return self.callRemote("session.destroy")
-			
-	def getSessionFromAPI(self):
-		result = self.callRemote("session.get")
-		if 'fault' in result:
-			return ''
-		else:
-			return result['header']['sessionID']												
-
-	def getStreamURL(self, songID):
-		result = self.callRemote("song.getStreamUrlEx", {"songID": songID})
-		if 'result' in result:
-			return result['result']['url']
-		else:
-			return ''
-	
-	def createUserAuthToken(self, username, password):
-		hashpass = md5.new(password).hexdigest()
-		hashpass = username + hashpass
-		hashpass = md5.new(hashpass).hexdigest()
-		result = self.callRemote("session.createUserAuthToken", {"username": username, "hashpass": hashpass})
-		if 'result' in result:
-			return result['result']['token'], result['result']['userID']
-		elif 'fault' in result:
-			if result['fault']['code'] == 256:
-				return -1 # Exceeded the number of allowed tokens. Should not happen
-			else:
-				return -2 # Unknown error
-		else:
-			return -2 # Unknown error
-	
-	def destroyUserAuthToken(self, token):
-		self.callRemote("session.destroyAuthToken", {"token": token})
 		
-	def loginViaAuthToken(self, token):
-		result = self.callRemote("session.loginViaAuthToken", {"token": token})
-		self.destroyUserAuthToken(token)
-		if 'result' in result:
-			self.userID = result['result']['userID']
-			return result['result']['userID']
-		else:
-			return 0
-	
 	def login(self, username, password):
 		if self.loggedIn == 1:
 			return self.userId
@@ -229,25 +291,12 @@ class GrooveAPI:
 			else:
 				self.loggedIn = 1
 				return self.userId
-				
 
 	def loginExt(self, username, password):
 		if self.loggedIn == 1:
 			return self.userId
 		token = md5.new(username.lower() + md5.new(password).hexdigest()).hexdigest()
 		result = self.callRemote("session.loginExt", {"username": username, "token": token})
-		if 'result' in result:
-			if 'userID' in result['result']:
-				self.loggedIn = 1
-				self.userId = result['result']['userID']
-				return result['result']['userID'] 
-		else:
-			return 0
-
-	def loginBasic(self, username, password):
-		if self.loggedIn == 1:
-			return self.userId
-		result = self.callRemote("session.login", {"username": username, "password": password})
 		if 'result' in result:
 			if 'userID' in result['result']:
 				self.loggedIn = 1
@@ -473,91 +522,33 @@ class GrooveAPI:
 	def unfavoriteSong(self, songID):
 		return self.callRemote("song.unfavorite", {"songID": songID})
 		
-	def getMethods(self):
-		return self.callRemote("service.getMethods")
+	def searchSongs(self, query, type = 'Songs'):
+		parameters = {
+			"query": query,
+			"type": type}
 
-	def searchSongsExactMatch(self, songName, artistName, albumName):
-		result = self.callRemote("search.songExactMatch", {"songName": songName, "artistName": artistName, "albumName": albumName})
-		list = self.parseSongs(result)
-		return list
+		response = Request(self, parameters, "getSearchResultsEx").send()
+		try:
+			return self.parseSongs(response['result']['result'])
+		except:
+			return []
 
-	def searchSongs(self, query, limit, page=0, sortKey=6):
-		result = self.callRemote("search.songs", {"query": query, "limit": limit, "page:": page, "streamableOnly": 1})
-		list = self.parseSongs(result)
-		return list
-		#return sorted(list, key=itemgetter(sortKey))
+	def searchPlaylists(self, query):
+		parameters = {
+			"query": query,
+			"type": "Playlists"}
 
-	def searchArtists(self, query, limit, sortKey=0):
-		result = self.callRemote("search.artists", {"query": query, "limit": limit, "streamableOnly": 1})
-		list = self.parseArtists(result)
-		return list
-		#return sorted(list, key=itemgetter(sortKey))
-
-	def searchAlbums(self, query, limit, sortKey=2):
-		result = self.callRemote("search.albums", {"query": query, "limit": limit, "streamableOnly": 1})
-		list = self.parseAlbums(result)
-		return list
-		#return sorted(list, key=itemgetter(sortKey))
-
-	def searchPlaylists(self, query, limit):
-		result = self.callRemote("search.playlists", {"query": query, "limit": limit, "streamableOnly": 1})
-		list = self.parsePlaylists(result)
-		return list
-
-	def popularGetSongs(self, limit):
-		result = self.callRemote("popular.getSongs", {"limit": limit})
-		list = self.parseSongs(result)
-		return list
+		response = Request(self, parameters, "getSearchResultsEx").send()
 		
-	def popularGetArtists(self, limit):
-		result = self.callRemote("popular.getArtists", {"limit": limit})
-		list = self.parseArtists(result)
-		return list
-
-	def popularGetAlbums(self, limit):
-		result = self.callRemote("popular.getAlbums", {"limit": limit})
-		list = self.parseAlbums(result)
-		return list
-
-	def artistAbout(self, artistId):
-		result = self.callRemote("artist.about", {"artistID": artistId})
-		return result
-		
-	def artistGetAlbums(self, artistId, limit, sortKey=2):
-		result = self.callRemote("artist.getAlbums", {"artistID": artistId, "limit": limit})
-		list = self.parseAlbums(result)
-		return list
-		#return sorted(list, key=itemgetter(sortKey))
-
-	def artistGetVerifiedAlbums(self, artistId, limit):
-		result = self.callRemote("artist.getVerifiedAlbums", {"artistID": artistId, "limit": limit})
-		list = self.parseSongs(result)
-		return list
-
-	def albumGetSongs(self, albumId, limit):
-		result = self.callRemote("album.getSongs", {"albumID": albumId, "limit": limit})
-		list = self.parseSongs(result)
-		return list
-
-	def songGetSimilar(self, songId, limit):
-		result = self.callRemote("song.getSimilar", {"songID": songId, "limit": limit})
-		list = self.parseSongs(result)
-		return list
-
-	def artistGetSimilar(self, artistId, limit):
-		result = self.callRemote("artist.getSimilar", {"artistID": artistId, "limit": limit})
-		list = self.parseArtists(result)
-		return list
-
-	def songAbout(self, songId):
-		result = self.callRemote("song.about", {"songID": songId})
-		return result['result']['song']
-
-	def getVersion(self):
-		result = self.callRemote("service.getVersion", {})
-		return result
+		return response['result']['result']
 
 	def parseSongs(self, items):
+		for entry in items:
+			if (entry['CoverArtFilename'] != None) and (entry['CoverArtFilename'] != ''):
+				entry['CoverArtFilename'] = 'http://beta.grooveshark.com/static/amazonart/m' + entry['CoverArtFilename']
+			else:
+				entry['CoverArtFilename'] = os.path.join(self.rootDir, 'resources','skins','DefaultSkin','media','default-cover.png')
+		return items
 		try:
 			if 'result' in items:
 				i = 0
@@ -614,6 +605,7 @@ class GrooveAPI:
 			return []
 
 	def parseArtists(self, items):
+		return items
 		try:
 			if 'result' in items:
 				i = 0
