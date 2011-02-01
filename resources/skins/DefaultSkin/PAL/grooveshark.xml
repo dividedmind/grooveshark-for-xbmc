@@ -588,16 +588,8 @@
 				<posx>97</posx>
 				<posy>315</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
-				<visible>StringCompare(Container(50).NumItems,4)</visible> <!--+ [SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT106],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3040],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3041],Left)]</visible>-->
+				<visible>StringCompare(Container(50).NumItems,4)</visible>
 			</control>
-<!--			<control type="image">
-				<width>395</width>
-				<height>370</height>
-				<posx>97</posx>
-				<posy>380</posy>					
-				<texture>gs-bg-item-unfocus.png</texture>'
-				<visible>StringCompare(Container(50).NumItems,4) + ![SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT106],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3040],Left) | SubString(Control.GetLabel(3000) ,$LOCALIZE[SCRIPT3041],Left)]</visible>
-			</control>-->
 			<control type="image">
 				<width>395</width>
 				<height>370</height>
@@ -610,7 +602,7 @@
 				<width>395</width>
 				<height>370</height>
 				<posx>97</posx>
-				<posy>510</posy>					
+				<posy>445</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
 				<visible>StringCompare(Container(50).NumItems,6)</visible>
 			</control>
@@ -684,146 +676,6 @@
 				<textcolor>FFFFFFFF</textcolor>
 				<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(111).HasFocus">conditional</animation>
 				<animation effect="fade" start="0" end="100" time="400" condition="!ControlGroup(111).HasFocus">conditional</animation>
-			</control>
-			<control type="button" id="1001">
-				<description>Now playing</description>				
-				<posx>0</posx>
-				<posy>0</posy>
-				<width>125</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT107]</label>
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1007</onup>
-				<ondown>1002</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1002">
-				<description>Search</description>				
-				<posx>0</posx>
-				<posy>35</posy>
-				<width>110</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT106]</label>
-				<texturefocus>button_focus.png</texturefocus>		
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1001</onup>
-				<ondown>1003</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1003">
-				<description>Playlists button</description>				
-				<posx>0</posx>	
-				<posy>70</posy>
-				<width>110</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT117]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1002</onup>
-				<ondown>1004</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1004">
-				<description>Popular button</description>				
-				<posx>0</posx>	
-				<posy>105</posy>
-				<width>110</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT108]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1003</onup>
-				<ondown>1006</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1006">
-				<description>Save queue button</description>				
-				<posx>0</posx>	
-				<posy>140</posy>
-				<width>110</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT118]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1004</onup>
-				<ondown>1005</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1005">
-				<description>Settings button</description>				
-				<posx>0</posx>	
-				<posy>175</posy>
-				<width>110</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT109]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1006</onup>
-				<ondown>1007</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
-			</control>
-			<control type="button" id="1007">
-				<description>Exit button</description>				
-				<posx>0</posx>	
-				<posy>210</posy>
-				<width>110</width>
-				<height>30</height>
-				<label>$LOCALIZE[SCRIPT121]</label>		
-				<texturefocus>button_focus.png</texturefocus>
-				<texturenofocus></texturenofocus>
-				<textcolor>ffffffff</textcolor>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textoffsetx>0</textoffsetx>
-				<align>center</align>
-				<aligny>center</aligny>					
-				<onup>1005</onup>
-				<ondown>1001</ondown>	
-				<onleft>205</onleft>
-				<onright>205</onright>
-				<font>font12</font>
 			</control>
 			</control>
 		</control>
