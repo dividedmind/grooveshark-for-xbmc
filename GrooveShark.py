@@ -764,8 +764,10 @@ class GrooveClass(xbmcgui.WindowXML):
 	def saveAlbumAsPlaylist(self, selected = 0, obj = None, item = None):
 		album = obj.get(selected)
 		name = album.artistName + ' - ' + album.name
-		name = self.getInput('Rename playlist', default=name)
-		if name != '' and name != None:
+		name = self.getInput('Name for playlist', default=name)
+		if name == None:
+			return
+		if name != '':
 			lock()
 			try:
 				songs = album.getSongs(self.gs)
@@ -774,8 +776,10 @@ class GrooveClass(xbmcgui.WindowXML):
 				unlock()
 				self.notification('Saved')
 			except:
+				unlock()
 				self.notification('Sorry')
 		else:
+			unlock()
 			self.notification('Type a name')
 
 	def addSongToPlaylist(self, selected = 0, obj = None, item = None):
@@ -1012,8 +1016,6 @@ class GrooveClass(xbmcgui.WindowXML):
 				return
 			self.initialized = True
 			self.initPlayer()
-			#if self.loadState() == False:
-			#	self.getPopularSongs()
 			self.optionsRight = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.optionsPlaylists = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.optionsMenu = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
@@ -1022,7 +1024,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.navi.down(self.rootTree)
 
 	def __del__(self):
-		print 'GooveShark: __del__() called'
+		print 'GrooveShark: __del__() called'
 		self.saveState()
 
 	def initPlayer(self):
@@ -1252,14 +1254,13 @@ class GrooveClass(xbmcgui.WindowXML):
 			pass
 													
 	def getInput(self, title, default="", hidden=False):
-		ret = ""
-	
 		keyboard = xbmc.Keyboard(default, title)
 		keyboard.setHiddenInput(hidden)
 		keyboard.doModal()
 		if keyboard.isConfirmed():
-			ret = keyboard.getText()
-		return ret
+			return keyboard.getText()
+		else:
+			return None
 				
 	def savePlaylist(self, playlistId = 0, name = '', about = '', songList = []):
 		try:
