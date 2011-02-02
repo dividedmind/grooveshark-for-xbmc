@@ -3,6 +3,13 @@ from operator import itemgetter, attrgetter
 from pprint import pprint
 ################### Classes for songs
 
+def debug(msg):
+	try:
+		if __debugging__ == True:
+			print 'GrooveLib: ' + str(msg)
+	except:
+		pass
+
 class GS_Song:
 	"""class: Represents a Grooveshark song"""
 	def __init__(self, data, defaultCoverArt = None):
@@ -44,6 +51,12 @@ class GS_Song:
 				self.coverart = self.defaultCoverArt
 		except:
 			pass
+		try:
+			if (data['CoverArt']) != '':
+				self.coverart = data['CoverArt']
+		except:
+			pass
+
 		try:
 			self.duration = int(data['EstimateDuration'])
 		except:
@@ -107,7 +120,18 @@ class GS_Song:
 		self.albumContainer = GS_Album
 
 class GS_Songs:
-	def __init__(self, data, defaultCoverArt = None, container = GS_Song):
+	def __init__(self, data, defaultCoverArt = None, container = GS_Song, sort = None):
+		rev = False
+		if sort == 'Score': #Sort by relevance
+			rev = True
+		if 'Sort' == 'Popularity': #Sort by popularity on Grooveshark
+			rev = True
+		try:
+			data = sorted(data, key=itemgetter('Score'), reversed=rev)
+		except:
+			print 'GS_Songs: Couldn\'t sort'
+			pass
+
 		self.songs = []
 		self.setContainers()
 		self.defaultCoverArt = defaultCoverArt
@@ -165,8 +189,8 @@ class GS_FavoriteSongs(GS_Songs):
 			response = gsapi.request(parameters, "getFavorites").send()
 			return response['result']
 		else:
+			debug('Could not auth in favorites')
 			return None
-			print 'Fav, could not auth'
 
 	def getFavorites(self, gsapi, ofWhat = 'Songs'):
 		data = self._favorites(gsapi, ofWhat = ofWhat) 
@@ -191,12 +215,13 @@ class GS_Playlists:
 			response = gsapi.request(parameters, "userGetPlaylists").send()
 			#print response
 			data = response['result']['Playlists']
+			data = sorted(data, key=itemgetter('Name'))
 			for item in data:
 				playlist = self.playlistContainer(item, defaultCoverArt = self.defaultCoverArt)
 				self.playlists.append(playlist)
 			return True
 		else:
-			print 'Fav, could not auth'
+			debug('Could not auth in playlists')
 			return False
 
 	def get(self, n):
@@ -253,7 +278,7 @@ class GS_Playlist:
 		if gsapi.authenticate():
 			parameters = {"playlistID":self.id, 'playlistName':name}
 			response = gsapi.request(parameters, "renamePlaylist").send()
-			print response
+			#print response
 			try:
 				result = response['result']
 				if result == True:
@@ -263,8 +288,8 @@ class GS_Playlist:
 			except:
 				return False
 		else:
+			debug('Could not auth in rename playlist')
 			return False
-			print 'playlist, could not auth'
 
 	def save(self, gsapi):
 		songIds = []
@@ -281,8 +306,8 @@ class GS_Playlist:
 			except:
 				return False
 		else:
+			debug('Could not auth in save')
 			return False
-			print 'playlist, could not auth save'
 
 	def saveAs(self, gsapi):
 		songIds = []
@@ -297,8 +322,8 @@ class GS_Playlist:
 			except:
 				return -1
 		else:
+			debug('Could not auth in playlist save as')
 			return -1
-			print 'playlist, could not auth save'
 
 	def delete(self, gsapi):
 		if gsapi.authenticate():
@@ -311,8 +336,8 @@ class GS_Playlist:
 			except:
 				return False
 		else:
+			debug('Could not auth in delete playlist')
 			return False
-			print 'playlist, could not auth save'
 
 	def setContainers(self):
 		self.songsContainer = GS_Songs
@@ -429,12 +454,10 @@ class GS_Artist:
 			"artistID": self.id}
 
 		response = gsapi.request(parameters, "artistGetSimilarArtists").send()
-		print response
 		return self.artistsContainer(response['result']['SimilarArtists'], defaultCoverArt = self.defaultCoverArt)
 
 	def _getSongs(self, gsapi):
 		parameters = {"artistID":self.id, "isVerified":self.verified, "offset":0}
-
 		return gsapi.request(parameters, "artistGetSongs").send()
 
 	def getSongs(self, gsapi):
@@ -514,7 +537,7 @@ class GS_Search:
 	def search(self, gsapi, query, type = 'Songs'):
 		result = self._search(gsapi, query, type = type)
 		try:
-			self.songs = self.newSongsContainer(result['result']['result'])
+			self.songs = self.newSongsContainer(result['result']['result'], sort = 'Score')
 			self.albums = self.newAlbumsContainer(result['result']['result'])
 			self.artists = self.newArtistsContainer(result['result']['result'])
 			self.queryText = query
@@ -525,11 +548,11 @@ class GS_Search:
 			self.queryText = None
 			traceback.print_exc()
 	
-	def newSongContainer(self, item):
+	def newSongContainer(self, item, sort = None):
 		return self.songContainer(item, defaultCoverArt = self.defaultCoverArt)
 
-	def newSongsContainer(self, item):
-		return self.songsContainer(item, defaultCoverArt = self.defaultCoverArt)
+	def newSongsContainer(self, item, sort = None):
+		return self.songsContainer(item, defaultCoverArt = self.defaultCoverArt, sort = sort)
 
 	def newArtistContainer(self, item):
 		return self.artistContainer(item, defaultCoverArt = self.defaultCoverArt)
