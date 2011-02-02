@@ -39,6 +39,58 @@ def lock():
 def unlock():
 	pGUI.playlistHasFocus()
 
+#plugin://%s/?playSong=%s&artistId=%s&albumId=%s&image=%s&songName=%s&artistName=%s&albumName=%s&options=%s
+
+#plugin://script.audio.grooveshark/?
+#playSong=10779110
+#&artistId=401423
+#&albumId=1145459
+#&image=http%3A%2F%2Fbeta.grooveshark.com%2Fstatic%2Famazonart%2Fm3253484.jpg
+#&songName=Yes Sir I Can Boogie
+#&artistName=Goldfrapp
+#&albumName=Misc
+#&options=
+class NowPlaying:
+	def __init__(self, gui, gsapi, defaultCoverArt = None):
+		self.songs = []
+		self.gsapi = gsapi
+		self.defaultCoverArt = defaultCoverArt
+		self.gui = gui
+		pass
+
+	def _list(self, gui, gsapi):
+		playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+		n = playlist.size()
+		data = []
+		songs = []
+		for i in range(n):
+			song = playlist[i]
+			name = song.getfilename()
+			name = name.split('?')[1]
+			parts = name.split('&')
+			songId = parts[0].split('=')[1]
+			artistId = parts[1].split('=')[1]
+			albumId = parts[2].split('=')[1]
+			image = urllib.unquote_plus(parts[3].split('=')[1])
+			songName = urllib.unquote_plus(parts[4].split('=')[1])
+			artistName = urllib.unquote_plus(parts[5].split('=')[1])
+			albumName = urllib.unquote_plus(parts[6].split('=')[1])
+			options = parts[7].split('=')[1]
+			item = {'SongID': songId,\
+					'Name': songName,\
+					'AlbumName':albumName,\
+					'ArtistName':artistName,\
+					'ArtistID':artistId,\
+					'AlbumID':albumId,\
+					'ArtistID':artistId,\
+					'CoverArt':image\
+					}
+			data.append(item)
+		songs = Songs(data, defaultCoverArt = self.defaultCoverArt)
+		#pprint(data)
+		return songs._list(self.gui, self.gsapi)
+			
+
 class Search(GS_Search):
 	def __init__(self, gui, defaultCoverArt = None):
 		self.gui = gui
@@ -54,7 +106,7 @@ class Search(GS_Search):
 	def newSongContainer(self, item):
 		return self.songContainer(item, defaultCoverArt = self.defaultCoverArt)
 
-	def newSongsContainer(self, item):
+	def newSongsContainer(self, item, sort = 'Score'):
 		return self.songsContainer(item, defaultCoverArt = self.defaultCoverArt)
 
 	def newArtistContainer(self, item):
@@ -98,8 +150,8 @@ class Search(GS_Search):
 		pass
 
 class Songs(GS_Songs):
-	def __init__(self, data, defaultCoverArt = None):
-		GS_Songs.__init__(self, data, defaultCoverArt = defaultCoverArt)
+	def __init__(self, data, defaultCoverArt = None, sort = None):
+		GS_Songs.__init__(self, data, defaultCoverArt = defaultCoverArt, sort = sort)
 
 	def setContainers(self):
 		self.songContainer = Song
@@ -186,7 +238,7 @@ class Songs(GS_Songs):
 		playlist.add(url=url, listitem=listItem, index=index)
 
 	def defaultUrl(self, song, options = ''):
-		return 'plugin://%s/?playSong=%s&artistId=%s&options=%s' % (__scriptid__, song.id, song.artistID, options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
+		return 'plugin://%s/?playSong=%s&artistId=%s&albumId=%s&image=%s&songName=%s&artistName=%s&albumName=%s&options=%s' % (__scriptid__, song.id, song.artistID, song.albumID, urllib.quote_plus(song.coverart), urllib.quote_plus(song.name), urllib.quote_plus(song.artistName), urllib.quote_plus(song.albumName), options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
 
 	def createListItem(self, url, song):
 		listItem = xbmcgui.ListItem('music', thumbnailImage=song.coverart, iconImage=song.coverart)
@@ -343,7 +395,8 @@ class RootTree:
 		self.tree = [self._search,\
 						Popular(gui = gui, gsapi = gsapi, type = 'monthly', defaultCoverArt = self.defaultCoverArt),\
 						Favorites(gui = gui, gsapi = gsapi, defaultCoverArt = self.defaultCoverArt),\
-						Playlists(gui = gui, defaultCoverArt = self.defaultCoverArt)]
+						Playlists(gui = gui, defaultCoverArt = self.defaultCoverArt),\
+						NowPlaying(gui = gui, gsapi = gsapi, defaultCoverArt = self.defaultCoverArt)]
 
 		pass
 
@@ -359,6 +412,7 @@ class RootTree:
 		pathPopular = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media', 'gs_popular.png')
 		pathFavorites = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media', 'gs_favorites.png')
 		pathPlaylist = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media', 'gs_playlist.png')
+		pathNowPlaying = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media', 'gs_song.png')
 		try:
 			searchLabel = 'Found ' + str(self._search.countResults()) + ' for "' + self._search.queryText + '"'
 		except:
@@ -370,7 +424,7 @@ class RootTree:
 			xbmcgui.ListItem (label='Popular', label2='Popular songs on Grooveshark', thumbnailImage=pathPopular),\
 			xbmcgui.ListItem (label='Favorites', label2='Your favorites', thumbnailImage=pathFavorites),\
 			xbmcgui.ListItem (label='Playlists', label2='Your playlists', thumbnailImage=pathPlaylist),\
-#			xbmcgui.ListItem (label='Now playing', label2='Have a look at the tunes', thumbnailImage=pathPlaylist),\
+			xbmcgui.ListItem (label='Now playing', label2='Have a look at the tunes', thumbnailImage=pathNowPlaying),\
 		]
 		self.gui.setStateLabel('')
 		return [self, listItems]
@@ -961,10 +1015,28 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.navi._list()
 
 	def findSimilarFromSong(self, selected = 0, obj = None, item = None):
-		self.notification('Unimplemented')
+		lock()
+		try:
+			song = obj.get(selected)
+			artist = Artist(song.artistID)
+			artists = artist.similar(gsapi = self.gs)
+			self.navi.down(artists, selected+1)
+			unlock()
+		except:
+			unlock()
+			self.notification('Sorry')
 
 	def findSimilarFromAlbum(self, selected = 0, obj = None, item = None):
-		self.notification('Unimplemented')
+		lock()
+		try:
+			album = obj.get(selected)
+			artist = Artist(album.artistID)
+			artists = artist.similar(gsapi = self.gs)
+			self.navi.down(artists, selected+1)
+			unlock()
+		except:
+			unlock()
+			self.notification('Sorry')
 
 	def findSimilarFromArtist(self, selected = 0, obj = None, item = None):
 		lock()
@@ -995,6 +1067,12 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def onInit(self):
 		setPGUI(self)
+#		try:
+#			bla = NowPlaying(None, None)
+#			bla._list(None, None)
+#		except:
+#			traceback.print_exc()
+
 		try:
 			if self.initialized == True:
 				self.navi._list()
