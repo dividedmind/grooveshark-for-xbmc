@@ -7,8 +7,6 @@ import traceback
 import threading
 from datetime import datetime
 
-print 'GrooveShark: ####### Start'
-
 class tools(object):
 	def __init__(self):
 		pass
