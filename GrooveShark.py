@@ -58,6 +58,13 @@ class NowPlaying:
 		self.gui = gui
 		pass
 
+	def decode(self, s):
+		try:
+			return urllib.unquote_plus(s)
+		except:
+			print s
+			return "blabla"
+
 	def _list(self, gui, gsapi):
 		playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 		n = playlist.size()
@@ -71,10 +78,10 @@ class NowPlaying:
 			songId = parts[0].split('=')[1]
 			artistId = parts[1].split('=')[1]
 			albumId = parts[2].split('=')[1]
-			image = urllib.unquote_plus(parts[3].split('=')[1])
-			songName = urllib.unquote_plus(parts[4].split('=')[1])
-			artistName = urllib.unquote_plus(parts[5].split('=')[1])
-			albumName = urllib.unquote_plus(parts[6].split('=')[1])
+			image = self.decode(parts[3].split('=')[1])
+			songName = self.decode(parts[4].split('=')[1])
+			artistName = self.decode(parts[5].split('=')[1])
+			albumName = self.decode(parts[6].split('=')[1])
 			options = parts[7].split('=')[1]
 			item = {'SongID': songId,\
 					'Name': songName,\
@@ -189,7 +196,9 @@ class Songs(GS_Songs):
 				else:
 					lYear = ''
 				l2 = l2 + lYear
-				item = xbmcgui.ListItem (label=l1,label2=l2, thumbnailImage=path, iconImage=path)			
+				imageDir = os.path.join(__cwd__, 'resources','skins','DefaultSkin','media')
+				path2 = os.path.join(imageDir, 'gs_smile.png')
+				item = xbmcgui.ListItem (label=l1,label2=l2, thumbnailImage=path, iconImage = path2)
 				listItems.append(item)
 			return self, listItems
 		except:
@@ -238,7 +247,15 @@ class Songs(GS_Songs):
 		playlist.add(url=url, listitem=listItem, index=index)
 
 	def defaultUrl(self, song, options = ''):
-		return 'plugin://%s/?playSong=%s&artistId=%s&albumId=%s&image=%s&songName=%s&artistName=%s&albumName=%s&options=%s' % (__scriptid__, song.id, song.artistID, song.albumID, urllib.quote_plus(song.coverart), urllib.quote_plus(song.name), urllib.quote_plus(song.artistName), urllib.quote_plus(song.albumName), options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
+		return 'plugin://%s/?playSong=%s&artistId=%s&albumId=%s&image=%s&songName=%s&artistName=%s&albumName=%s&options=%s' % (__scriptid__, song.id, song.artistID, song.albumID, self.encode(song.coverart), self.encode(song.name), self.encode(song.artistName), self.encode(song.albumName), options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
+
+	def encode(self, s):
+		try:
+			return urllib.quote_plus(s.encode('latin1','ignore'))
+		except:
+			print '########## GS Encode error'
+			print s
+			return '### encode error ###'
 
 	def createListItem(self, url, song):
 		listItem = xbmcgui.ListItem('music', thumbnailImage=song.coverart, iconImage=song.coverart)
@@ -1098,7 +1115,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.optionsPlaylists = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.optionsMenu = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.navi = Navigation(self, self.gs, displayCallBack = self.displayItems, optionsCallBack = self.setOptionsRight, optionsShowCallback = self.showOptionsRight)
-			self.rootTree = RootTree(self, self.gs, defaultCoverArt = self.defaultCoverArt)
+			self.rootTree = RootTree(self, self.gs, defaultCoverArt = 'http://beta.grooveshark.com/webincludes/img/defaultart/album/mdefault.png')
 			self.navi.down(self.rootTree)
 
 	def __del__(self):
