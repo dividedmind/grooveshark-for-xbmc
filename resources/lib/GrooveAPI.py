@@ -1,7 +1,7 @@
 import urllib, urllib2, unicodedata, re, os, traceback, sys, pickle, socket, string, time, random, sha, md5
 from operator import itemgetter, attrgetter
 
-sys.path.append('/home/solver/.xbmc/addons/script.module.simplejson/lib')
+#sys.path.append('/home/solver/.xbmc/addons/script.module.simplejson/lib')
 import simplejson as json
 
 import traceback
@@ -90,7 +90,6 @@ class GrooveAPI(gwAPI):
 		self._password = ''
 
 	def authenticate(self):
-		print self._username
 		if self._isAuthenticated == True:
 			if self._authenticatedUser == self._username:
 				self.debug('Already logged in')
@@ -103,19 +102,22 @@ class GrooveAPI(gwAPI):
 				"password": self._password,
 				"savePassword": 0,
 				}
+			response = AuthRequest(self, parameters, "authenticateUser").send()
 			try:
-				response = AuthRequest(self, parameters, "authenticateUser").send()
 				res = response['result']
 				if res['userID'] > 0: 
 					self._authenticatedUserId= res['userID']
 					self._authenticatedUser = self._username
 					self._isAuthenticated = True
 				else:
+					self.debug('Failed to log in (else)')
 					self._isAuthenticated = False
 					self._authenticatedUserId = -1
 					self._authenticatedUser = ''
+					print response
 			except:
-				self.debug('Failed to log in')
+				self.debug('Failed to log in (exception)')
+				print response
 				self._isAuthenticated = False
 				self._authenticatedUserId = -1
 				self._authenticatedUser = ''
@@ -191,7 +193,7 @@ class GrooveAPI(gwAPI):
 		except:
 			pass
 
-	def enableDebug(self, v):
+	def _enableDebug(self, v):
 		if v == True:
 			self.enableDebug == True
 		if v == False:
