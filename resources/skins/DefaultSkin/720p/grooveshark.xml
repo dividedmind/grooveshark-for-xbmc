@@ -219,7 +219,7 @@
 			<control type="image">
 				<description>background now playing</description>
 				<posx>0</posx>
-				<posy>550</posy>
+				<posy>516</posy>
 				<height>34</height>
 				<width>150</width>
 				<texture>playing-bg.png</texture>	
@@ -231,7 +231,7 @@
 				<description>Playing label</description>
 				<width>150</width>			
 				<posx>0</posx>
-				<posy>567</posy>
+				<posy>533</posy>
 				<align>left</align>
 				<aligny>center</aligny>
 				<scrollout>False</scrollout>
@@ -258,7 +258,7 @@
 				<description>Playing label</description>
 				<width>150</width>			
 				<posx>0</posx>
-				<posy>600</posy>
+				<posy>566</posy>
 				<align>center</align>
 				<aligny>center</aligny>
 				<label>$INFO[MusicPlayer.Time]</label>
@@ -419,7 +419,8 @@
 				<visible>true</visible>
 			</control>
 		</control>
-      	
+
+      	
 		<control type="group" id="205">
 			<posx>80</posx>
 			<posy>0</posy>
@@ -462,6 +463,13 @@
 						<height>75</height>
 						<info>ListItem.Thumb</info>
 					</control>
+					<!--<control type="image">
+						<posx>5</posx>
+						<posy>5</posy>
+						<width>15</width>
+						<height>15</height>
+						<info>ListItem.Icon</info>
+					</control>-->
 					<control type="label">
 						<posx>125</posx>
 						<posy>8</posy>
@@ -503,6 +511,14 @@
 						<info>ListItem.Thumb</info>
 						<visible>true</visible>
 					</control>
+					<!--<control type="image">
+						<posx>5</posx>
+						<posy>5</posy>
+						<width>15</width>
+						<height>15</height>
+						<info>ListItem.Icon</info>
+						<visible>true</visible>
+					</control>-->
 					<control type="label">
 						<posx>125</posx>
 						<posy>8</posy>
