@@ -580,7 +580,7 @@
 			</control>
 			<control type="image">
 				<width>700</width>
-				<height>480</height>
+				<height>565</height>
 				<posx>97</posx>
 				<posy>155</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
@@ -588,7 +588,7 @@
 			</control>
 			<control type="image">
 				<width>700</width>
-				<height>400</height>
+				<height>480</height>
 				<posx>97</posx>
 				<posy>240</posy>					
 				<texture>gs-bg-item-unfocus.png</texture>'
