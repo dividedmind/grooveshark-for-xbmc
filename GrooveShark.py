@@ -437,10 +437,10 @@ class RootTree:
 
 		listItems = [\
 			xbmcgui.ListItem (label=__language__(128), label2=searchLabel, thumbnailImage=pathSearch),\
-			xbmcgui.ListItem (label=__language__(108), label2='Popular songs on Grooveshark', thumbnailImage=pathPopular),\
+			xbmcgui.ListItem (label=__language__(108), label2=__language__(3041), thumbnailImage=pathPopular),\
 			xbmcgui.ListItem (label=__language__(129), label2='Your favorites', thumbnailImage=pathFavorites),\
-			xbmcgui.ListItem (label=__language__(117), label2='Your playlists', thumbnailImage=pathPlaylist),\
-			xbmcgui.ListItem (label=__language__(107), label2='Have a look at the tunes', thumbnailImage=pathNowPlaying),\
+			xbmcgui.ListItem (label=__language__(117), label2=__language__(3039), thumbnailImage=pathPlaylist),\
+			xbmcgui.ListItem (label=__language__(107), label2='Have a look at the tunes you\'re playing', thumbnailImage=pathNowPlaying),\
 		]
 		self.gui.setStateLabel('')
 		return [self, listItems]
@@ -752,6 +752,7 @@ class GrooveClass(xbmcgui.WindowXML):
 		cnt.setEnabled(True)
 		items = []
 		items = [{'name': __language__(106), 'callback': self.newSearch, 'enabledOnBack': True, 'icon': 'gs_search.png'},\
+					{'name': __language__(117), 'callback': self.showPlaylists, 'enabledOnBack': True, 'icon': 'gs_playlist.png'},\
 					{'name': __language__(107), 'callback': self.showNowPlaying, 'enabledOnBack': True, 'icon': 'gs_song.png'},\
 					{'name': __language__(109), 'callback': self.settings, 'enabledOnBack': True, 'icon': 'gs_wrench.png'},\
 					{'name': __language__(121), 'callback': self.exit, 'enabledOnBack': True, 'icon': 'gs_exit.png'}]
@@ -1015,6 +1016,10 @@ class GrooveClass(xbmcgui.WindowXML):
 		except:
 			unlock()
 			self.notification('Sorry')
+
+	def showPlaylists(self, selected = 0, obj = None, item = None):
+		self.navi.updateList(0, 3)
+		self.navi._list()
 
 	def showNowPlaying(self, selected = 0, obj = None, item = None):
 		self.navi.updateList(0, 4)
