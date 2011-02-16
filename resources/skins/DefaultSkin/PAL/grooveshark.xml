@@ -459,14 +459,14 @@
 						<height>50</height>
 						<info>ListItem.Thumb</info>
 					</control>
-					<control type="image">
+					<!--<control type="image">
 						<posx>5</posx>
 						<posy>-5</posy>
 						<width>25</width>
 						<height>25</height>
 						<info>ListItem.Icon</info>
 						<visible>true</visible>
-					</control>
+					</control>-->
 					<control type="label">
 						<posx>70</posx>
 						<posy>3</posy>
@@ -508,14 +508,14 @@
 						<info>ListItem.Thumb</info>
 						<visible>true</visible>
 					</control>
-					<control type="image">
+					<!--<control type="image">
 						<posx>5</posx>
 						<posy>-5</posy>
 						<width>25</width>
 						<height>25</height>
 						<info>ListItem.Icon</info>
 						<visible>true</visible>
-					</control>
+					</control>-->
 					<control type="label">
 						<posx>70</posx>
 						<posy>3</posy>
