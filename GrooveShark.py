@@ -166,7 +166,7 @@ class Songs(GS_Songs):
 	def _list(self, gui, gsapi):
 		try:
 			n = self.count()
-			self.info = str(n) + ' tunes'
+			self.info = str(n) + ' ' + __language__(3023)
 			listItems = []
 			for i in range(self.count()):
 				song = self.get(i)
@@ -274,7 +274,7 @@ class Albums(GS_Albums):
 
 	def _list(self, gui, gsapi):
 		n = self.count()
-		self.info = str(n) + ' tunes'
+		self.info = str(n) + ' ' + __language__(3025)
 		listItems = []
 		for i in range(self.count()):
 			album = self.get(i)
@@ -291,7 +291,7 @@ class Artists(GS_Artists):
 
 	def _list(self, gui, gsapi):
 		n = self.count()
-		self.info = str(n) + ' artists'
+		self.info = str(n) + ' ' + __language__(3024)
 		path = os.path.join(os.getcwd(),'resources','skins','DefaultSkin', 'media','default-cover.png')
 		listItems = []
 		for i in range(self.count()):
@@ -366,7 +366,7 @@ class Favorites(GS_FavoriteSongs):
 	def _list(self, gui, gsapi):
 		data = self._favorites(gsapi)
 		if data == None:
-			gui.notification('Wrong username/password')
+			gui.notification(__language__(3027)) #Wrong username/password
 			return None
 		return Songs(data, self.defaultCoverArt)._list(gui, gsapi)
 
@@ -380,11 +380,10 @@ class Playlists(GS_Playlists):
 
 	def _list(self, gui, gsapi):
 		if self.getPlaylists(gsapi) == False:
-			print 'argggghhhhh fuck'
-			gui.notification('Wrong username/password')
+			gui.notification(__language__(3027))
 			return [None, None]
 		n = self.count()
-		self.info = str(n) + ' playlists'
+		self.info = str(n) + ' ' + __language__(3042)
 		listItems = []
 		for i in range(self.count()):
 			playlist = self.get(i)
@@ -437,11 +436,11 @@ class RootTree:
 			traceback.print_exc()
 
 		listItems = [\
-			xbmcgui.ListItem (label='Search results', label2=searchLabel, thumbnailImage=pathSearch),\
-			xbmcgui.ListItem (label='Popular', label2='Popular songs on Grooveshark', thumbnailImage=pathPopular),\
-			xbmcgui.ListItem (label='Favorites', label2='Your favorites', thumbnailImage=pathFavorites),\
-			xbmcgui.ListItem (label='Playlists', label2='Your playlists', thumbnailImage=pathPlaylist),\
-			xbmcgui.ListItem (label='Now playing', label2='Have a look at the tunes', thumbnailImage=pathNowPlaying),\
+			xbmcgui.ListItem (label=__language__(128), label2=searchLabel, thumbnailImage=pathSearch),\
+			xbmcgui.ListItem (label=__language__(108), label2='Popular songs on Grooveshark', thumbnailImage=pathPopular),\
+			xbmcgui.ListItem (label=__language__(129), label2='Your favorites', thumbnailImage=pathFavorites),\
+			xbmcgui.ListItem (label=__language__(117), label2='Your playlists', thumbnailImage=pathPlaylist),\
+			xbmcgui.ListItem (label=__language__(107), label2='Have a look at the tunes', thumbnailImage=pathNowPlaying),\
 		]
 		self.gui.setStateLabel('')
 		return [self, listItems]
@@ -526,7 +525,7 @@ class Navigation:
 			n = len(self.tree)
 			if n > 1:
 				path = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media', 'gs_back.png')
-				item = xbmcgui.ListItem (label='', label2='', thumbnailImage=path)
+				item = xbmcgui.ListItem (label='', label2='', thumbnailImage=path, iconImage=self.gui.defaultCoverArt)
 				self.gui.addItem(item)
 		except:
 			traceback.print_exc()
@@ -689,7 +688,7 @@ class Options:
 				icon = item['icon']
 			except:
 				pass
-			listItem = xbmcgui.ListItem (label=item['name'], label2='', thumbnailImage=icon)
+			listItem = xbmcgui.ListItem (label=item['name'], label2='', thumbnailImage=icon, iconImage='')
 			if back == True:
 				if item['enabledOnBack'] == True:
 					self.cntList.addItem(listItem)
@@ -752,10 +751,10 @@ class GrooveClass(xbmcgui.WindowXML):
 		cnt = self.getControl(500)
 		cnt.setEnabled(True)
 		items = []
-		items = [{'name': 'New search', 'callback': self.newSearch, 'enabledOnBack': True, 'icon': 'gs_search.png'},\
-					{'name': 'Now playing', 'callback': self.showNowPlaying, 'enabledOnBack': True, 'icon': 'gs_song.png'},\
-					{'name': 'Settings', 'callback': self.settings, 'enabledOnBack': True, 'icon': 'gs_wrench.png'},\
-					{'name': 'Exit', 'callback': self.exit, 'enabledOnBack': True, 'icon': 'gs_exit.png'}]
+		items = [{'name': __language__(106), 'callback': self.newSearch, 'enabledOnBack': True, 'icon': 'gs_search.png'},\
+					{'name': __language__(107), 'callback': self.showNowPlaying, 'enabledOnBack': True, 'icon': 'gs_song.png'},\
+					{'name': __language__(109), 'callback': self.settings, 'enabledOnBack': True, 'icon': 'gs_wrench.png'},\
+					{'name': __language__(121), 'callback': self.exit, 'enabledOnBack': True, 'icon': 'gs_exit.png'}]
 
 		self.options.reset()
 		self.options.setLabel('')
@@ -776,16 +775,16 @@ class GrooveClass(xbmcgui.WindowXML):
 						{'name': __language__(103), 'callback': self.queueAllSongs, 'enabledOnBack': True, 'icon':'gs_enqueue.png'},\
 						{'name': __language__(104), 'callback': self.addSongToPlaylist, 'enabledOnBack': False, 'icon':'gs_addsong.png'},\
 						{'name':  __language__(119), 'callback': self.findSimilarFromSong, 'enabledOnBack': False, 'icon':'gs_similar.png'},\
-						{'name':  'Browse songs album', 'callback': self.songsOnAlbum, 'enabledOnBack': False, 'icon':'gs_album.png'}]
+						{'name':  __language__(120), 'callback': self.songsOnAlbum, 'enabledOnBack': False, 'icon':'gs_album.png'}]
 			self.options.reset()
 			self.options.setLabel('')
 			self.options.setImage(os.path.join(self.imageDir, 'gs_song.png'))
 			self.options.addOptions(items)
 			self.options.update()
 		if isinstance(obj, Albums):
-			items = [{'name': 'Play album', 'callback': self.playAlbum, 'enabledOnBack': False, 'icon': 'gs_play_item.png'},\
-						{'name': 'Enqueue album', 'callback': self.queueAlbum, 'enabledOnBack': False, 'icon': 'gs_enqueue.png'},\
-						{'name': 'Save album as a playlist', 'callback': self.saveAlbumAsPlaylist, 'enabledOnBack': False, 'icon': 'gs_savealbum.png'},\
+			items = [{'name': __language__(125), 'callback': self.playAlbum, 'enabledOnBack': False, 'icon': 'gs_play_item.png'},\
+						{'name': __language__(126), 'callback': self.queueAlbum, 'enabledOnBack': False, 'icon': 'gs_enqueue.png'},\
+						{'name': __language__(127), 'callback': self.saveAlbumAsPlaylist, 'enabledOnBack': False, 'icon': 'gs_savealbum.png'},\
 						{'name':  __language__(119), 'callback': self.findSimilarFromAlbum, 'enabledOnBack': False, 'icon': 'gs_similar.png'}]
 			self.options.reset()
 			self.options.setLabel('')
@@ -793,8 +792,8 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.options.addOptions(items)
 			self.options.update()
 		if isinstance(obj, Playlists):
-			items = [{'name': 'Rename', 'callback': self.renamePlaylist, 'enabledOnBack': False, 'icon': 'gs_rename.png'},\
-						{'name': 'Delete', 'callback': self.deletePlaylist, 'enabledOnBack': False, 'icon': 'gs_delete2.png'}]
+			items = [{'name': __language__(111), 'callback': self.renamePlaylist, 'enabledOnBack': False, 'icon': 'gs_rename.png'},\
+						{'name': __language__(112), 'callback': self.deletePlaylist, 'enabledOnBack': False, 'icon': 'gs_delete2.png'}]
 			self.options.reset()
 			self.options.setLabel('')
 			self.options.setImage(os.path.join(self.imageDir, 'gs_playlist.png'))
@@ -887,10 +886,13 @@ class GrooveClass(xbmcgui.WindowXML):
 			core = __settings__.getSetting('player_core')
 			debug = __settings__.getSetting('debug')
 			__settings__.openSettings()
-			self.searchLimit = int(__settings__.getSetting('search_limit'))
-			self.gs.setRemoveDuplicates(__settings__.getSetting('remove_duplicates'))
-			self.useCoverArt = self.convertToBool(__settings__.getSetting('covers_in_script'))
-			self.useCoverArtNowPlaying = self.convertToBool(__settings__.getSetting('cover_now_playing'))
+			#try:
+			#	self.searchLimit = int(__settings__.getSetting('search_limit'))
+			#except:
+			#	self.searchLimit = 100
+			#self.gs.setRemoveDuplicates(__settings__.getSetting('remove_duplicates'))
+			#self.useCoverArt = self.convertToBool(__settings__.getSetting('covers_in_script'))
+			#self.useCoverArtNowPlaying = self.convertToBool(__settings__.getSetting('cover_now_playing'))
 			# Check to see if things have changed:
 			if __settings__.getSetting('username') != username or __settings__.getSetting('password') != password:
 				self.gs.startSession(__settings__.getSetting('username'), __settings__.getSetting('password'))
@@ -902,7 +904,7 @@ class GrooveClass(xbmcgui.WindowXML):
 					__debugging__ = False
 				else:
 					__debugging__ = True
-				self.gs.enableDebug(__debugging__)
+				self.gs._enableDebug(__debugging__)
 		except:
 			traceback.print_exc()
 
@@ -937,7 +939,7 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def renamePlaylist(self, selected = 0, obj = None, item = None):
 		playlist = obj.get(selected)
-		name = self.getInput('Rename playlist', default=playlist.name)
+		name = self.getInput(__language__(111), default=playlist.name)
 		if name != '' and name != None:
 			lock()
 			try:
@@ -1015,12 +1017,15 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.notification('Sorry')
 
 	def showNowPlaying(self, selected = 0, obj = None, item = None):
+		self.navi.updateList(0, 4)
+		self.navi._list()
+		return
+		#Disable the old way for now
 		wId = xbmcgui.getCurrentWindowId()
 		gWin = xbmcgui.Window(wId)
-		pWin = xbmcgui.Window(10500) #blablabla
+		pWin = xbmcgui.Window(10500)
 		selected = self.getCurrentListPosition()
 		self.navi.setSelected(selected)
-		#self.location[len(self.location)-1]['itemFocused'] = self.getCurrentListPosition() # Make sure we end up at the index when the playlist is close and the __init__ is run again for the class
 		pWin.show()
 		while xbmcgui.getCurrentWindowId() == 10500: #Music playlist
 			xbmc.sleep(100)
@@ -1084,12 +1089,6 @@ class GrooveClass(xbmcgui.WindowXML):
 
 	def onInit(self):
 		setPGUI(self)
-#		try:
-#			bla = NowPlaying(None, None)
-#			bla._list(None, None)
-#		except:
-#			traceback.print_exc()
-
 		try:
 			if self.initialized == True:
 				self.navi._list()
@@ -1115,7 +1114,7 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.optionsPlaylists = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.optionsMenu = Options(self.getControl(500), self.getControl(4100), self.getControl(410), self)
 			self.navi = Navigation(self, self.gs, displayCallBack = self.displayItems, optionsCallBack = self.setOptionsRight, optionsShowCallback = self.showOptionsRight)
-			self.rootTree = RootTree(self, self.gs, defaultCoverArt = 'http://beta.grooveshark.com/webincludes/img/defaultart/album/mdefault.png')
+			self.rootTree = RootTree(self, self.gs, defaultCoverArt = os.path.join(self.imageDir, 'default-cover.png'))
 			self.navi.down(self.rootTree)
 
 	def __del__(self):
@@ -1201,9 +1200,13 @@ class GrooveClass(xbmcgui.WindowXML):
 		self.rootDir = __cwd__
 		self.xbmcPlaylist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
 		self.defaultCoverArt = os.path.join(__cwd__,'resources','skins','DefaultSkin', 'media','default-cover.png')
-		self.searchLimit = int(__settings__.getSetting('search_limit'))
-		self.useCoverArt = self.convertToBool(__settings__.getSetting('covers_in_script'))
-		self.useCoverArtNowPlaying = self.convertToBool(__settings__.getSetting('cover_now_playing'))
+		#try:
+		#	self.searchLimit = int(__settings__.getSetting('search_limit'))
+		#except:
+		#	self.searchLimit = 100
+		#self.useCoverArt = self.convertToBool(__settings__.getSetting('covers_in_script'))
+		self.useCoverArt = True
+		#self.useCoverArtNowPlaying = self.convertToBool(__settings__.getSetting('cover_now_playing'))
 		if __isXbox__ == True:
 			self.dataDir = 'script_data'
 			dataRoot = os.path.join('special://profile/', self.dataDir)
