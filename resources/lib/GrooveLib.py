@@ -348,31 +348,20 @@ class GS_Album:
 		self.verified = False
 		self.hasMore = False
 		self.defaultCoverArt = defaultCoverArt
-		try:
-			self._parseData(data)
-		except:
-			self.id = data
+                self._parseData(data)
 
 	def _parseData(self, data):
 		"""function: Parse information from json data"""
-		try:
-			self.id = data["AlbumID"]
-			self.name = data["AlbumName"]
-			self.artistName = data["ArtistName"]
-			self.artistID = data["ArtistID"]
-		except:
-			self.id = data
-			pass
+		self.album = data
+                self.id = data.id
+                self.name = data.name
+                self.artistName = data.artist.name
+                self.artistID = data.artist.id
 
-		if (data['CoverArtFilename'] != None) and (data['CoverArtFilename'] != ''):
-			self.coverart = 'http://beta.grooveshark.com/static/amazonart/m' + data['CoverArtFilename']
-		else:
-			self.coverart = self.defaultCoverArt
+                self.coverart = data.cover._url
 		
 	def getSongs(self, gsapi):
-		parameters = {"albumID":self.id, "isVerified":self.verified, "offset":0}
-		response = gsapi.request(parameters, "albumGetSongs").send()
-		return self.songsContainer(response['result']['songs'], defaultCoverArt = self.defaultCoverArt)
+		return self.songsContainer(self.album.songs, defaultCoverArt = self.defaultCoverArt)
 
 	def setContainers(self):
 		self.songsContainer = GS_Songs
