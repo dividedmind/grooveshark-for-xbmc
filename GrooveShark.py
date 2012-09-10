@@ -19,8 +19,8 @@ __cwd__ = sys.modules["__main__"].__cwd__
 
 sys.path.append(os.path.join(__cwd__.replace(";",""),'resources','lib'))
 import uuid
+import grooveshark
 
-from GrooveAPI import *
 from GrooveLib import *
 from GroovePlayer import GroovePlayer
 from GrooveGUI import *
@@ -1102,11 +1102,12 @@ class GrooveClass(xbmcgui.WindowXML):
 			self.initVars()
 			self.loadState()
 			try:
-				self.gs = GrooveAPI(enableDebug = __debugging__, cwd = self.confDir ,clientUuid = None, clientVersion = None)
-				username = __settings__.getSetting("username")
-				password = __settings__.getSetting("password")
-				self.gs.startSession(username, password)
-				self.gs.setRemoveDuplicates(__settings__.getSetting('remove_duplicates'))
+				self.gs = grooveshark.Client()
+				self.gs.init()
+				#username = __settings__.getSetting("username")
+				#password = __settings__.getSetting("password")
+				#self.gs.startSession(username, password)
+				#self.gs.setRemoveDuplicates(__settings__.getSetting('remove_duplicates'))
 			except:
 				self.message(__language__(3046), __language__(3011)) #Unable to get new session ID
 				xbmc.log('GrooveShark Exception (onInit): ' + str(sys.exc_info()[0]))

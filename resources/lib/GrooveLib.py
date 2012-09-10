@@ -29,15 +29,13 @@ class GS_Song:
 	def _parseData(self, data):
 		"""function: Parses raw track data from Grooveshark"""
 		try:	
-			self.id = data["SongID"]
-			try:
-				self.name = data["Name"]
-			except:
-				self.name = data['SongName']
-			self.artistName = data["ArtistName"]
-			self.artistID = data["ArtistID"]
-   			self.albumName = data["AlbumName"]
-   			self.albumID = data["AlbumID"]
+                        self.song = data
+			self.id = data.id
+                        self.name = data.name
+			self.artistName = data.artist.name
+			self.artistID = data.artist.id
+   			self.albumName = data.album.name
+   			self.albumID = data.album.id
    			self.verified = False
 		except: # Otherwise assume only songID was supplied in data
 			print data
@@ -172,9 +170,7 @@ class GS_PopularSongs(GS_Songs):
 		self.defaultCoverArt = defaultCoverArt
 
 	def _getPopular(self, gsapi, type = 'monthly'):
-		parameters = {"type":type}
-		response = gsapi.request(parameters, "popularGetSongs").send()
-		return response['result']['Songs']
+		return gsapi.popular(period = type)
 
 	def getPopular(self, gsapi, type = 'monthly'):
 		data = self._getPopular(gsapi, type = type) 
