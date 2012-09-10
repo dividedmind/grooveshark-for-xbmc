@@ -911,16 +911,10 @@ class GrooveClass(xbmcgui.WindowXML):
 		#text = self.getInput(__language__(1000), "") 
 		result = search.getResult()
 		if result != None:
-			lock()
-			try:
-				text = result['query']
-				self.rootTree.tree[0].search(query= text, gsapi = self.gs)
-				self.navi.updateList(0, 0)
-				self.navi._list()
-				unlock()
-			except:
-				unlock()
-				self.notification('Sorry')
+                        text = result['query']
+                        self.rootTree.tree[0].search(query= text, gsapi = self.gs)
+                        self.navi.updateList(0, 0)
+                        self.navi._list()
 
 	def deletePlaylist(self, selected = 0, obj = None, item = None):
 		lock()
