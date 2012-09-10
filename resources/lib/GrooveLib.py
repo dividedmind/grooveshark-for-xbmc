@@ -47,21 +47,10 @@ class GS_Song:
 			self.year = data['Year']
 		except:
 			self.year = None
-		try:
-			if (data['CoverArtFilename'] != None) and (data['CoverArtFilename'] != ''):
-				self.coverart = 'http://beta.grooveshark.com/static/amazonart/m' + data['CoverArtFilename']
-			else:
-				self.coverart = self.defaultCoverArt
-		except:
-			pass
-		try:
-			if (data['CoverArt']) != '':
-				self.coverart = data['CoverArt']
-		except:
-			pass
+                self.coverart = data.album.cover._url
 
 		try:
-			self.duration = int(data['EstimateDuration'])
+			self.duration = int(data.duration)
 		except:
 			self.duration = 0
 
