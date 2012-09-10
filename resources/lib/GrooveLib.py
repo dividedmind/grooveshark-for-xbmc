@@ -527,11 +527,11 @@ class GS_Search:
 		return self.resultRaw
 
 	def search(self, gsapi, query, type = 'Songs'):
-		result = self._search(gsapi, query, type = type)
+		result = gsapi.search(query, type = type)
 		try:
-			self.songs = self.newSongsContainer(result['result']['result'], sort = 'Score')
-			self.albums = self.newAlbumsContainer(result['result']['result'])
-			self.artists = self.newArtistsContainer(result['result']['result'])
+			self.songs = self.newSongsContainer(result, sort = 'Score')
+			self.albums = self.newAlbumsContainer(result)
+			self.artists = self.newArtistsContainer(result)
 			self.queryText = query
 		except:
 			self.songs = []
