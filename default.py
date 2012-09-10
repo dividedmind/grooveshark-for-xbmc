@@ -89,15 +89,16 @@ if __isXbox__ == True:
 		startGUI()
 else: 
 	if len(sys.argv) == 3:#Run as a plugin to open datastreams
-		from GrooveAPI import *
+                import urllib
+		import grooveshark
 		import xbmcplugin
 		import xbmcgui
 		import traceback
 		try:
 			tools = tools()
 			tools.loadParameters(sys.argv[2])
-			gs = GrooveAPI(enableDebug = __debugging__, cwd = __cwd__,clientUuid = None, clientVersion = None)
-			gs.startSession('','')
+			gs = grooveshark.Client()
+			gs.init()
 			get = tools.getCmd
 			songId = get('playSong')
 			playlist = get('playlist')
@@ -113,10 +114,15 @@ else:
 			
 			elif (songId != None):
 				print 'GrooveShark: Song ID: ' + str(songId)
-				url = gs.getStreamURL(str(songId))
+				url = gs.song(songId).stream.url
 				if url != "":
 					listitem=xbmcgui.ListItem(label='music', path=url)
-					listitem.setInfo(type='Music', infoLabels = {'url': url, 'title': get('songName'), 'artist': get('artistName'), 'album': get('albumName')})
+					listitem.setInfo(type='Music', infoLabels = {
+                                          'url': url, 
+                                          'title': urllib.unquote_plus(get('songName')), 
+                                          'artist': urllib.unquote_plus(get('artistName')), 
+                                          'album': urllib.unquote_plus(get('albumName'))
+                                        })
 					listitem.setProperty('mimetype', 'audio/mpeg')
 					if options == 'radio':
 						print 'GrooveShark: Radio mode'
