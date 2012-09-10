@@ -424,20 +424,9 @@ class GS_Artist:
 
 	def _parseData(self, data):
 		"""function: Parse information from json data"""
-		try:
-			self.id = data["ArtistID"]
-			self.name = data["ArtistName"]
-		except:
-			try: #Returned by similar artists
-				self.id = data["ArtistID"]
-				self.name = data["Name"]
-			except:
-				self.id = data
-		try:
-			if None == self.verified and "1" == data["ArtistVerified"]:
-				self.verified = True
-		except:
-			pass
+		self.artist = data
+                self.id = data.id
+                self.name = data.name
 	
 	def similar(self, gsapi):
 		parameters = {
