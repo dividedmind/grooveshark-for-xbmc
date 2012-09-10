@@ -6,6 +6,7 @@ import traceback
 import threading
 import random
 import gc
+import urllib
 from pprint import pprint
 
 __scriptname__ = sys.modules[ "__main__" ].__scriptname__
@@ -250,12 +251,7 @@ class Songs(GS_Songs):
 		return 'plugin://%s/?playSong=%s&artistId=%s&albumId=%s&image=%s&songName=%s&artistName=%s&albumName=%s&options=%s' % (__scriptid__, song.id, song.artistID, song.albumID, self.encode(song.coverart), self.encode(song.name), self.encode(song.artistName), self.encode(song.albumName), options) # Adding plugin:// to the url makes xbmc call the script to resolve the real url
 
 	def encode(self, s):
-		try:
-			return urllib.quote_plus(s.encode('latin1','ignore'))
-		except:
-			print '########## GS Encode error'
-			print s
-			return '### encode error ###'
+                return urllib.quote_plus(s.encode('latin1','ignore'))
 
 	def createListItem(self, url, song):
 		listItem = xbmcgui.ListItem('music', thumbnailImage=song.coverart, iconImage=song.coverart)

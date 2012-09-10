@@ -102,7 +102,7 @@ class GS_Song:
 				"service").send()
 
 	def getStreamURL(self, gsapi):
-		return gsapi.getStreamURL(self.id)
+		return self.song.stream.url
 
 	def getSongsOnAlbum(self, gsapi):
 		album = albumContainer(self.albumID, defaultCoverArt = self.defaultCoverArt)
