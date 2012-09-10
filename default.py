@@ -7,6 +7,9 @@ import traceback
 import threading
 from datetime import datetime
 
+import codecs
+sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+
 class tools(object):
 	def __init__(self):
 		pass
