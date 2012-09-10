@@ -529,9 +529,9 @@ class GS_Search:
 	def search(self, gsapi, query, type = 'Songs'):
 		result = gsapi.search(query, type = type)
 		try:
-			self.songs = self.newSongsContainer(result, sort = 'Score')
-			self.albums = self.newAlbumsContainer(result)
-			self.artists = self.newArtistsContainer(result)
+			self.songs = self.newSongsContainer(gsapi.search(query, type = 'Songs'), sort = 'Score')
+			self.albums = self.newAlbumsContainer(gsapi.search(query, type = 'Albums'))
+			self.artists = self.newArtistsContainer(gsapi.search(query, type = 'Artists'))
 			self.queryText = query
 		except:
 			self.songs = []
