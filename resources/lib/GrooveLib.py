@@ -440,8 +440,7 @@ class GS_Artist:
 		return gsapi.request(parameters, "artistGetSongs").send()
 
 	def getSongs(self, gsapi):
-		res = self._getSongs(gsapi)
-		return self.songsContainer(res['result']['songs'], defaultCoverArt = self.defaultCoverArt)
+		return self.songsContainer(self.artist.songs, defaultCoverArt = self.defaultCoverArt)
 
 	def getAlbums(self, gsapi):
 		res = self._getSongs(gsapi)
